@@ -17,7 +17,7 @@ function [ D_k ] = trazar_recta( punto_inicio, punto_fin, n )
     punto_fin = double(punto_fin);
     a = (punto_fin(2)-punto_inicio(2))/(punto_fin(1)-punto_inicio(1)); % busco la ecuacion y=ax+b
     b = punto_inicio(2) - a*punto_inicio(1); % b = y - ax
-    for i = inicio:fin
+    for i = inicio:fin-1
         desde = floor(a*i+b); % calculo el pixel por el que pasa por encima en el momento i
         hasta = floor(a*(i+1)+b);
         if(hasta<desde)
