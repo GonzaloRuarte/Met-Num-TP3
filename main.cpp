@@ -13,6 +13,63 @@
 
 using namespace std;
 
+
+/**
+ * Dado 2 puntos por los que pasa una recta (que esten en el borde), los mueve para que la recta se rote en dirección
+ * contraria a las agujas del reloj. Importante, estoy considerando que el pixel [0,0] será la esquina superior
+ * izquierda, se debería cambiar esto si lo vamos a pensar distinto.
+ * @param p1 es el punto 1 donde el primer valor es la fila, el segundo la columna, y debe estar en el borde de la
+ * imagen
+ * @param p2 es el segundo punto donde termina la recta, con las mismas condiciones que p1.
+ * @param n es el tamaño total de la imágen final resultante de todos los métodos.
+ */
+void rotarContrarreloj(pair<int,int>& p1, pair<int,int>& p2, size_t n) {
+    if(p1.second == 0 and p1.first != n-1) { //Si la columna es 0, entonces si la fila no es la última lo movemos para
+        // abajo.
+        p1.first++;
+    } else if(p1.first == n-1 and p1.second != n-1) { //Estamos en última fila, y no estamos en última columna,
+        // movemos a derecha.
+        p1.second++;
+    } else if(p1.second == n-1 and p1.first != 0) { //Última columna, y no en la primera fila, movemos para arriba.
+        p1.first--;
+    } else { //Estamos en la primera fila, y no estamos en la última columna, entonces movemos a izquierda.
+        p1.second--;
+    }
+    //repetimos lo anterior para p2.
+    if(p2.second == 0 and p2.first != n-1) { //Si la columna es 0, entonces si la fila no es la última lo movemos para
+        // abajo.
+        p2.first++;
+    } else if(p2.first == n-1 and p2.second != n-1) { //Estamos en última fila, y no estamos en última columna,
+        // movemos a derecha.
+        p2.second++;
+    } else if(p2.second == n-1 and p2.first != 0) { //Última columna, y no en la primera fila, movemos para arriba.
+        p2.first--;
+    } else { //Estamos en la primera fila, y no estamos en la última columna, entonces movemos a izquierda.
+        p2.second--;
+    }
+    return;
+}
+
+/**
+ * Crea un par, de dos vectores (solo para tenerlos todos juntos y ordenados) donde el primer vector tiene en la
+ * posición i-ésima al punto del pixel de inicio, de la recta rayo, que pasa por la fila i-ésima, el segundo vector
+ * tiene el punto del pixel donde termina dicha recta.
+ * @param n tamaño de la matriz imagen resultante, que será del mismo tamaño que la matriz D^k.
+ * @result par de vectores con los pixeles inicio fin de las rectas horizontales de toda una matriz imagen de nxn.
+ */
+pair<vector<pair<int,int> >, vector<pair<int,int> > > inicios_fines_horizontales(size_t n) {
+    pair<vector<pair<int,int> >, vector<pair<int,int> > > result =
+            make_pair(vector<pair<int,int> >(n), vector<pair<int,int> >(n));
+    for(int i = 0; i < n; i++) {
+        result.first[i].first = i;
+        result.first[i].second = 0;
+        result.second[i].first = i;
+        result.second[i].second = n-1;
+    }
+    return result;
+};
+
+
 /**
  * Crea una matriz D_k del mismo tamaño que la imágen que será el resultado (nxn), donde un 1 en esa posición indica
  * que la recta pasa por ese pixel. (osea, un 1 en D[0][37] indica que el rayo pasa por el pixel de la fila 1,
@@ -27,7 +84,7 @@ using namespace std;
  * @param n es el tamaño de la matriz resultado del método que estamos desarrollando (Por ahora sería cuadrada).
  * @param result es la matriz resultante con unos donde pasa el rayo, en este caso del tp sería la matriz D^k.
  */
-vector<vector<double> > trazar_recta_en_matriz_D(pair<int,int> p1, pair<int,int> p2, int n) {
+vector<vector<double> > trazar_recta_en_matriz_D(pair<int,int> p1, pair<int,int> p2, size_t n) {
     vector<vector<double> > result(n, vector<double>(n,0));
     int inicio;
     int fin;
