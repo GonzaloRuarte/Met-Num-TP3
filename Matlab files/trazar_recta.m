@@ -27,5 +27,16 @@ function [ D_k ] = trazar_recta( punto_inicio, punto_fin, n )
         end
         D_k(desde:hasta,i) = 1; % Agrego todos los pixeles por los que va a pasar hasta llegar a i+1
     end
+    desde = floor(a*fin+b); % calculo el pixel por el que pasa por encima en el momento i
+    hasta = floor(a*(fin+1)+b);
+    if(hasta<desde)
+        aux = hasta
+        hasta = desde
+        desde = aux
+    end
+    if(hasta>n)
+        hasta = n;
+    end
+    D_k(desde:hasta,i) = 1; % Agrego todos los pixeles por los que va a pasar hasta llegar a i+1
 end
 
