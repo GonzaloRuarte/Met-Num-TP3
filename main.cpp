@@ -3,6 +3,7 @@
 #include <vector>
 #include <map>
 #include <algorithm>
+#include <random>
 #include <functional>
 #include <tuple>
 #include <stdlib.h>
@@ -23,7 +24,7 @@ using namespace std;
  * @param p2 es el segundo punto donde termina la recta, con las mismas condiciones que p1.
  * @param n es el tamaño total de la imágen final resultante de todos los métodos.
  */
-void rotarContrarreloj(pair<int,int>& p1, pair<int,int>& p2, size_t n) {
+void rotarContrarreloj(pair<uint,uint>& p1, pair<uint,uint>& p2, size_t n) {
     if(p1.second == 0 and p1.first != n-1) { //Si la columna es 0, entonces si la fila no es la última lo movemos para
         // abajo.
         p1.first++;
@@ -57,17 +58,17 @@ void rotarContrarreloj(pair<int,int>& p1, pair<int,int>& p2, size_t n) {
  * @param n tamaño de la matriz imagen resultante, que será del mismo tamaño que la matriz D^k.
  * @result par de vectores con los pixeles inicio fin de las rectas horizontales de toda una matriz imagen de nxn.
  */
-pair<vector<pair<int,int> >, vector<pair<int,int> > > inicios_fines_horizontales(size_t n) {
-    pair<vector<pair<int,int> >, vector<pair<int,int> > > result =
-            make_pair(vector<pair<int,int> >(n), vector<pair<int,int> >(n));
-    for(int i = 0; i < n; i++) {
+pair<vector<pair<uint,uint> >, vector<pair<uint,uint> > > inicios_fines_horizontales(size_t n) {
+    pair<vector<pair<uint,uint> >, vector<pair<uint,uint> > > result =
+            make_pair(vector<pair<uint,uint> >(n), vector<pair<uint,uint> >(n));
+    for(uint i = 0; i < n; i++) {
         result.first[i].first = i;
         result.first[i].second = 0;
         result.second[i].first = i;
         result.second[i].second = n-1;
     }
     return result;
-};
+}
 
 
 /**
@@ -84,13 +85,13 @@ pair<vector<pair<int,int> >, vector<pair<int,int> > > inicios_fines_horizontales
  * @param n es el tamaño de la matriz resultado del método que estamos desarrollando (Por ahora sería cuadrada).
  * @param result es la matriz resultante con unos donde pasa el rayo, en este caso del tp sería la matriz D^k.
  */
-vector<vector<double> > trazar_recta_en_matriz_D(pair<int,int> p1, pair<int,int> p2, size_t n) {
+vector<vector<double> > trazar_recta_en_matriz_D(pair<uint,uint> p1, pair<uint,uint> p2, size_t n) {
     vector<vector<double> > result(n, vector<double>(n,0));
-    int inicio;
-    int fin;
+    uint inicio;
+    uint fin;
     if(p1.second == p2.second) {
         // La recta es vertical, la trazo y termino el método.
-        for(int i = 0; i<n ; i++) {
+        for(uint i = 0; i<n ; i++) {
             result[i][p1.second] = 1;
         }
         return result;
@@ -104,26 +105,26 @@ vector<vector<double> > trazar_recta_en_matriz_D(pair<int,int> p1, pair<int,int>
     double a = (double(p2.first) - double(p1.first)) / (double(p2.second) - double(p1.second)); // No importa el orden
             // de p1 y p2, calcula la pendiente, fila 2 menos fila 1 sobre columna 2 menos columna 1.
     double b = double(p1.first) - a * double(p1.second); // calcula b = y - ax, con el punto p1.
-    for(int i = inicio; i<fin ; i++) { //voy de la columna inicio a la fin, pintando los pixeles por los que pase.
-        int pintar_desde = floor(a*i + b);
-        int pintar_hasta = floor(a*(i+1) +b);
+    for(uint i = inicio; i<fin ; i++) { //voy de la columna inicio a la fin, pintando los pixeles por los que pase.
+        uint pintar_desde = floor(a*i + b);
+        uint pintar_hasta = floor(a*(i+1) +b);
         if (pintar_hasta < pintar_desde) {
-            int aux = pintar_desde; //si estan al revez los swappeo
+            uint aux = pintar_desde; //si estan al revez los swappeo
             pintar_desde = pintar_hasta;
             pintar_hasta = aux;
         }
-        for(int j = pintar_desde; j <= pintar_hasta ; j++) {
+        for(uint j = pintar_desde; j <= pintar_hasta ; j++) {
             result[j][i] = 1;
         }
     }
-    int pintar_desde = floor(a*fin + b);
-    int pintar_hasta = floor(a*(fin+1) +b);
+    uint pintar_desde = floor(a*fin + b);
+    uint pintar_hasta = floor(a*(fin+1) +b);
     if (pintar_hasta < pintar_desde) {
-        int aux = pintar_desde; //si estan al revez los swappeo
+        uint aux = pintar_desde; //si estan al revez los swappeo
         pintar_desde = pintar_hasta;
         pintar_hasta = aux;
     }
-    for(int j = pintar_desde; j <= pintar_hasta ; j++) {
+    for(uint j = pintar_desde; j <= pintar_hasta ; j++) {
         result[j][fin] = 1;
     }
     return result;
@@ -133,23 +134,70 @@ vector<vector<double> > trazar_recta_en_matriz_D(pair<int,int> p1, pair<int,int>
  * esta funcion toma como parametros las matrices D y V
  * @return el tiempo que tarda la senial en atravesar el cuerpo
  */
-double medirTiempoDeRetrasoDeSenial(vector<vector<double>>& D, vector<vector<double>>& V) {
-    double ret = 0.0;
-    int n = D.size();
-    for (int i=0; i<n; i++) {
-        for (int j=0; j<n; j++) {
-            ret += D[i][j] * V[i][j];
-        }
+vector<double> medir_tiempos_senial(const vector<vector<double> > &M, const vector<double> &v){//recordar que el vector v son las inversas de las velocidades
+    const size_t& n = v.size();
+    vector<double> res(n);
+    for(size_t i = 0; i < n; ++i) {
+        res[i] = 0;
+        for (size_t k = 0; k < n; ++k)
+            res[i] += M[i][k]*v[k];
     }
+    return res;
 }
+
+vector<vector<double> > trasponer(const vector<vector<double> >& mat){
+    const unsigned long& n = mat.size();
+    const unsigned long& m = mat[0].size();
+    vector<vector<double> > res (m, vector<double>(n));
+    for (uint i = 0; i<n;i++)
+        for (uint j = 0; j<m;j++)
+            res[j][i] = mat[i][j];
+    return res;
+
+}
+
+
+
+
+
+vector<vector<double> > multMatPorMat(const vector<vector<double> >& mat1, const vector<vector<double> >& mat2) {
+    const unsigned long& n = mat1.size();
+    const unsigned long& m = mat2[0].size();
+    const unsigned long& l = mat2.size();
+    vector<vector<double> > res (n, vector<double>(m, 0));
+    for (uint i = 0; i < n; i++)
+        for (uint j = 0; j < m; j++)
+            for (uint k = 0; k < l; k++)
+                res[i][j] += mat1[i][k]*mat2[k][j];
+    return res;
+}
+
+vector<double> uniformNoise(vector<double> t, double init, double end, double sign){
+	vector<double> res(t.size());
+	default_random_engine generator;
+	uniform_real_distribution<double> distribution(init,end);
+	for(uint i = 0; i< t.size(); i++){
+		double number = distribution(generator);
+		if (sign != 0){
+			res[i] = sign*number*t[i] + t[i];
+		}
+		else {
+			random_device rd;
+			mt19937 gen(rd());
+			uniform_int_distribution<> dis(1, 2);
+			if (dis(gen) == 1){
+				res[i] = number*t[i] + t[i];	
+			}
+			else {
+				res[i] = t[i] - number*t[i];
+			}
+		}
+		
+	}
+	return res;
+} 
 
 int main(int argc, char * argv[]) {
 
-    vector<vector<double>> D = {{1,0,0,0}, {0,1,0,0}, {0,0,1,0}, {0,0,0,1}};
-    vector<vector<double>> V = {{0,1,2,3}, {4,5,6,7}, {8,9,10,11}, {14,25,36,57}};
-
-    double t = medirTiempoDeRetrasoDeSenial(D, V);
-
-    cout << t;
     return 0;
 }
