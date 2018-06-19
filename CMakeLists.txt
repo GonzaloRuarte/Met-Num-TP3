@@ -3,4 +3,6 @@ project(PageRank)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(tp3 main.cpp rdtsc.h ppmloader.cpp ppmloader.h)
+add_executable(tp3 main.cpp rdtsc.h ppmloader.cpp ppmloader.h calcular_rayos.cpp calcular_rayos.h)
+
+add_executable(testcalcular_rayos test_main.cpp )
