@@ -12,6 +12,6 @@
 
 using namespace std;
 
-vector<vector<short int>>* leerCSV(string nombreArchivo);
+vector<vector<double>>* leerCSV(string nombreArchivo);
 
 #endif //TC_UTIL_H

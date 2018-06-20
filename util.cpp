@@ -18,8 +18,8 @@ const vector<string> explode(const string& s, const char& c)
 }
 
 
-vector<short int> convertirAVectorDeValores(vector<string> lecturas) {
-    vector<short int>* ret = new vector<short int>(0);
+vector<double> convertirAVectorDeValores(vector<string> lecturas) {
+    vector<double>* ret = new vector<double>(0);
     for (vector<string>::iterator it = lecturas.begin() ; it != lecturas.end(); ++it) {
         string lectura = *it;
         ret->push_back(stoi(lectura));
@@ -27,10 +27,10 @@ vector<short int> convertirAVectorDeValores(vector<string> lecturas) {
     return *ret;
 }
 
-vector<vector<short int>>* leerCSV(string nombreArchivo) {
+vector<vector<double>>* leerCSV(string nombreArchivo) {
     fstream entrada(nombreArchivo, ios_base::in);
 
-    vector<vector<short int>>* ret = new vector<vector<short int>>(0);
+    vector<vector<double>>* ret = new vector<vector<double>>(0);
 
     string lectura;
     vector<string> lecturas;
