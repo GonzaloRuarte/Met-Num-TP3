@@ -29,7 +29,9 @@ vector<double> convertirAVectorDeValores(vector<string> lecturas) {
 
 vector<vector<double>>* leerCSV(string nombreArchivo) {
     fstream entrada(nombreArchivo, ios_base::in);
-
+    if(entrada.fail()){
+        throw runtime_error("no se existe el archivo " + nombreArchivo + "!");
+    }
     vector<vector<double>>* ret = new vector<vector<double>>(0);
 
     string lectura;
