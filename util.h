@@ -1,14 +1,17 @@
-//
-// Created by christian on 19/06/18.
-//
+#ifndef TC_UTIL_H
+#define TC_UTIL_H
 
-#ifndef PAGERANK_UTIL_H
-#define PAGERANK_UTIL_H
+#include <string>
+#include <vector>
+#include <iostream>
+#include <fstream>
+#include "ppmloader.h"
+#include "dirent.h"
+#include <sstream>
+#include <stdio.h>
 
+using namespace std;
 
-class util {
+vector<vector<short int>>* leerCSV(string nombreArchivo);
 
-};
-
-
-#endif //PAGERANK_UTIL_H
+#endif //TC_UTIL_H
