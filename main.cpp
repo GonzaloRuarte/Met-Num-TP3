@@ -146,7 +146,7 @@ vector<double> uniformNoise(vector<double> t, double init, double end, double si
 	return res;
 }
 
-vector<vector<uint16_t>> datosAMatriz(uchar &datos, int ancho, int alto) {
+vector<vector<uint16_t>> datosAMatriz(uchar &datos, uint ancho, uint alto) {
 	vector<vector<uint16_t>> ret (0);
 	for (size_t i = 0; i < alto; ++i) {
 		vector<uint16_t> fila (0);
