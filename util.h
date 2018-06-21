@@ -13,5 +13,7 @@
 using namespace std;
 
 vector<vector<double>>* leerCSV(string nombreArchivo);
+vector<vector<double>> discretizar(vector<vector<double>> mat, uint val);
+vector<double> pasarAVector(vector<vector<double>> mat);
 
 #endif //TC_UTIL_H
