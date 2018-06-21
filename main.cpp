@@ -209,8 +209,12 @@ vector<vector<uint16_t>> datosAMatriz(uchar &datos, uint ancho, uint alto) {
 int main(int argc, char * argv[]) {
     vector<vector<double>>* matriz;
     matriz = leerCSV("dicom_csv2/1.2.826.0.1.3680043.2.656.1.138.1.csv");
+
+	//cout << (*matriz)[0].size() << endl;
+
+
 	vector<vector<double>> mat(20,vector<double> (20,0));
-	
+
 	for(uint i = 0; i< mat.size(); i++){
 		for(uint j = 0; j < mat[0].size(); j++){
 			mat[i][j]=i*2+j*2;

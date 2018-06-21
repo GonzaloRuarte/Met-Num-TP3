@@ -38,11 +38,14 @@ vector<vector<double>>* leerCSV(string nombreArchivo) {
     vector<string> lecturas;
     bool path = true;
     while(entrada >> lectura) {
-        ret->push_back(convertirAVectorDeValores(explode(lectura, ' ')));
+        ret->push_back(convertirAVectorDeValores(explode(lectura, ',')));
     }
     entrada.close();
     return ret;
 }
+
+
+
 
 vector<vector<double>> discretizar(vector<vector<double>> mat, uint val){//supongo que la matriz mat es cuadrada
 	vector<vector<double>> res (mat.size()/val, vector<double> (mat.size()/val));
