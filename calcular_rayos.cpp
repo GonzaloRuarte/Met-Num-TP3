@@ -17,7 +17,7 @@ void rotarContrarreloj(pair<uint,uint>& p1, pair<uint,uint>& p2, size_t n) {
         p1.second++;
     } else if(p1.second == n-1 and p1.first != 0) { //Última columna, y no en la primera fila, movemos para arriba.
         p1.first--;
-    } else { //Estamos en la primera fila, y no estamos en la última columna, entonces movemos a izquierda.
+    } else { //Estamos en la primera fila, y no estamos en la primera columna, entonces movemos a izquierda.
         p1.second--;
     }
     //repetimos lo anterior para p2.
@@ -29,7 +29,7 @@ void rotarContrarreloj(pair<uint,uint>& p1, pair<uint,uint>& p2, size_t n) {
         p2.second++;
     } else if(p2.second == n-1 and p2.first != 0) { //Última columna, y no en la primera fila, movemos para arriba.
         p2.first--;
-    } else { //Estamos en la primera fila, y no estamos en la última columna, entonces movemos a izquierda.
+    } else { //Estamos en la primera fila, y no estamos en la primera columna, entonces movemos a izquierda.
         p2.second--;
     }
     return;
@@ -118,4 +118,102 @@ vector<vector<double> > trazar_recta_en_matriz_D(pair<uint,uint> p1, pair<uint,u
         result[j][fin] = 1;
     }
     return result;
+}
+
+/**
+ * Carga las posiciones donde se colocarían laseres a lo alto (en el borde izquierdo y derecho) para una imagen de nxn.
+ * esto indica la posicion de inicio de los laseres, su punto al que apuntan será manejado con otra función.
+ * @param n: Tamaño de la matriz imágen donde se colocaran los laseres.
+ * @param cada_cuanto: Cada cuantos pixeles se añadirá un nuevo laser, el primero se añade sin dejar espacio (si offset
+ * es 0).
+ * @param offset: espacio dejado antes del primer laser (se empiezan a colocar de arriba a abajo, solo en los bordes
+ * izquierdo y derecho)
+ * @param cant_maxima: parámetro extra para evitar que el método cree mas laseres que cant_maxima (por cada lado, o sea
+ * se crean cant_maxima de laseres por el lado izquierdo, y cant_maxima por el lado derecho).
+ * @return Devuelve los puntos donde inician los laseres para una matriz de nxn.
+ */
+
+vector<pair<uint,uint> > crearLaseres(size_t n, size_t cada_cuanto, size_t offset, size_t cant_maxima){
+    vector<pair<uint,uint> > result;
+    uint cant_creada = 0;
+    for(uint i = offset; i<n and (cant_maxima == 0 or cant_creada < cant_maxima); i += cada_cuanto) {
+        result.emplace_back(make_pair(i,uint(0)));
+    }
+
+    cant_creada = 0;
+
+    for(uint i = offset; i<n and (cant_maxima == 0 or cant_creada < cant_maxima); i += cada_cuanto) {
+        result.emplace_back(i,uint(n-1));
+    }
+
+    return result;
+}
+
+
+/**
+ * Dado un vector con los laseres de inicio, crea los n puntos a donde empezarían a apuntar para dar una sola pasada.
+ * @param Laseres: resultado dado por la función crearLaseres.
+ * @param n: tamaño de la imágen.
+ * @return vector con los puntos a los que apuntan los laseres, ordenados de la misma forma que se encuentran los
+ * Laseres en el vector de Laseres.
+ */
+
+vector<pair<uint,uint> > crearPuntosDeFin(vector<pair<uint,uint> > Laseres, size_t n) {
+    vector<pair<uint,uint> > result;
+    result.reserve(Laseres.size()*2);
+    for(int i = 0; i<Laseres.size(); i++) {
+        uint fila;
+        uint columna;
+        if(Laseres[i].second == 0){
+            fila = uint(0);
+            columna = uint(1);
+        } else {
+            fila = uint(0);
+            columna = uint(n-2);
+        }
+        pair<uint,uint> p = make_pair(fila,columna);
+        result.emplace_back(p);
+    }
+    return result;
+}
+
+
+/**
+ * Función que rota el punto donde termina el laser creado en crearPuntosDeFin. A los laseres que hayan empezado del
+ * lado derecho, los rota contrarreloj (empezando de la esquina arriba a la derecha), y los laseres del lado izquierdo
+ * los rota en dirección de las agujas del reloj.
+ * @param Laseres: vector de puntos creado con la función crearLaseres.
+ * @param A_donde_apuntan: vector de puntos creado con la función crearPuntosDeFin, este lo toma por referencia y los
+ * rota acorde a lo mencionado mas arriba.
+ */
+
+void rotarLaseres(vector<pair<uint,uint> > Laseres, vector<pair<uint,uint> >& A_donde_apuntan, size_t n) {
+    for(int i = 0; i<Laseres.size(); i++) {
+        if(Laseres[i].second == 0){ //roto en direccion del reloj.
+            if(A_donde_apuntan[i].second == 0 and A_donde_apuntan[i].first != 0) { //Si la columna es 0, entonces si la fila no es la primera lo movemos para
+                // arriba.
+                A_donde_apuntan[i].first--;
+            } else if(A_donde_apuntan[i].first == n-1 and A_donde_apuntan[i].second != 0) { //Estamos en última fila, y no estamos en primera columna,
+                // movemos a izquierda.
+                A_donde_apuntan[i].second--;
+            } else if(A_donde_apuntan[i].second == n-1 and A_donde_apuntan[i].first != 0) { //Última columna, y no en la ultima fila, movemos para abajo.
+                A_donde_apuntan[i].first++;
+            } else { //Estamos en la primera fila, y no estamos en la última columna, entonces movemos a derecha.
+                A_donde_apuntan[i].second++;
+            }
+        } else { //rota contrarreloj.
+            if(A_donde_apuntan[i].second == 0 and A_donde_apuntan[i].first != n-1) { //Si la columna es 0, entonces si la fila no es la última lo movemos para
+                // abajo.
+                A_donde_apuntan[i].first++;
+            } else if(A_donde_apuntan[i].first == n-1 and A_donde_apuntan[i].second != n-1) { //Estamos en última fila, y no estamos en última columna,
+                // movemos a derecha.
+                A_donde_apuntan[i].second++;
+            } else if(A_donde_apuntan[i].second == n-1 and A_donde_apuntan[i].first != 0) { //Última columna, y no en la primera fila, movemos para arriba.
+                A_donde_apuntan[i].first--;
+            } else { //Estamos en la primera fila, y no estamos en la primera columna, entonces movemos a izquierda.
+                A_donde_apuntan[i].second--;
+            }
+        }
+    }
+    return;
 }

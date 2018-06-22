@@ -53,4 +53,42 @@ pair<vector<pair<uint,uint> >, vector<pair<uint,uint> > > inicios_fines_horizont
 vector<vector<double> > trazar_recta_en_matriz_D(pair<uint,uint> p1, pair<uint,uint> p2, size_t n);
 
 
+/**
+ * Carga las posiciones donde se colocarían laseres a lo alto (en el borde izquierdo y derecho) para una imagen de nxn.
+ * esto indica la posicion de inicio de los laseres, su punto al que apuntan será manejado con otra función.
+ * @param n: Tamaño de la matriz imágen donde se colocaran los laseres.
+ * @param cada_cuanto: Cada cuantos pixeles se añadirá un nuevo laser, el primero se añade sin dejar espacio (si offset
+ * es 0).
+ * @param offset: espacio dejado antes del primer laser (se empiezan a colocar de arriba a abajo, solo en los bordes
+ * izquierdo y derecho)
+ * @param cant_maxima: parámetro extra para evitar que el método cree mas laseres que cant_maxima (por cada lado, o sea
+ * se crean cant_maxima de laseres por el lado izquierdo, y cant_maxima por el lado derecho). Si cant_maxima es igual
+ * a 0, se ignora el valor y se coloca tantos como sean posibles.
+ * @return Devuelve los puntos donde inician los laseres para una matriz de nxn.
+ */
+
+vector<pair<uint,uint> > crearLaseres(size_t n, size_t cada_cuanto, size_t offset, size_t cant_maxima);
+
+
+/**
+ * Dado un vector con los laseres de inicio, crea los n puntos a donde empezarían a apuntar para dar una sola pasada.
+ * @param Laseres: resultado dado por la función crearLaseres.
+ * @param n: tamaño de la imágen.
+ * @return vector con los puntos a los que apuntan los laseres, ordenados de la misma forma que se encuentran los
+ * Laseres en el vector de Laseres.
+ */
+vector<pair<uint,uint> > crearPuntosDeFin(vector<pair<uint,uint> > Laseres, size_t n);
+
+
+/**
+ * Función que rota el punto donde termina el laser creado en crearPuntosDeFin. A los laseres que hayan empezado del
+ * lado derecho, los rota contrarreloj (empezando de la esquina arriba a la derecha), y los laseres del lado izquierdo
+ * los rota en dirección de las agujas del reloj.
+ * @param Laseres: vector de puntos creado con la función crearLaseres.
+ * @param A_donde_apuntan: vector de puntos creado con la función crearPuntosDeFin, este lo toma por referencia y los
+ * rota acorde a lo mencionado mas arriba.
+ */
+
+void rotarLaseres(vector<pair<uint,uint> > Laseres, vector<pair<uint,uint> >& A_donde_apuntan, size_t n);
+
 #endif //CALCULAR_RAYOS_H
