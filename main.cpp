@@ -238,7 +238,7 @@ vector<vector<double>> reconstruirCuerpo(string nombreAchivoEntrada, int tamanoD
 	// 5) invertimos el vector V
 
 	// 6) multiplicamos la matriz D por el vector V invertido
-	vector<double> T = multMatPorMat(D, V);
+	vector<double> T = medir_tiempos_senial(D, V);
 	// 7) le aplicamos ruido al vector T
 	vector<double> vectorCuerpoDiscretizadoConRuido = uniformNoise(T, inicioRuido, finRuido, signoRuido);
 	// 8) generamos DtD
