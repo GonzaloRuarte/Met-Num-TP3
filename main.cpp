@@ -234,15 +234,19 @@ vector<vector<double>> reconstruirCuerpo(string nombreAchivoEntrada, int tamanoD
 	// 3) obtenemos D (la matriz con las trayectorias de los rayos
 	vector<vector<double>> D = generarRayos(tamMatriz);
 	// 4) pasamos la imagen discretizada a vector
-	vector<double> vectorCuerpoDiscretizado = pasarAVector(cuerpoDiscretizado);
+	vector<double> V = pasarAVector(cuerpoDiscretizado);
 	// 5) invertimos el vector V
-	vector<double> vectorCuerpoDiscretizadoConRuido = uniformNoise(vectorCuerpoDiscretizado, inicioRuido, finRuido, signoRuido);
-	// 6) multiplicamos la matriz D por el vector V invertido
 
+	// 6) multiplicamos la matriz D por el vector V invertido
+	vector<double> T = multMatPorMat(D, V);
 	// 7) le aplicamos ruido al vector T
+	vector<double> vectorCuerpoDiscretizadoConRuido = uniformNoise(T, inicioRuido, finRuido, signoRuido);
 	// 8) generamos DtD
+	vector<vector<double>> Dt = trasponer(D);
+
 	// 9) generamos el vector Dt*T
 	// 10) resolvemos el sistema DtDx = DtT con EG
+
 
 }
 
