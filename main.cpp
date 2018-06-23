@@ -206,6 +206,38 @@ vector<vector<uint16_t>> datosAMatriz(uchar &datos, uint ancho, uint alto) {
 	} // end of readPPM
 
 
+vector<vector<double>> reconstruirCuerpo(string nombreAchivoEntrada, int tamanoDiscretizacion, double inicioRuido, double finRuido, double signoRuido) {
+	vector<vector<double>>* cuerpo;
+	cuerpo = leerCSV(nombreAchivoEntrada);
+	vector<vector<double>> cuerpoDiscretizado = discretizar(*cuerpo, tamanoDiscretizacion);
+	vector<double> vectorCuerpoDiscretizado = pasarAVector(cuerpoDiscretizado);
+	vector<double> vectorCuerpoDiscretizadoConRuido = uniformNoise(vectorCuerpoDiscretizado, inicioRuido, finRuido, signoRuido);
+
+}
+
+vector<vector<double>> generarRayos(size_t tamMatriz) {
+	// creamos un laser de cada una de las esquinas
+	vector<pair<uint,uint> > laseres = crearLaseres(tamMatriz, 0, 0, 1);
+	vector<pair<uint,uint> > sensores = crearPuntosDeFin(laseres, tamMatriz);
+
+
+	for (int i = 0; i<tamMatriz; i++) {
+		trazar_recta_en_matriz_D(laseres, sensores, tamMatriz);
+
+	}
+}
+
+vector<vector<double>> obtenerTrayectorias() {
+
+	for (vector<string>::iterator it = lecturas.begin(); it != lecturas.end(); ++it) {
+
+	}
+}
+
+
+
+
+
 int main(int argc, char * argv[]) {
     vector<vector<double>>* matriz;
     matriz = leerCSV("dicom_csv2/1.2.826.0.1.3680043.2.656.1.138.1.csv");
