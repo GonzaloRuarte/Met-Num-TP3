@@ -181,7 +181,9 @@ vector<pair<uint,uint> > crearPuntosDeFin(vector<pair<uint,uint> > Laseres, size
 /**
  * Función que rota el punto donde termina el laser creado en crearPuntosDeFin. A los laseres que hayan empezado del
  * lado derecho, los rota contrarreloj (empezando de la esquina arriba a la derecha), y los laseres del lado izquierdo
- * los rota en dirección de las agujas del reloj.
+ * los rota en dirección de las agujas del reloj, en el unico caso en el que los laseres quedan horizontales, para no
+ * repetir laseres, decidimos que los laseres de la izquierda roten un paso más, y asi saltearse el valor horizontal,
+ * ya que los laseres de la derecha ya lo representan, para que no tengamos 2 veces laseres horizontales.
  * @param Laseres: vector de puntos creado con la función crearLaseres.
  * @param A_donde_apuntan: vector de puntos creado con la función crearPuntosDeFin, este lo toma por referencia y los
  * rota acorde a lo mencionado mas arriba.
@@ -196,10 +198,18 @@ void rotarLaseres(vector<pair<uint,uint> > Laseres, vector<pair<uint,uint> >& A_
             } else if(A_donde_apuntan[i].first == n-1 and A_donde_apuntan[i].second != 0) { //Estamos en última fila, y no estamos en primera columna,
                 // movemos a izquierda.
                 A_donde_apuntan[i].second--;
-            } else if(A_donde_apuntan[i].second == n-1 and A_donde_apuntan[i].first != 0) { //Última columna, y no en la ultima fila, movemos para abajo.
+            } else if(A_donde_apuntan[i].second == n-1 and A_donde_apuntan[i].first != n-1) { //Última columna, y no en la ultima fila, movemos para abajo.
                 A_donde_apuntan[i].first++;
+                if (A_donde_apuntan[i].first == Laseres[i].first and A_donde_apuntan[i].first != n-1) { //Si el laser de la izquierda queda horizontal, lo muevo hacia abajo, excepto si el laser es el ultimo mas abajo.
+                    A_donde_apuntan[i].first++;
+                } else if (A_donde_apuntan[i].first == Laseres[i].first and A_donde_apuntan[i].first == n-1) { // Si es el ultimo mas abajo, lo muevo hacia la izquierda (porque sino se va de rango).
+                    A_donde_apuntan[i].second--;
+                }
             } else { //Estamos en la primera fila, y no estamos en la última columna, entonces movemos a derecha.
                 A_donde_apuntan[i].second++;
+                if(Laseres[i].first == 0 and A_donde_apuntan[i].second == n-1) { // Si es el primer laser y cae en la ultima columna, entonces lo debemos mover hacia abajo ya que no lo queremos horizontal.
+                    A_donde_apuntan[i].first++;
+                }
             }
         } else { //rota contrarreloj.
             if(A_donde_apuntan[i].second == 0 and A_donde_apuntan[i].first != n-1) { //Si la columna es 0, entonces si la fila no es la última lo movemos para

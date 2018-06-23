@@ -83,7 +83,9 @@ vector<pair<uint,uint> > crearPuntosDeFin(vector<pair<uint,uint> > Laseres, size
 /**
  * Función que rota el punto donde termina el laser creado en crearPuntosDeFin. A los laseres que hayan empezado del
  * lado derecho, los rota contrarreloj (empezando de la esquina arriba a la derecha), y los laseres del lado izquierdo
- * los rota en dirección de las agujas del reloj.
+ * los rota en dirección de las agujas del reloj, en el único caso en el que los laseres quedan horizontales, para no
+ * repetir laseres, decidimos que los laseres de la izquierda roten un paso mas que los laseres de la derecha para que
+ * no tengamos 2 veces laseres horizontales.
  * @param Laseres: vector de puntos creado con la función crearLaseres.
  * @param A_donde_apuntan: vector de puntos creado con la función crearPuntosDeFin, este lo toma por referencia y los
  * rota acorde a lo mencionado mas arriba.
