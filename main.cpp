@@ -205,16 +205,6 @@ vector<vector<uint16_t>> datosAMatriz(uchar &datos, uint ancho, uint alto) {
 
 	} // end of readPPM
 
-
-vector<vector<double>> reconstruirCuerpo(string nombreAchivoEntrada, int tamanoDiscretizacion, double inicioRuido, double finRuido, double signoRuido) {
-	vector<vector<double>>* cuerpo;
-	cuerpo = leerCSV(nombreAchivoEntrada);
-	vector<vector<double>> cuerpoDiscretizado = discretizar(*cuerpo, tamanoDiscretizacion);
-	vector<double> vectorCuerpoDiscretizado = pasarAVector(cuerpoDiscretizado);
-	vector<double> vectorCuerpoDiscretizadoConRuido = uniformNoise(vectorCuerpoDiscretizado, inicioRuido, finRuido, signoRuido);
-
-}
-
 vector<vector<double>> generarRayos(size_t tamMatriz) {
 	// creamos un laser de cada una de las esquinas
 	vector<pair<uint,uint> > laseres = crearLaseres(tamMatriz, 0, 0, 1);
@@ -222,17 +212,40 @@ vector<vector<double>> generarRayos(size_t tamMatriz) {
 
 
 	for (int i = 0; i<tamMatriz; i++) {
-		trazar_recta_en_matriz_D(laseres, sensores, tamMatriz);
+//		trazar_recta_en_matriz_D(laseres, sensores, tamMatriz);
 
 	}
 }
 
 vector<vector<double>> obtenerTrayectorias() {
 
-	for (vector<string>::iterator it = lecturas.begin(); it != lecturas.end(); ++it) {
+/*	for (vector<string>::iterator it = lecturas.begin(); it != lecturas.end(); ++it) {
 
-	}
+	}*/
 }
+
+vector<vector<double>> reconstruirCuerpo(string nombreAchivoEntrada, int tamanoDiscretizacion, double inicioRuido, double finRuido, double signoRuido) {
+	vector<vector<double>>* cuerpo;
+	// 1) tomamos la imagen
+	cuerpo = leerCSV(nombreAchivoEntrada);
+	size_t tamMatriz = cuerpo[0].size();
+	// 2) la discretizamos
+	vector<vector<double>> cuerpoDiscretizado = discretizar(*cuerpo, tamanoDiscretizacion);
+	// 3) obtenemos D (la matriz con las trayectorias de los rayos
+	vector<vector<double>> D = generarRayos(tamMatriz);
+	// 4) pasamos la imagen discretizada a vector
+	vector<double> vectorCuerpoDiscretizado = pasarAVector(cuerpoDiscretizado);
+	// 5) invertimos el vector V
+	vector<double> vectorCuerpoDiscretizadoConRuido = uniformNoise(vectorCuerpoDiscretizado, inicioRuido, finRuido, signoRuido);
+	// 6) multiplicamos la matriz D por el vector V invertido
+
+	// 7) le aplicamos ruido al vector T
+	// 8) generamos DtD
+	// 9) generamos el vector Dt*T
+	// 10) resolvemos el sistema DtDx = DtT con EG
+
+}
+
 
 
 
