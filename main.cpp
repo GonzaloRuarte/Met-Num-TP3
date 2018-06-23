@@ -21,7 +21,7 @@ using namespace std;
  * esta funcion toma como parametros las matrices D y V
  * @return el tiempo que tarda la senial en atravesar el cuerpo
  */
-vector<double> medir_tiempos_senial(const vector<vector<double> > &M, const vector<double> &v){//recordar que el vector v son las inversas de las velocidades
+vector<double> multMatPorVect(const vector<vector<double> > &M, const vector<double> &v){//recordar que el vector v son las inversas de las velocidades
     const size_t& n = v.size();
     vector<double> res(n);
     for(size_t i = 0; i < n; ++i) {
@@ -238,15 +238,16 @@ vector<vector<double>> reconstruirCuerpo(string nombreAchivoEntrada, int tamanoD
 	// 5) invertimos el vector V
 
 	// 6) multiplicamos la matriz D por el vector V invertido
-	vector<double> T = medir_tiempos_senial(D, V);
+	vector<double> T = multMatPorVect(D, V);
 	// 7) le aplicamos ruido al vector T
 	vector<double> vectorCuerpoDiscretizadoConRuido = uniformNoise(T, inicioRuido, finRuido, signoRuido);
 	// 8) generamos DtD
 	vector<vector<double>> Dt = trasponer(D);
-
+	vector<vector<double>> DtD = multMatPorMat(Dt, D);
 	// 9) generamos el vector Dt*T
+	vector<double> DtT = multMatPorVect(Dt, T);
 	// 10) resolvemos el sistema DtDx = DtT con EG
-
+	pair<vector<double>,short> solucion = EG(DtD, DtT);
 
 }
 
