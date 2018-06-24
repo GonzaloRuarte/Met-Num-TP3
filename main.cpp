@@ -224,7 +224,7 @@ vector<vector<vector<double> > > generarRayos(size_t tamMatriz, bool fijos) {
 	while(sensores[0].first != tamMatriz - 1 or sensores[0].second != 0) { //Esto quiza es dificil de ver, pero para los laseres izquierdos
         // que se saltean el horizontal, este es la ultima posicion interesante a la que apuntan. NOTA IMPORTANTE,
         // SI SE HACEN MAS DE UN SALTO PUEDE QUE ESTO NO TERMINE. ASIQUE CUIDADO CON PONER MAS DE UN rotarLaseres.
-        for(int i = 0; i < laseres.size(); i++) {
+        for(uint i = 0; i < laseres.size(); i++) {
             D_k = trazar_recta_en_matriz_D(laseres[i], sensores[i], tamMatriz);
             D_ks.emplace_back(D_k);
         }
@@ -276,6 +276,7 @@ vector<vector<double>> reconstruirCuerpo(string nombreAchivoEntrada, uint tamano
 	vector<double> DtT = multMatPorVect(Dt, T);
 	// 10) resolvemos el sistema DtDx = DtT con EG
 	pair<vector<double>,short> solucion = EG(DtD, DtT);
+	// invertir los valores de la solucion y volverlo a pasar a matriz para luego convertirlo en una imagen que podamos ver
 
 }
 
