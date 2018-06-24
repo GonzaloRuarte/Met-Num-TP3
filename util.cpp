@@ -63,6 +63,19 @@ vector<vector<double>> discretizar(vector<vector<double>> mat, uint val){//supon
 	return res;
 }
 
+map<uint, double> pasarAMap(vector<vector<double>> mat){
+    map<uint, double> res;
+    for(uint i = 0; i< mat.size(); i++){
+        for(uint j = 0; j < mat[0].size(); j++){
+            if(abs(mat[i][j]) > 0.001) {
+                res[i*mat[0].size()+j] = mat[i][j];
+            }
+        }
+    }
+    return res;
+
+}
+
 vector<double> pasarAVector(vector<vector<double>> mat){
 	vector<double> res (mat.size()*mat[0].size(),0);
 	for(uint i = 0; i< mat.size(); i++){

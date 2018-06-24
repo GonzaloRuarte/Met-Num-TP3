@@ -9,6 +9,7 @@
 #include <functional>
 #include <tuple>
 #include <stdlib.h>
+#include "VectorMapMatrix.h"
 
 
 #include <cmath>
@@ -48,7 +49,7 @@ pair<vector<pair<uint,uint> >, vector<pair<uint,uint> > > inicios_fines_horizont
  * Por último el algoritmo supone que p1 y p2 son distintos, si son el mismo no funciona.
  * @param p2 es el segundo punto, donde termina la recta (lo mismo que el primer punto, puede ser cualquiera pero en borde)
  * @param n es el tamaño de la matriz resultado del método que estamos desarrollando (Por ahora sería cuadrada).
- * @param result es la matriz resultante con unos donde pasa el rayo, en este caso del tp sería la matriz D^k.
+ * @return la matriz resultante con unos donde pasa el rayo, en este caso del tp sería la matriz D^k.
  */
 vector<vector<double> > trazar_recta_en_matriz_D(pair<uint,uint> p1, pair<uint,uint> p2, size_t n);
 
