@@ -246,21 +246,27 @@ vector<vector<double>> obtenerTrayectorias() {
 	}*/
 }
 
-vector<vector<double>> reconstruirCuerpo(string nombreAchivoEntrada, int tamanoDiscretizacion, double inicioRuido, double finRuido, double signoRuido) {
+vector<vector<double>> reconstruirCuerpo(string nombreAchivoEntrada, uint tamanoDiscretizacion, double inicioRuido, double finRuido, double signoRuido) {
 	vector<vector<double> >* cuerpo;
 	// 1) tomamos la imagen
 	cuerpo = leerCSV(nombreAchivoEntrada);
-	size_t tamMatriz = cuerpo[0].size();
+	
 	// 2) la discretizamos
 	vector<vector<double> > cuerpoDiscretizado = discretizar(*cuerpo, tamanoDiscretizacion);
+	size_t tamMatriz = cuerpoDiscretizado.size();
 	// 3) obtenemos D (la matriz con las trayectorias de los rayos
-	vector<vector<vector<double> > > D_ks = generarRayos(cuerpoDiscretizado.size(),true);
+	vector<vector<vector<double> > > D_ks = generarRayos(tamMatriz,true);
 	// 4) pasamos la imagen discretizada a vector
 	vector<double> V = pasarAVector(cuerpoDiscretizado);
 	// 5) invertimos el vector V
-
+	vector<double> Vinv (V.size(), 0);
+	for (uint i = 0; i< V.size(); i++){
+		if (V[i] != 0){
+			Vinv[i] = 1/V[i];
+		}
+	}
 	// 6) multiplicamos la matriz D por el vector V invertido
-	vector<double> T = multMatPorVect(D, V);
+	vector<double> T = multMatPorVect(D, Vinv);
 	// 7) le aplicamos ruido al vector T
 	vector<double> vectorCuerpoDiscretizadoConRuido = uniformNoise(T, inicioRuido, finRuido, signoRuido);
 	// 8) generamos DtD
