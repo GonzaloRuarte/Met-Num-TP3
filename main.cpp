@@ -11,12 +11,22 @@
 #include "util.h"
 #include <cmath>
 #include <chrono>
-
+#include "VectorMapMatrix.h"
 
 
 using namespace std;
 
 
+
+VectorMapMatrix getTraspuesta(VectorMapMatrix &W) {
+    VectorMapMatrix ret(W.cantFilas(), W.cantColumnas());
+    double acum[W.cantColumnas()];
+    for(uint i = 0; i < W.cantColumnas(); ++i)
+        for (unsigned int j=0; j<W.cantFilas(); ++j)
+            ret.asignar(j, i, W.at(i, j));
+    return ret;
+
+}
 /**
  * esta funcion toma como parametros las matrices D y V
  * @return el tiempo que tarda la senial en atravesar el cuerpo
@@ -267,14 +277,14 @@ vector<vector<double>> reconstruirCuerpo(string nombreAchivoEntrada, uint tamano
 		}
 	}
 	// 6) multiplicamos la matriz D por el vector V invertido
-	vector<double> T = multMatPorVect(D, Vinv);
+	vector<double> T = D*Vinv;
 	// 7) le aplicamos ruido al vector T
 	vector<double> vectorCuerpoDiscretizadoConRuido = uniformNoise(T, inicioRuido, finRuido, signoRuido);
 	// 8) generamos DtD
-	vector<vector<double> > Dt = trasponer(D);
-	vector<vector<double> > DtD = multMatPorMat(Dt, D);
+	VectorMapMatrix Dt = getTraspuesta(D);
+	VectorMapMatrix DtD = Dt*D;
 	// 9) generamos el vector Dt*T
-	vector<double> DtT = multMatPorVect(Dt, T);
+	vector<double> DtT = Dt*T;
 	// 10) resolvemos el sistema DtDx = DtT con EG
 	pair<vector<double>,short> solucion = EG(DtD, DtT);
 	// invertir los valores de la solucion y volverlo a pasar a matriz para luego convertirlo en una imagen que podamos ver
