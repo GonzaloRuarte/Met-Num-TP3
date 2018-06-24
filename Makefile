@@ -3,7 +3,7 @@ CFLAGS= -std=c++11 -Wextra -Wall -pedantic -g -lm -Wno-unused-variable -Wno-unus
 
 
 
-main: main.cpp ppmloader.cpp util.cpp calcular_rayos.cpp
+main: main.cpp ppmloader.cpp util.cpp calcular_rayos.cpp VectorMapMatrix.cpp
 	$(CC) $(CFLAGS) $^ -o tp3
 
 
