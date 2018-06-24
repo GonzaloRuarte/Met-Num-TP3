@@ -205,16 +205,38 @@ vector<vector<uint16_t>> datosAMatriz(uchar &datos, uint ancho, uint alto) {
 
 	} // end of readPPM
 
-vector<vector<double>> generarRayos(size_t tamMatriz) {
+
+/**
+ * Genera Matriz con todos los D_kij
+ * @param tamMatriz tamaño de la imagen discretizada.
+ * @param horizontales Si se desea generar rayos fijos se coloca en true, si se coloca en false se crean n rayos horizontales y se rotan 2n veces.
+ * @return La matriz D con todos los D_k (falta convertir las matrices D_k en vectores.
+ */
+vector<vector<vector<double> > > generarRayos(size_t tamMatriz, bool fijos) {
 	// creamos un laser de cada una de las esquinas
-	vector<pair<uint,uint> > laseres = crearLaseres(tamMatriz, 0, 0, 1);
+	vector<pair<uint,uint> > laseres = crearLaseres(tamMatriz, tamMatriz/4, tamMatriz/8, 0); //tamano, despues cada_cuanta_dist, offset, max_cant de rayos.
 	vector<pair<uint,uint> > sensores = crearPuntosDeFin(laseres, tamMatriz);
 
+    vector<vector<vector<double> > > D_ks; // Este es el vector con las matrices D, para cada uno de los K rayos (hay que convertirlas en vectores).
+    D_ks.reserve((tamMatriz^2)*6); //Tenemos 2n rayos que rotaremos aproximadamente 3n veces.
 
-	for (int i = 0; i<tamMatriz; i++) {
+    vector<vector<double> > D_k; //matriz auxiliar del D_k del laser calculado recien.
+	while(sensores[0] != make_pair(tamMatriz - 1, 0)) { //Esto quiza es dificil de ver, pero para los laseres izquierdos
+        // que se saltean el horizontal, este es la ultima posicion interesante a la que apuntan. NOTA IMPORTANTE,
+        // SI SE HACEN MAS DE UN SALTO PUEDE QUE ESTO NO TERMINE. ASIQUE CUIDADO CON PONER MAS DE UN rotarLaseres.
+        for(int i = 0; i < laseres.size(); i++) {
+            D_k = trazar_recta_en_matriz_D(laseres[i], sensores[i], tamMatriz);
+            D_ks.emplace_back(D_k);
+        }
+        rotarLaseres(laseres,sensores,tamMatriz);
+	}
+
+	return D_ks;
+
+	/*for (int i = 0; i<tamMatriz; i++) {
 //		trazar_recta_en_matriz_D(laseres, sensores, tamMatriz);
 
-	}
+	}*/
 }
 
 vector<vector<double>> obtenerTrayectorias() {
@@ -225,14 +247,14 @@ vector<vector<double>> obtenerTrayectorias() {
 }
 
 vector<vector<double>> reconstruirCuerpo(string nombreAchivoEntrada, int tamanoDiscretizacion, double inicioRuido, double finRuido, double signoRuido) {
-	vector<vector<double>>* cuerpo;
+	vector<vector<double> >* cuerpo;
 	// 1) tomamos la imagen
 	cuerpo = leerCSV(nombreAchivoEntrada);
 	size_t tamMatriz = cuerpo[0].size();
 	// 2) la discretizamos
-	vector<vector<double>> cuerpoDiscretizado = discretizar(*cuerpo, tamanoDiscretizacion);
+	vector<vector<double> > cuerpoDiscretizado = discretizar(*cuerpo, tamanoDiscretizacion);
 	// 3) obtenemos D (la matriz con las trayectorias de los rayos
-	vector<vector<double>> D = generarRayos(tamMatriz);
+	vector<vector<vector<double> > > D = generarRayos(cuerpoDiscretizado.size());
 	// 4) pasamos la imagen discretizada a vector
 	vector<double> V = pasarAVector(cuerpoDiscretizado);
 	// 5) invertimos el vector V

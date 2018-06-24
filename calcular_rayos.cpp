@@ -129,7 +129,8 @@ vector<vector<double> > trazar_recta_en_matriz_D(pair<uint,uint> p1, pair<uint,u
  * @param offset: espacio dejado antes del primer laser (se empiezan a colocar de arriba a abajo, solo en los bordes
  * izquierdo y derecho)
  * @param cant_maxima: parámetro extra para evitar que el método cree mas laseres que cant_maxima (por cada lado, o sea
- * se crean cant_maxima de laseres por el lado izquierdo, y cant_maxima por el lado derecho).
+ * se crean cant_maxima de laseres por el lado izquierdo, y cant_maxima por el lado derecho). Si cant_maxima es igual
+ * a 0, se ignora el valor y se coloca tantos como sean posibles.
  * @return Devuelve los puntos donde inician los laseres para una matriz de nxn.
  */
 
