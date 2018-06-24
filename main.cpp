@@ -19,8 +19,8 @@ using namespace std;
 
 
 VectorMapMatrix getTraspuesta(VectorMapMatrix &W) {
-    VectorMapMatrix ret(W.cantFilas(), W.cantColumnas());
-    double acum[W.cantColumnas()];
+    VectorMapMatrix ret(W.cantColumnas(), W.cantFilas());
+    
     for(uint i = 0; i < W.cantColumnas(); ++i)
         for (unsigned int j=0; j<W.cantFilas(); ++j)
             ret.asignar(j, i, W.at(i, j));
@@ -286,7 +286,7 @@ vector<vector<double>> reconstruirCuerpo(string nombreAchivoEntrada, uint tamano
 	// 9) generamos el vector Dt*T
 	vector<double> DtT = Dt*T;
 	// 10) resolvemos el sistema DtDx = DtT con EG
-	pair<vector<double>,short> solucion = EG(DtD, DtT);
+	pair<vector<double>,short> solucion = DtD.EG(DtD, DtT);
 	// invertir los valores de la solucion y volverlo a pasar a matriz para luego convertirlo en una imagen que podamos ver
 
 }

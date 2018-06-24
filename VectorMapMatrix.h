@@ -24,7 +24,7 @@ public:
 
     void asignar(uint f, uint c, const double value); //Si el valor a asignar puede o no ser 0, usar esta función (y no operator[]).
 
-    const double at(uint f, uint c) const; //útil si queres leer la posición sin asignar un 0 (operator[] crea el nodo sin importar si no asignas nada).
+    double at(uint f, uint c) const; //útil si queres leer la posición sin asignar un 0 (operator[] crea el nodo sin importar si no asignas nada).
 
     double& operator[](pair<uint,uint> p); //Usar solo si se quieren hacer muchas asignaciones distintas de 0.
     // Cuidado, no usar para asignar ceros, usar asignar en tal caso.

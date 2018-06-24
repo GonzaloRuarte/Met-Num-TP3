@@ -22,7 +22,7 @@ void VectorMapMatrix::asignar(uint f, uint c, const double value) {
     }
 }
 
-const double VectorMapMatrix::at(uint f, uint c) const {
+double VectorMapMatrix::at(uint f, uint c) const {
     double result;
     if(m[f].count(c) == 0) {
         result = 0;
