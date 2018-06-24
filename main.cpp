@@ -221,7 +221,7 @@ vector<vector<vector<double> > > generarRayos(size_t tamMatriz, bool fijos) {
     D_ks.reserve((tamMatriz^2)*6); //Tenemos 2n rayos que rotaremos aproximadamente 3n veces.
 
     vector<vector<double> > D_k; //matriz auxiliar del D_k del laser calculado recien.
-	while(sensores[0] != make_pair(tamMatriz - 1, 0)) { //Esto quiza es dificil de ver, pero para los laseres izquierdos
+	while(sensores[0].first != tamMatriz - 1 or sensores[0].second != 0) { //Esto quiza es dificil de ver, pero para los laseres izquierdos
         // que se saltean el horizontal, este es la ultima posicion interesante a la que apuntan. NOTA IMPORTANTE,
         // SI SE HACEN MAS DE UN SALTO PUEDE QUE ESTO NO TERMINE. ASIQUE CUIDADO CON PONER MAS DE UN rotarLaseres.
         for(int i = 0; i < laseres.size(); i++) {
@@ -255,7 +255,7 @@ vector<vector<double>> reconstruirCuerpo(string nombreAchivoEntrada, uint tamano
 	vector<vector<double> > cuerpoDiscretizado = discretizar(*cuerpo, tamanoDiscretizacion);
 	size_t tamMatriz = cuerpoDiscretizado.size();
 	// 3) obtenemos D (la matriz con las trayectorias de los rayos
-	vector<vector<vector<double> > > D_ks = generarRayos(tamMatriz,true);
+	vector<vector<vector<double> > > D = generarRayos(tamMatriz,true);
 	// 4) pasamos la imagen discretizada a vector
 	vector<double> V = pasarAVector(cuerpoDiscretizado);
 	// 5) invertimos el vector V

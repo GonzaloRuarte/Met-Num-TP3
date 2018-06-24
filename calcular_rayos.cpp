@@ -162,7 +162,7 @@ vector<pair<uint,uint> > crearLaseres(size_t n, size_t cada_cuanto, size_t offse
 vector<pair<uint,uint> > crearPuntosDeFin(vector<pair<uint,uint> > Laseres, size_t n) {
     vector<pair<uint,uint> > result;
     result.reserve(Laseres.size()*2);
-    for(int i = 0; i<Laseres.size(); i++) {
+    for(uint i = 0; i<Laseres.size(); i++) {
         uint fila;
         uint columna;
         if(Laseres[i].second == 0){
@@ -191,7 +191,7 @@ vector<pair<uint,uint> > crearPuntosDeFin(vector<pair<uint,uint> > Laseres, size
  */
 
 void rotarLaseres(vector<pair<uint,uint> > Laseres, vector<pair<uint,uint> >& A_donde_apuntan, size_t n) {
-    for(int i = 0; i<Laseres.size(); i++) {
+    for(uint i = 0; i<Laseres.size(); i++) {
         if(Laseres[i].second == 0){ //roto en direccion del reloj.
             if(A_donde_apuntan[i].second == 0 and A_donde_apuntan[i].first != 0) { //Si la columna es 0, entonces si la fila no es la primera lo movemos para
                 // arriba.
