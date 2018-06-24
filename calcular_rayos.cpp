@@ -71,8 +71,8 @@ pair<vector<pair<uint,uint> >, vector<pair<uint,uint> > > inicios_fines_horizont
  */
 vector<vector<double> > trazar_recta_en_matriz_D(pair<uint,uint> p1, pair<uint,uint> p2, size_t n) {
     vector<vector<double> > result(n, vector<double>(n,0));
-    uint inicio;
-    uint fin;
+    int inicio;
+    int fin;
     if(p1.second == p2.second) {
         // La recta es vertical, la trazo y termino el método.
         for(uint i = 0; i<n ; i++) {
@@ -88,8 +88,8 @@ vector<vector<double> > trazar_recta_en_matriz_D(pair<uint,uint> p1, pair<uint,u
     }
     double a = (double(p2.first) - double(p1.first)) / (double(p2.second) - double(p1.second)); // No importa el orden
     // de p1 y p2, calcula la pendiente, fila 2 menos fila 1 sobre columna 2 menos columna 1.
-    double b = double(p1.first) - a * double(p1.second); // calcula b = y - ax, con el punto p1.
-    for(uint i = inicio; i<fin ; i++) { //voy de la columna inicio a la fin, pintando los pixeles por los que pase.
+    double b = double(p1.first) - a * double(p1.second) + 0.5; // calcula b = y - ax, con el punto p1.
+    for(int i = inicio; i<fin ; i++) { //voy de la columna inicio a la fin, pintando los pixeles por los que pase.
         int pintar_desde = floor(a*i + b);
         int pintar_hasta = floor(a*(i+1) +b);
         if (pintar_hasta < pintar_desde) {
