@@ -151,11 +151,20 @@ VectorMapMatrix VectorMapMatrix::operator*(const VectorMapMatrix &B){
 }*/
 
 vector<double> VectorMapMatrix::operator*(const vector<double>& v){
+/*
     VectorMapMatrix vect_como_matriz(v.size(), 1);
     for(uint i = 0; i <v.size(); ++i) vect_como_matriz.asignar(i, 0, v[i]);
     vect_como_matriz = (*this)*vect_como_matriz;
     vector<double> res(cantFilas());
     for(uint i = 0; i < res.size(); ++i) res[i] = vect_como_matriz.at(i, 0);
+*/
+	vector<double> res (cantFilas());
+	for (uint i = 0; i< res.size(); i++){
+		double acum = 0;
+		for (uint j = 0; v.size(); j++){
+			acum+= v[j]*(*this).at(i,j);
+		}
+	}
     return res;
 }
 
