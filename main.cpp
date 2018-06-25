@@ -21,8 +21,8 @@ using namespace std;
 VectorMapMatrix getTraspuesta(VectorMapMatrix &W) {
     VectorMapMatrix ret(W.cantColumnas(), W.cantFilas());
     
-    for(uint i = 0; i < W.cantColumnas(); ++i)
-        for (unsigned int j=0; j<W.cantFilas(); ++j)
+    for(uint i = 0; i < W.cantFilas(); ++i)
+        for (unsigned int j=0; j<W.cantColumnas(); ++j)
             ret.asignar(j, i, W.at(i, j));
     return ret;
 
@@ -257,6 +257,17 @@ vector<vector<double>> obtenerTrayectorias() {
 	}*/
 }
 
+bool esTraspuesta(VectorMapMatrix &D, VectorMapMatrix &Dt) {
+	bool ret = true;
+	for (int i=0; i<D.cantFilas(); i++) {
+		for (int j=0; j<D.cantColumnas(); j++) {
+			ret = ret && D[i][j] == Dt[j][i];
+		}
+	}
+	return ret;
+}
+
+
 vector<double>* reconstruirCuerpo(string nombreAchivoEntrada, vector<double>* V, uint tamanoDiscretizacion, double inicioRuido, double finRuido, double signoRuido) {
 	vector<vector<double> >* cuerpo;
 	// 1) tomamos la imagen
@@ -283,6 +294,7 @@ vector<double>* reconstruirCuerpo(string nombreAchivoEntrada, vector<double>* V,
 	vector<double> vectorCuerpoDiscretizadoConRuido = uniformNoise(T, inicioRuido, finRuido, signoRuido);
 	// 8) generamos DtD
 	VectorMapMatrix Dt = getTraspuesta(D);
+	bool est = esTraspuesta(D, Dt);
 	VectorMapMatrix DtD = Dt*D;
 	// 9) generamos el vector Dt*T
 	vector<double> DtT = Dt*T;
@@ -291,6 +303,7 @@ vector<double>* reconstruirCuerpo(string nombreAchivoEntrada, vector<double>* V,
 	// invertir los valores de la solucion y volverlo a pasar a matriz para luego convertirlo en una imagen que podamos ver
 
 }
+
 
 
 double ECM(vector<double> original, vector<double> reconstruido) {
@@ -322,16 +335,17 @@ vector<double>& medirErrorDeReconstruccion(string nombreDirectorioEntrada, uint 
 
 int main(int argc, char * argv[]) {
 
-	reconstruirCuerpos("dicom_csv2", 4, 3, 2, 1);
+	//reconstruirCuerpos("dicom_csv2", 4, 3, 2, 1);
 
 	VectorMapMatrix  D = generarRayos(500,true);
-    vector<vector<double>>* cuerpo;
-    cuerpo = leerCSV("dicom_csv2/1.2.826.0.1.3680043.2.656.1.138.1.csv");
+    vector<double>* cuerpo;
+    //cuerpo = leerCSV("dicom_csv2/1.2.826.0.1.3680043.2.656.1.138.1.csv");
 
 	//cout << (*matriz)[0].size() << endl;
 
+	reconstruirCuerpo("dicom_csv2/1.2.826.0.1.3680043.2.656.1.138.1.csv", cuerpo, 5, 0, 1, 0.5);
 
-	vector<vector<double>> mat(20,vector<double> (20,0));
+/*	vector<vector<double>> mat(20,vector<double> (20,0));
 
 	for(uint i = 0; i< mat.size(); i++){
 		for(uint j = 0; j < mat[0].size(); j++){
@@ -358,7 +372,7 @@ int main(int argc, char * argv[]) {
 		cout << vec[i]<< " ";
 	}
 	cout << endl;
-	return 0;
+*/	return 0;
 }
 
 
