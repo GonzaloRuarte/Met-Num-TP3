@@ -90,7 +90,7 @@ VectorMapMatrix VectorMapMatrix::operator+(VectorMapMatrix const &B) {
 VectorMapMatrix VectorMapMatrix::operator*(const VectorMapMatrix &B) {
     if(cantColumnas() == B.cantFilas()) {
         VectorMapMatrix result(cantFilas(), B.cantColumnas());
-        vector<vector<double> > sumasParciales(cantColumnas(),vector<double>(B.cantColumnas(), 0));
+        vector<vector<double> > sumasParciales(cantFilas(),vector<double>(B.cantColumnas(), 0));
         uint f = 0; //Recorro sobre A, y cuando estoy en el elemento a(ij) multiplico por la fila j de B, sumándolo en result.
         while(f < cantFilas()) {
             map<uint, double>::const_iterator it1 = m[f].begin();
@@ -151,11 +151,23 @@ VectorMapMatrix VectorMapMatrix::operator*(const VectorMapMatrix &B){
 }*/
 
 vector<double> VectorMapMatrix::operator*(const vector<double>& v){
+/*
     VectorMapMatrix vect_como_matriz(v.size(), 1);
     for(uint i = 0; i <v.size(); ++i) vect_como_matriz.asignar(i, 0, v[i]);
     vect_como_matriz = (*this)*vect_como_matriz;
     vector<double> res(cantFilas());
     for(uint i = 0; i < res.size(); ++i) res[i] = vect_como_matriz.at(i, 0);
+*/
+	vector<double> res (cantFilas(),0);
+	for (uint i = 0; i< res.size(); i++){
+		double acum = 0;
+		for (uint j = 0; j< v.size(); j++){
+			
+			acum+= v[j]*(*this).at(i,j);
+		}
+		res[i] = acum;
+		
+	}
     return res;
 }
 
@@ -208,6 +220,7 @@ void VectorMapMatrix::reservar(uint ancho, uint alto) {
 pair<vector<double>,short> VectorMapMatrix::EG(const VectorMapMatrix& thisTranspuestaAux, vector<double> bb) {
 	unsigned int f1,f2,c; //f1 será la fila eliminadora, f2 la fila que eliminaremos, c la columna que estamos operando.
 	vector<double> res(width,0);
+	bool cont = true;
 	short status = 0; //status default, el sistema tiene una unica solucion posible
 	double A_kk, A_f2k;
 	VectorMapMatrix A = VectorMapMatrix(*this);
@@ -220,7 +233,25 @@ pair<vector<double>,short> VectorMapMatrix::EG(const VectorMapMatrix& thisTransp
 
 
 	for(f1 = 0; f1 < A.cantFilas()-1; f1++){ //itero sobre las filas, y elimino el resto de las filas respecto de f1. La última no es necesario.
+		//cout << f1 << endl;
+		cont = true;
 		A_kk = A.at(f1,f1); //de la diagonal
+		if (abs(A_kk) <= 0.001){
+			cont = false;
+			for(uint j = f1+1; j < A.cantFilas(); j++){ //itero sobre las filas desde i en adelante, estaria por fijarme si tengo que hacer o no calculo en el paso i de la EG
+				if(abs(A.at(j,f1)) > 0.001){ //si no hay un 0 en la posicion j,i
+					cont = true;
+						A[f1].swap(A[j]); //cambio de lugar las filas porque habia un 0 en la diagonal pero no en el resto de la columna
+                    				double temp = bb[f1];
+                   				bb[f1] = bb[j];         //como se cambiaron de lugar las filas, también se cambian de lugar los valores de "bb"
+                    				bb[j] = temp;
+                			
+					break;
+				}
+			}
+
+		}
+		if (cont){
 		map<unsigned int, double>::const_iterator it_f2 = A_t[f1].find(f1);
 		it_f2++; //Busco la primera fila que deba eliminarse.
 		while(it_f2 != A_t[f1].end()){
@@ -243,6 +274,7 @@ pair<vector<double>,short> VectorMapMatrix::EG(const VectorMapMatrix& thisTransp
 
             it_f2++; //} //A_f2k y A_kk son los valores que determinan a las matrices Mk que uso para llegar desde A a U, sabiendo que PA = LU
 		}
+		}	
 	}
 	for(f1 = A.cantFilas()-1; f1 < A.cantFilas(); f1--){
 		if(A.at(f1,f1) == 0 && bb[f1] != 0){

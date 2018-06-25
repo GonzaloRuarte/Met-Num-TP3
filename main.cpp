@@ -121,9 +121,30 @@ vector<vector<double> > multMatPorMat(const vector<vector<double> >& mat1, const
                 res[i][j] += mat1[i][k]*mat2[k][j];
     return res;
 }
+
 //vector<double> uniformNoise(const vector<double>& t, double init, double end, double sign
+
+VectorMapMatrix multMatPorMat(VectorMapMatrix &mat1, VectorMapMatrix &mat2) {
+    	const unsigned long& n = mat1.cantFilas();
+    	const unsigned long& m = mat2.cantColumnas();
+    	const unsigned long& l = mat2.cantFilas();
+    	VectorMapMatrix res = VectorMapMatrix(n, m);
+	
+    	for (uint i = 0; i < n; i++){
+        	for (uint j = i; j < m; j++){
+			double acum = 0;
+			for (uint k = 0; k < l; k++){
+                		acum += mat1.at(i,k)*mat2.at(k,j);
+			}
+			res.asignar(i,j,acum);
+			res.asignar(j,i,acum);
+		}
+	}
+    	return res;
+}
+
 vector<vector<uint16_t>> datosAMatriz(uchar &datos, uint ancho, uint alto) {
-	vector<vector<uint16_t>> ret (0);
+	vector<vector<uint16_t> > ret (0);
 	for (size_t i = 0; i < alto; ++i) {
 		vector<uint16_t> fila (0);
 		for (size_t j = 0; j < ancho; ++j) {
@@ -200,7 +221,7 @@ bool esTraspuesta(VectorMapMatrix &D, VectorMapMatrix &Dt) {
 }
 
 
-vector<double>* reconstruirCuerpo(string nombreAchivoEntrada, vector<double>* V, uint tamanoDiscretizacion, double inicioRuido, double finRuido, double signoRuido) {
+vector<double> reconstruirCuerpo(string nombreAchivoEntrada, vector<double>* V, uint tamanoDiscretizacion, double inicioRuido, double finRuido, double signoRuido) {
 	vector<vector<double> >* cuerpo;
 	// 1) tomamos la imagen
 	cuerpo = leerCSV(nombreAchivoEntrada);
@@ -226,14 +247,13 @@ vector<double>* reconstruirCuerpo(string nombreAchivoEntrada, vector<double>* V,
 	vector<double> vectorCuerpoDiscretizadoConRuido = uniformNoise(T, inicioRuido, finRuido, signoRuido);
 	// 8) generamos DtD
 	VectorMapMatrix Dt = getTraspuesta(D);
-	bool est = esTraspuesta(D, Dt);
-	VectorMapMatrix DtD = Dt*D;
+	VectorMapMatrix DtD = Dt*D;//multMatPorMat(Dt,D);
 	// 9) generamos el vector Dt*T
 	vector<double> DtT = Dt*T;
 	// 10) resolvemos el sistema DtDx = DtT con EG
 	pair<vector<double>,short> solucion = DtD.EG(DtD, DtT);
 	// invertir los valores de la solucion y volverlo a pasar a matriz para luego convertirlo en una imagen que podamos ver
-
+	return solucion.first;
 }
 
 //double ECM(vector<double> original, vector<double> reconstruido)
@@ -243,12 +263,12 @@ vector<double>& medirErrorDeReconstruccion(string nombreDirectorioEntrada, uint 
 	vector<string> listadoDirectorio;
     listarDirectorio(nombreDirectorioEntrada, listadoDirectorio);
 	vector<double>* cuerpoDiscretizado;
-	vector<double>* cuerpoDiscretizaqdoReconstruido;
+	vector<double> cuerpoDiscretizaqdoReconstruido;
     vector<double> ECMs (0);
 	for (int i=0; i < listadoDirectorio.size(); i++) {
 		cuerpoDiscretizaqdoReconstruido = reconstruirCuerpo(listadoDirectorio[i], cuerpoDiscretizado, tamanoDiscretizacion, inicioRuido, finRuido, signoRuido);
     	//cout << listadoDirectorio[i] << endl;
-    	ECMs.push_back(ECM(*cuerpoDiscretizado, *cuerpoDiscretizaqdoReconstruido));
+    	ECMs.push_back(ECM(*cuerpoDiscretizado, cuerpoDiscretizaqdoReconstruido));
     }
     return ECMs;
 }
@@ -258,13 +278,13 @@ int main(int argc, char * argv[]) {
 
 	//reconstruirCuerpos("dicom_csv2", 4, 3, 2, 1);
 
-	VectorMapMatrix  D = generarRayos(500,true);
+	//VectorMapMatrix  D = generarRayos(500,true);
     vector<double>* cuerpo;
     //cuerpo = leerCSV("dicom_csv2/1.2.826.0.1.3680043.2.656.1.138.1.csv");
 
 	//cout << (*matriz)[0].size() << endl;
 
-	reconstruirCuerpo("dicom_csv2/1.2.826.0.1.3680043.2.656.1.138.1.csv", cuerpo, 5, 0, 1, 0.5);
+	vector<double> asd = reconstruirCuerpo("dicom_csv2/1.2.826.0.1.3680043.2.656.1.138.1.csv", cuerpo, 16, 0, 1, 0.5);
 
 /*	vector<vector<double>> mat(20,vector<double> (20,0));
 

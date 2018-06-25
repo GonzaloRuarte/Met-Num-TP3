@@ -124,7 +124,7 @@ VectorMapMatrix  generarRayos(size_t tamMatriz, bool fijos) {
 }
 */
 
-VectorMapMatrix  generarRayos_barrido_H(size_t tamMatriz, size_t cada_cuanto) {
+VectorMapMatrix generarRayos_barrido_H(size_t tamMatriz, size_t cada_cuanto) {
     vector<pair<uint,uint> > laseres = crearLaseres(tamMatriz, cada_cuanto, cada_cuanto/2, 0);
     vector<pair<uint,uint> > sensores = crearPuntosDeFin(laseres, tamMatriz);
     VectorMapMatrix D_ks(0, tamMatriz*tamMatriz);
@@ -191,18 +191,34 @@ double ECM(vector<double> original, vector<double> reconstruido) {
  * @param ruido: intervalo del porcentaje de ruido (expresado como valor entre 0 y 1)
  * @param espacio_entre_censores
  */
-void experimentacion_barrido_H(unsigned char discretizacion, pair<float,float> ruido, unsigned short int espacio_entre_censores){
+void experimentacion_barrido_H(unsigned char discretizacion, pair<float,float> ruido, unsigned short int espacio_entre_censores) {
     vector<vector<double> > *imagen_entera = leerCSV(archivo_imagen);
     vector<vector<double> > imagen_discreta = discretizar(*imagen_entera, discretizacion);
     vector<double> vec_imagen_discreta = pasarAVector(imagen_discreta);
     VectorMapMatrix D = generarRayos_barrido_H(imagen_discreta.size(), espacio_entre_censores);
-    vector<double> t_sin_ruido = D*vec_imagen_discreta;
+    vector<double> t_sin_ruido = D * vec_imagen_discreta;
     vector<double> t_con_ruido = uniformNoise(t_sin_ruido, ruido.first, ruido.second, 0);
-    VectorMapMatrix Dt_D = getTraspuesta(D)*D;
+    VectorMapMatrix Dt_D = getTraspuesta(D) * D;
     pair<vector<double>, short> v = Dt_D.EG(Dt_D, t_con_ruido);
     double error = ECM(vec_imagen_discreta, v.first);
     ofstream salida(archivo_salida);
     salida << error;
     salida.close();
     return;
+}
+
+void listarDirectorio(const string& directorio,  vector<string>& v)
+{
+    string nomArch;
+    DIR* dirp = opendir(directorio.c_str());
+    struct dirent * dp;
+    if (dirp == NULL) {
+        throw runtime_error("no se encontro directorio " + directorio + "!");
+    }
+    while ((dp = readdir(dirp)) != NULL) {
+        string nomArch = dp->d_name;
+        if (nomArch.compare(".") != 0 && nomArch.compare("..") != 0)
+            v.push_back(directorio + "/" + nomArch);
+    }
+    closedir(dirp);
 }
