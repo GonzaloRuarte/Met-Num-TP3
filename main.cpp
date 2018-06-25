@@ -292,6 +292,17 @@ vector<vector<double>> reconstruirCuerpo(string nombreAchivoEntrada, uint tamano
 }
 
 
+double ECM(vector<double> original, vector<double> reconstruido) {
+    uint n = original.size();
+    double ret = 0;
+    double dif;
+    for(uint i = 0; i< n; i++){
+        dif = original[i] - reconstruido[i];
+        ret += dif*dif;
+    }
+    return ret/n*n;
+}
+
 
 
 
