@@ -257,7 +257,7 @@ vector<vector<double>> obtenerTrayectorias() {
 	}*/
 }
 
-vector<vector<double>> reconstruirCuerpo(string nombreAchivoEntrada, uint tamanoDiscretizacion, double inicioRuido, double finRuido, double signoRuido) {
+vector<double>* reconstruirCuerpo(string nombreAchivoEntrada, vector<double>* V, uint tamanoDiscretizacion, double inicioRuido, double finRuido, double signoRuido) {
 	vector<vector<double> >* cuerpo;
 	// 1) tomamos la imagen
 	cuerpo = leerCSV(nombreAchivoEntrada);
@@ -268,12 +268,13 @@ vector<vector<double>> reconstruirCuerpo(string nombreAchivoEntrada, uint tamano
 	// 3) obtenemos D (la matriz con las trayectorias de los rayos
 	VectorMapMatrix  D = generarRayos(tamMatriz,true);
 	// 4) pasamos la imagen discretizada a vector
-	vector<double> V = pasarAVector(cuerpoDiscretizado);
+	vector<double> Vtemp = pasarAVector(cuerpoDiscretizado);
+	V = &Vtemp;
 	// 5) invertimos el vector V
-	vector<double> Vinv (V.size(), 0);
-	for (uint i = 0; i< V.size(); i++){
-		if (V[i] != 0){
-			Vinv[i] = 1/V[i];
+	vector<double> Vinv (V->size(), 0);
+	for (uint i = 0; i< V->size(); i++){
+		if ((*V)[i] != 0){
+			Vinv[i] = 1/(*V)[i];
 		}
 	}
 	// 6) multiplicamos la matriz D por el vector V invertido
@@ -304,13 +305,28 @@ double ECM(vector<double> original, vector<double> reconstruido) {
 }
 
 
-
+vector<double>& medirErrorDeReconstruccion(string nombreDirectorioEntrada, uint tamanoDiscretizacion, double inicioRuido, double finRuido, double signoRuido) {
+	vector<string> listadoDirectorio;
+    listarDirectorio(nombreDirectorioEntrada, listadoDirectorio);
+	vector<double>* cuerpoDiscretizado;
+	vector<double>* cuerpoDiscretizaqdoReconstruido;
+    vector<double> ECMs (0);
+	for (int i=0; i < listadoDirectorio.size(); i++) {
+		cuerpoDiscretizaqdoReconstruido = reconstruirCuerpo(listadoDirectorio[i], cuerpoDiscretizado, tamanoDiscretizacion, inicioRuido, finRuido, signoRuido);
+    	//cout << listadoDirectorio[i] << endl;
+    	ECMs.push_back(ECM(*cuerpoDiscretizado, *cuerpoDiscretizaqdoReconstruido));
+    }
+    return ECMs;
+}
 
 
 int main(int argc, char * argv[]) {
+
+	reconstruirCuerpos("dicom_csv2", 4, 3, 2, 1);
+
 	VectorMapMatrix  D = generarRayos(500,true);
-    vector<vector<double>>* matriz;
-    matriz = leerCSV("dicom_csv2/1.2.826.0.1.3680043.2.656.1.138.1.csv");
+    vector<vector<double>>* cuerpo;
+    cuerpo = leerCSV("dicom_csv2/1.2.826.0.1.3680043.2.656.1.138.1.csv");
 
 	//cout << (*matriz)[0].size() << endl;
 
