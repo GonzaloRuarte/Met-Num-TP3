@@ -136,15 +136,15 @@ VectorMapMatrix multMatPorMat(VectorMapMatrix &mat1, VectorMapMatrix &mat2) {
     	const unsigned long& m = mat2.cantColumnas();
     	const unsigned long& l = mat2.cantFilas();
     	VectorMapMatrix res = VectorMapMatrix(n, m);
-	cout << n << endl;
+	
     	for (uint i = 0; i < n; i++){
-		cout << i << endl;
-        	for (uint j = 0; j < m; j++){
+        	for (uint j = i; j < m; j++){
 			double acum = 0;
 			for (uint k = 0; k < l; k++){
                 		acum += mat1.at(i,k)*mat2.at(k,j);
 			}
 			res.asignar(i,j,acum);
+			res.asignar(j,i,acum);
 		}
 	}
     	return res;
