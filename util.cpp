@@ -86,3 +86,19 @@ vector<double> pasarAVector(vector<vector<double>> mat){
 	return res;
 
 }
+
+void listarDirectorio(const string& directorio,  vector<string>& v)
+{
+    string nomArch;
+    DIR* dirp = opendir(directorio.c_str());
+    struct dirent * dp;
+    if (dirp == NULL) {
+        throw runtime_error("no se encontro directorio " + directorio + "!");
+    }
+    while ((dp = readdir(dirp)) != NULL) {
+        string nomArch = dp->d_name;
+        if (nomArch.compare(".") != 0 && nomArch.compare("..") != 0)
+            v.push_back(directorio + "/" + nomArch);
+    }
+    closedir(dirp);
+}

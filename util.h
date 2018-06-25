@@ -17,5 +17,7 @@ vector<vector<double>>* leerCSV(string nombreArchivo);
 vector<vector<double>> discretizar(vector<vector<double>> mat, uint val);
 map<uint, double> pasarAMap(vector<vector<double>> mat);
 vector<double> pasarAVector(vector<vector<double>> mat);
+void listarDirectorio(const string& directorio,  vector<string>& v);
+
 
 #endif //TC_UTIL_H
