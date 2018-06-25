@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/testcalcular_rayos.dir/test_main.cpp.o  -o testcalcular_rayos 

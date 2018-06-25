@@ -10,7 +10,7 @@ class VectorMapMatrix {
 public:
     VectorMapMatrix(); //Construyo una "matriz" de 0x0
 
-    VectorMapMatrix(uint h, uint w); //Nueva matriz "Llena de ceros" de altura h, ancho w.
+    VectorMapMatrix(size_t h, size_t w); //Nueva matriz "Llena de ceros" de altura h, ancho w.
 
     VectorMapMatrix(const VectorMapMatrix &orig) = default; //default copy constructor
 
@@ -37,7 +37,7 @@ public:
 
     vector<double> operator*(const vector<double> &v);
 
-    void agregarFila(map<uint,double> map); //Agrega una nueva fila.
+    void agregarFila(const map<uint,double>& map); //Agrega una nueva fila.
 
     void reservar(uint ancho, uint alto); //Permite reservar mas espacio para Maps si se desean agregar mas, y agrandar el ancho de los maps.
     //Solo lo cambia si es mayor, si es menor no cambia nada.

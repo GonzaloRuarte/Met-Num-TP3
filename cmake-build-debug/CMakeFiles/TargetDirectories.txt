@@ -1,0 +1,4 @@
+/home/nahuel/Escritorio/UBA/Mét. num./TP3/Código/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/nahuel/Escritorio/UBA/Mét. num./TP3/Código/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/nahuel/Escritorio/UBA/Mét. num./TP3/Código/cmake-build-debug/CMakeFiles/testcalcular_rayos.dir
+/home/nahuel/Escritorio/UBA/Mét. num./TP3/Código/cmake-build-debug/CMakeFiles/tp3.dir

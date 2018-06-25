@@ -8,7 +8,7 @@
 
 VectorMapMatrix::VectorMapMatrix() : width(0) {}
 
-VectorMapMatrix::VectorMapMatrix(uint h, uint w) : m(h, map<uint,double>()) , width(w) {}
+VectorMapMatrix::VectorMapMatrix(size_t h, size_t w) : m(h, map<uint,double>()) , width(w) {}
 
 size_t VectorMapMatrix::cantFilas() const {return m.size();}
 
@@ -191,14 +191,10 @@ VectorMapMatrix VectorMapMatrix::permutar(unsigned int j, unsigned int i){
 }
 */
 
-void VectorMapMatrix::agregarFila(map<uint, double> map) {
-    std::map<unsigned int,double>::iterator it = map.end();
-    if(it != map.begin()){
-        it--;
-        if (it->first >= width) {
-            throw runtime_error("El map es mas grande que el ancho de este VectorMapMatrix");
-        }
-    }
+void VectorMapMatrix::agregarFila(const map<uint, double>& map) {
+    std::map<unsigned int,double>::const_reverse_iterator it = map.rbegin();
+    if(!map.empty() && it->first >= width)
+        throw runtime_error("El map es mas grande que el ancho de este VectorMapMatrix");
     m.emplace_back(map);
 }
 

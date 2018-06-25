@@ -92,6 +92,6 @@ vector<pair<uint,uint> > crearPuntosDeFin(vector<pair<uint,uint> > Laseres, size
  * rota acorde a lo mencionado mas arriba.
  */
 
-void rotarLaseres(vector<pair<uint,uint> > Laseres, vector<pair<uint,uint> >& A_donde_apuntan, size_t n);
+void barrerLaseres_H(vector<pair<uint,uint> > Laseres, vector<pair<uint,uint> >& A_donde_apuntan, size_t n);
 
 #endif //CALCULAR_RAYOS_H
