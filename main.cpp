@@ -131,6 +131,25 @@ vector<vector<double> > multMatPorMat(const vector<vector<double> >& mat1, const
     return res;
 }
 
+VectorMapMatrix multMatPorMat(VectorMapMatrix &mat1, VectorMapMatrix &mat2) {
+    	const unsigned long& n = mat1.cantFilas();
+    	const unsigned long& m = mat2.cantColumnas();
+    	const unsigned long& l = mat2.cantFilas();
+    	VectorMapMatrix res = VectorMapMatrix(n, m);
+	cout << n << endl;
+    	for (uint i = 0; i < n; i++){
+		cout << i << endl;
+        	for (uint j = 0; j < m; j++){
+			double acum = 0;
+			for (uint k = 0; k < l; k++){
+                		acum += mat1.at(i,k)*mat2.at(k,j);
+			}
+			res.asignar(i,j,acum);
+		}
+	}
+    	return res;
+}
+
 vector<double> uniformNoise(vector<double> t, double init, double end, double sign){
 	vector<double> res(t.size());
 	default_random_engine generator;
@@ -294,8 +313,9 @@ vector<double>* reconstruirCuerpo(string nombreAchivoEntrada, vector<double>* V,
 	vector<double> vectorCuerpoDiscretizadoConRuido = uniformNoise(T, inicioRuido, finRuido, signoRuido);
 	// 8) generamos DtD
 	VectorMapMatrix Dt = getTraspuesta(D);
-	bool est = esTraspuesta(D, Dt);
-	VectorMapMatrix DtD = Dt*D;
+	cout << 1 << endl;
+	VectorMapMatrix DtD = multMatPorMat(Dt,D);
+	cout << 2 << endl;
 	// 9) generamos el vector Dt*T
 	vector<double> DtT = Dt*T;
 	// 10) resolvemos el sistema DtDx = DtT con EG
@@ -337,13 +357,13 @@ int main(int argc, char * argv[]) {
 
 	//reconstruirCuerpos("dicom_csv2", 4, 3, 2, 1);
 
-	VectorMapMatrix  D = generarRayos(500,true);
+	//VectorMapMatrix  D = generarRayos(500,true);
     vector<double>* cuerpo;
     //cuerpo = leerCSV("dicom_csv2/1.2.826.0.1.3680043.2.656.1.138.1.csv");
 
 	//cout << (*matriz)[0].size() << endl;
 
-	reconstruirCuerpo("dicom_csv2/1.2.826.0.1.3680043.2.656.1.138.1.csv", cuerpo, 5, 0, 1, 0.5);
+	reconstruirCuerpo("dicom_csv2/1.2.826.0.1.3680043.2.656.1.138.1.csv", cuerpo, 16, 0, 1, 0.5);
 
 /*	vector<vector<double>> mat(20,vector<double> (20,0));
 
