@@ -287,7 +287,7 @@ bool esTraspuesta(VectorMapMatrix &D, VectorMapMatrix &Dt) {
 }
 
 
-vector<double>* reconstruirCuerpo(string nombreAchivoEntrada, vector<double>* V, uint tamanoDiscretizacion, double inicioRuido, double finRuido, double signoRuido) {
+vector<double> reconstruirCuerpo(string nombreAchivoEntrada, vector<double>* V, uint tamanoDiscretizacion, double inicioRuido, double finRuido, double signoRuido) {
 	vector<vector<double> >* cuerpo;
 	// 1) tomamos la imagen
 	cuerpo = leerCSV(nombreAchivoEntrada);
@@ -321,7 +321,7 @@ vector<double>* reconstruirCuerpo(string nombreAchivoEntrada, vector<double>* V,
 	// 10) resolvemos el sistema DtDx = DtT con EG
 	pair<vector<double>,short> solucion = DtD.EG(DtD, DtT);
 	// invertir los valores de la solucion y volverlo a pasar a matriz para luego convertirlo en una imagen que podamos ver
-
+	return solucion.first;
 }
 
 
@@ -342,12 +342,12 @@ vector<double>& medirErrorDeReconstruccion(string nombreDirectorioEntrada, uint 
 	vector<string> listadoDirectorio;
     listarDirectorio(nombreDirectorioEntrada, listadoDirectorio);
 	vector<double>* cuerpoDiscretizado;
-	vector<double>* cuerpoDiscretizaqdoReconstruido;
+	vector<double> cuerpoDiscretizaqdoReconstruido;
     vector<double> ECMs (0);
 	for (int i=0; i < listadoDirectorio.size(); i++) {
 		cuerpoDiscretizaqdoReconstruido = reconstruirCuerpo(listadoDirectorio[i], cuerpoDiscretizado, tamanoDiscretizacion, inicioRuido, finRuido, signoRuido);
     	//cout << listadoDirectorio[i] << endl;
-    	ECMs.push_back(ECM(*cuerpoDiscretizado, *cuerpoDiscretizaqdoReconstruido));
+    	ECMs.push_back(ECM(*cuerpoDiscretizado, cuerpoDiscretizaqdoReconstruido));
     }
     return ECMs;
 }
@@ -363,7 +363,7 @@ int main(int argc, char * argv[]) {
 
 	//cout << (*matriz)[0].size() << endl;
 
-	reconstruirCuerpo("dicom_csv2/1.2.826.0.1.3680043.2.656.1.138.1.csv", cuerpo, 16, 0, 1, 0.5);
+	vector<double> asd = reconstruirCuerpo("dicom_csv2/1.2.826.0.1.3680043.2.656.1.138.1.csv", cuerpo, 16, 0, 1, 0.5);
 
 /*	vector<vector<double>> mat(20,vector<double> (20,0));
 
