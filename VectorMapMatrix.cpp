@@ -90,7 +90,7 @@ VectorMapMatrix VectorMapMatrix::operator+(VectorMapMatrix const &B) {
 VectorMapMatrix VectorMapMatrix::operator*(const VectorMapMatrix &B) {
     if(cantColumnas() == B.cantFilas()) {
         VectorMapMatrix result(cantFilas(), B.cantColumnas());
-        vector<vector<double> > sumasParciales(cantColumnas(),vector<double>(B.cantColumnas(), 0));
+        vector<vector<double> > sumasParciales(cantFilas(),vector<double>(B.cantColumnas(), 0));
         uint f = 0; //Recorro sobre A, y cuando estoy en el elemento a(ij) multiplico por la fila j de B, sumándolo en result.
         while(f < cantFilas()) {
             map<uint, double>::const_iterator it1 = m[f].begin();
@@ -237,7 +237,7 @@ pair<vector<double>,short> VectorMapMatrix::EG(const VectorMapMatrix& thisTransp
 
 
 	for(f1 = 0; f1 < A.cantFilas()-1; f1++){ //itero sobre las filas, y elimino el resto de las filas respecto de f1. La última no es necesario.
-		cout << f1 << endl;
+		//cout << f1 << endl;
 		cont = true;
 		A_kk = A.at(f1,f1); //de la diagonal
 		if (abs(A_kk) <= 0.001){

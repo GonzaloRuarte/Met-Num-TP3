@@ -313,9 +313,7 @@ vector<double> reconstruirCuerpo(string nombreAchivoEntrada, vector<double>* V, 
 	vector<double> vectorCuerpoDiscretizadoConRuido = uniformNoise(T, inicioRuido, finRuido, signoRuido);
 	// 8) generamos DtD
 	VectorMapMatrix Dt = getTraspuesta(D);
-	cout << 1 << endl;
-	VectorMapMatrix DtD = multMatPorMat(Dt,D);
-	cout << 2 << endl;
+	VectorMapMatrix DtD = Dt*D;//multMatPorMat(Dt,D);
 	// 9) generamos el vector Dt*T
 	vector<double> DtT = Dt*T;
 	// 10) resolvemos el sistema DtDx = DtT con EG
