@@ -87,7 +87,7 @@ VectorMapMatrix VectorMapMatrix::operator+(VectorMapMatrix const &B) {
     }
 }
 
-VectorMapMatrix VectorMapMatrix::operator*(const VectorMapMatrix &B) {
+vector<vector<double>> VectorMapMatrix::operator*(const VectorMapMatrix &B) {
     if(cantColumnas() == B.cantFilas()) {
         VectorMapMatrix result(cantFilas(), B.cantColumnas());
         vector<vector<double> > sumasParciales(cantFilas(),vector<double>(B.cantColumnas(), 0));
@@ -119,9 +119,10 @@ VectorMapMatrix VectorMapMatrix::operator*(const VectorMapMatrix &B) {
             c=0;
             f++;
         }
-        return result;
+        return sumasParciales;
     } else {
-        return VectorMapMatrix(); //No está definida la multiplicación.
+	vector<vector<double>> ads;
+        return ads; //No está definida la multiplicación.
     }
 }
 /*

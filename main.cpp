@@ -55,7 +55,7 @@ vector<vector<double> > trasponer(const vector<vector<double> >& mat){
 
 
 
-pair<vector<double>,short> EG(const vector<vector<double>> &mat, vector<double> bb) {
+pair<vector<double>,short> EG2(const vector<vector<double>> &mat, vector<double> bb) {
 	unsigned int i,j,l;
 	vector<double> res(mat[0].size(),0);
 	short status = 0; //status default, el sistema tiene una unica solucion posible
@@ -315,11 +315,19 @@ vector<double> reconstruirCuerpo(string nombreAchivoEntrada, vector<double>* V, 
 	vector<double> vectorCuerpoDiscretizadoConRuido = uniformNoise(T, inicioRuido, finRuido, signoRuido);
 	// 8) generamos DtD
 	VectorMapMatrix Dt = getTraspuesta(D);
-	VectorMapMatrix DtD = Dt*D;//multMatPorMat(Dt,D);
+	vector<vector<double>> DtD = Dt*D;//multMatPorMat(Dt,D);
+	
 	// 9) generamos el vector Dt*T
 	vector<double> DtT = Dt*T;
 	// 10) resolvemos el sistema DtDx = DtT con EG
-	pair<vector<double>,short> solucion = DtD.EG(DtD, DtT);
+	pair<vector<double>,short> solucion = EG2(DtD, DtT);
+	for(uint i = 0 ; i < solucion.first.size(); i++){
+		
+			cout << solucion.first[i] << " ";
+		
+		
+	}
+	cout << endl;
 	// invertir los valores de la solucion y volverlo a pasar a matriz para luego convertirlo en una imagen que podamos ver
 	return solucion.first;
 }

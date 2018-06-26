@@ -33,7 +33,7 @@ public:
 
     VectorMapMatrix operator+(VectorMapMatrix const &B);
 
-    VectorMapMatrix operator*(const VectorMapMatrix &B);
+    vector<vector<double>> operator*(const VectorMapMatrix &B);
 
     vector<double> operator*(const vector<double> &v);
 
