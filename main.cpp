@@ -17,10 +17,19 @@
 using namespace std;
 
 
-//VectorMapMatrix getTraspuesta(VectorMapMatrix &W)
+
+VectorMapMatrix getTraspuesta(VectorMapMatrix &W) {
+    VectorMapMatrix ret(W.cantColumnas(), W.cantFilas());
+    
+    for(uint i = 0; i < W.cantFilas(); ++i)
+        for (unsigned int j=0; j<W.cantColumnas(); ++j)
+            ret.asignar(j, i, W.at(i, j));
+    return ret;
+
+}
 /**
  * esta funcion toma como parametros las matrices D y V
- * @return los tiempos que tardan las seniales en atravesar el cuerpo
+ * @return el tiempo que tarda la senial en atravesar el cuerpo
  */
 vector<double> multMatPorVect(const vector<vector<double> > &M, const vector<double> &v){//recordar que el vector v son las inversas de las velocidades
     const size_t& n = v.size();
@@ -43,6 +52,8 @@ vector<vector<double> > trasponer(const vector<vector<double> >& mat){
     return res;
 
 }
+
+
 
 pair<vector<double>,short> EG(const vector<vector<double>> &mat, vector<double> bb) {
 	unsigned int i,j,l;
@@ -122,8 +133,6 @@ vector<vector<double> > multMatPorMat(const vector<vector<double> >& mat1, const
     return res;
 }
 
-//vector<double> uniformNoise(const vector<double>& t, double init, double end, double sign
-
 VectorMapMatrix multMatPorMat(VectorMapMatrix &mat1, VectorMapMatrix &mat2) {
     	const unsigned long& n = mat1.cantFilas();
     	const unsigned long& m = mat2.cantColumnas();
@@ -143,8 +152,33 @@ VectorMapMatrix multMatPorMat(VectorMapMatrix &mat1, VectorMapMatrix &mat2) {
     	return res;
 }
 
+vector<double> uniformNoise(vector<double> t, double init, double end, double sign){
+	vector<double> res(t.size());
+	default_random_engine generator;
+	uniform_real_distribution<double> distribution(init,end);
+	for(uint i = 0; i< t.size(); i++){
+		double number = distribution(generator);
+		if (sign != 0){
+			res[i] = sign*number*t[i] + t[i];
+		}
+		else {
+			random_device rd;
+			mt19937 gen(rd());
+			uniform_int_distribution<> dis(1, 2);
+			if (dis(gen) == 1){
+				res[i] = number*t[i] + t[i];	
+			}
+			else {
+				res[i] = t[i] - number*t[i];
+			}
+		}
+		
+	}
+	return res;
+}
+
 vector<vector<uint16_t>> datosAMatriz(uchar &datos, uint ancho, uint alto) {
-	vector<vector<uint16_t> > ret (0);
+	vector<vector<uint16_t>> ret (0);
 	for (size_t i = 0; i < alto; ++i) {
 		vector<uint16_t> fila (0);
 		for (size_t j = 0; j < ancho; ++j) {
@@ -157,51 +191,85 @@ vector<vector<uint16_t>> datosAMatriz(uchar &datos, uint ancho, uint alto) {
 	return ret;
 }
 
-unsigned char* readPPM(const char* fileName, char* pSix, int* width, int* height) {
+	unsigned char* readPPM(const char* fileName, char* pSix, int* width, int* height) {
 
-	// open the file to read just the header reading
-	FILE* fr = fopen(fileName, "r");
+		// open the file to read just the header reading
+		FILE* fr = fopen(fileName, "r");
 
-	// formatted read of header
-	fscanf(fr, "%s", pSix);
+		// formatted read of header
+		fscanf(fr, "%s", pSix);
 
-	// check to see if it's a PPM image file
+		// check to see if it's a PPM image file
 /*		if (strncmp(pSix, "P6" , 10) != 0) {
-		printf("They are not the same\n");
-	} else {
-		printf("They are the same\n");
-	}*/
+			printf("They are not the same\n");
+		} else {
+			printf("They are the same\n");
+		}*/
 
-	// read the rest of header
-	fscanf(fr, "%d\n %d\n", width, height);
+		// read the rest of header
+		fscanf(fr, "%d\n %d\n", width, height);
 
-	//fscanf(fr, "%d\n", maximum);
+		//fscanf(fr, "%d\n", maximum);
 
-	// check to see if they were stored properly
-	printf("PSix: %s\n", pSix);
-	printf("Width: %d\n", *width);
-	printf("Height: %d\n", *height);
+		// check to see if they were stored properly
+		printf("PSix: %s\n", pSix);
+		printf("Width: %d\n", *width);
+		printf("Height: %d\n", *height);
 //		printf("maximum: %d\n", *maximum);
 
-	int size = (*width) * (*height);
-	//int size = 423800;
+		int size = (*width) * (*height);
+		//int size = 423800;
 
-	// allocate array for pixels
-	unsigned char* pixels = new unsigned char[size];
+		// allocate array for pixels
+		unsigned char* pixels = new unsigned char[size];
 
-	// unformatted read of binary pixel data
-	while (fread(pixels, sizeof(int), 128, fr)) {
-		printf("%s", pixels);
-	} // end of for loop
+		// unformatted read of binary pixel data
+		while (fread(pixels, sizeof(int), 128, fr)) {
+			printf("%s", pixels);
+		} // end of for loop
 
-	// close file
-	fclose(fr);
+		// close file
+		fclose(fr);
 
-	// return the array
-	return pixels;
+		// return the array
+		return pixels;
 
-} // end of readPPM
+	} // end of readPPM
 
+
+/**
+ * Genera Matriz con todos los D_kij
+ * @param tamMatriz tamaño de la imagen discretizada.
+ * @param horizontales Si se desea generar rayos fijos se coloca en true, si se coloca en false se crean n rayos horizontales y se rotan 2n veces.
+ * @return La matriz D con todos los D_k (falta convertir las matrices D_k en vectores.
+ */
+VectorMapMatrix  generarRayos(size_t tamMatriz, bool fijos) {
+	// creamos un laser de cada una de las esquinas
+	vector<pair<uint,uint> > laseres = crearLaseres(tamMatriz, tamMatriz/4, tamMatriz/8, 0); //tamano, despues cada_cuanta_dist, offset, max_cant de rayos.
+	vector<pair<uint,uint> > sensores = crearPuntosDeFin(laseres, tamMatriz);
+
+    VectorMapMatrix D_ks((tamMatriz^2)*6, tamMatriz*tamMatriz); // Este es el vector con las matrices D, para cada uno de los K rayos (hay que convertirlas en vectores).
+    //Tenemos 2n rayos que rotaremos aproximadamente 3n veces.
+
+    vector<vector<double> > D_k; //matriz auxiliar del D_k del laser calculado recien.
+	while(sensores[0].first != tamMatriz - 1 or sensores[0].second != 0) { //Esto quiza es dificil de ver, pero para los laseres izquierdos
+        // que se saltean el horizontal, este es la ultima posicion interesante a la que apuntan. NOTA IMPORTANTE,
+        // SI SE HACEN MAS DE UN SALTO PUEDE QUE ESTO NO TERMINE. ASIQUE CUIDADO CON PONER MAS DE UN rotarLaseres.
+        for(uint i = 0; i < laseres.size(); i++) {
+            D_k = trazar_recta_en_matriz_D(laseres[i], sensores[i], tamMatriz);
+            map<uint, double> D_k_map = pasarAMap(D_k);
+            D_ks.agregarFila(D_k_map);
+        }
+        rotarLaseres(laseres,sensores,tamMatriz);
+	}
+
+	return D_ks;
+
+	/*for (int i = 0; i<tamMatriz; i++) {
+//		trazar_recta_en_matriz_D(laseres, sensores, tamMatriz);
+
+	}*/
+}
 
 vector<vector<double>> obtenerTrayectorias() {
 
@@ -256,7 +324,18 @@ vector<double> reconstruirCuerpo(string nombreAchivoEntrada, vector<double>* V, 
 	return solucion.first;
 }
 
-//double ECM(vector<double> original, vector<double> reconstruido)
+
+
+double ECM(vector<double> original, vector<double> reconstruido) {
+    uint n = original.size();
+    double ret = 0;
+    double dif;
+    for(uint i = 0; i< n; i++){
+        dif = original[i] - reconstruido[i];
+        ret += dif*dif;
+    }
+    return ret/n*n;
+}
 
 
 vector<double>& medirErrorDeReconstruccion(string nombreDirectorioEntrada, uint tamanoDiscretizacion, double inicioRuido, double finRuido, double signoRuido) {
@@ -272,7 +351,22 @@ vector<double>& medirErrorDeReconstruccion(string nombreDirectorioEntrada, uint 
     }
     return ECMs;
 }
-
+/*
+void experimentacion_barrido_H(unsigned char discretizacion, pair<float,float> ruido, unsigned short int espacio_entre_censores){
+   vector<vector<double> > *imagen_entera = leerCSV(archivo_imagen);
+    vector<vector<double> > imagen_discreta = discretizar(*imagen_entera, discretizacion);
+    vector<double> vec_imagen_discreta = pasarAVector(imagen_discreta);
+    VectorMapMatrix D = generarRayos_barrido_H(imagen_discreta.size(), espacio_entre_censores);
+    vector<double> t_sin_ruido = D*vec_imagen_discreta;
+    vector<double> t_con_ruido = uniformNoise(t_sin_ruido, ruido.first, ruido.second, 0);
+    VectorMapMatrix Dt_D = getTraspuesta(D)*D;
+    pair<vector<double>, short> v = Dt_D.EG(Dt_D, t_con_ruido);
+    double error = ECM(vec_imagen_discreta, v.first);
+    ofstream salida(archivo_salida);
+    salida << error;
+    salida.close();
+    return;
+}*/
 
 int main(int argc, char * argv[]) {
 

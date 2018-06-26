@@ -10,7 +10,7 @@ class VectorMapMatrix {
 public:
     VectorMapMatrix(); //Construyo una "matriz" de 0x0
 
-    VectorMapMatrix(size_t h, size_t w); //Nueva matriz "Llena de ceros" de altura h, ancho w.
+    VectorMapMatrix(uint h, uint w); //Nueva matriz "Llena de ceros" de altura h, ancho w.
 
     VectorMapMatrix(const VectorMapMatrix &orig) = default; //default copy constructor
 
