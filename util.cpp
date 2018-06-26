@@ -191,19 +191,25 @@ double ECM(vector<double> original, vector<double> reconstruido) {
  * @param ruido: intervalo del porcentaje de ruido (expresado como valor entre 0 y 1)
  * @param espacio_entre_censores
  */
-void experimentacion_barrido_H(unsigned char discretizacion, pair<float,float> ruido, unsigned short int espacio_entre_censores) {
-    vector<vector<double> > *imagen_entera = leerCSV(archivo_imagen);
-    vector<vector<double> > imagen_discreta = discretizar(*imagen_entera, discretizacion);
-    vector<double> vec_imagen_discreta = pasarAVector(imagen_discreta);
-    VectorMapMatrix D = generarRayos_barrido_H(imagen_discreta.size(), espacio_entre_censores);
-    vector<double> t_sin_ruido = D * vec_imagen_discreta;
-    vector<double> t_con_ruido = uniformNoise(t_sin_ruido, ruido.first, ruido.second, 0);
-    VectorMapMatrix Dt_D = getTraspuesta(D) * D;
-    pair<vector<double>, short> v = Dt_D.EG(Dt_D, t_con_ruido);
-    double error = ECM(vec_imagen_discreta, v.first);
-    ofstream salida(archivo_salida);
-    salida << error;
-    salida.close();
+void experimentacion_barrido_H(const string& directorio, const vector<unsigned char>& discretizaciones, const vector<pair<float,float> >& ruidos, const vector<unsigned short int>& espacios_entre_censores) {
+    vector<string> archivos;
+    listarDirectorio(directorio, archivos);
+    for(size_t ind_arch = 0; ind_arch < archivos.size(); ++ind_arch){
+        vector<vector<double> > *imagen_entera = leerCSV(archivos[ind_arch]);
+        for(size_t ind_disc = 0; ind_disc < discretizaciones.size(); ++ind_disc){
+            vector<vector<double> > imagen_discreta = discretizar(*imagen_entera, discretizaciones[ind_disc]);
+            vector<double> vec_imagen_discreta = pasarAVector(imagen_discreta);
+            VectorMapMatrix D = generarRayos_barrido_H(imagen_discreta.size(), espacio_entre_censores);
+            vector<double> t_sin_ruido = D * vec_imagen_discreta;
+            vector<double> t_con_ruido = uniformNoise(t_sin_ruido, ruido.first, ruido.second, 0);
+            VectorMapMatrix Dt_D = getTraspuesta(D) * D;
+            pair<vector<double>, short> v = Dt_D.EG(Dt_D, t_con_ruido);
+            double error = ECM(vec_imagen_discreta, v.first);
+            ofstream salida(archivo_salida);
+            salida << error;
+            salida.close();
+        }
+    }
     return;
 }
 
