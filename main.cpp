@@ -226,15 +226,14 @@ vector<double> reconstruirCuerpo(string nombreAchivoEntrada, vector<double>* V, 
 	vector<double> DtT = Dt*T;
 	// 10) resolvemos el sistema DtDx = DtT con EG
 	pair<vector<double>,short> solucion = EG2(DtD, DtT);
-	
-	vector<double> check = multMatPorVect(DtD,solucion.first);
-	for(uint i = 0 ; i < check.size(); i++){
-		
-			cout << check[i]-DtT[i] << " ";
-		
-		
+	vector<double> Check (V->size(), 0);
+	for (uint i = 0; i< V->size(); i++){
+		if (abs(solucion.first[i]) > 0.00001){
+			Check[i] = 1/solucion.first[i];
+		}
 	}
-	cout << endl;
+
+	cout << ECM(*V,Check) << endl;
 	// invertir los valores de la solucion y volverlo a pasar a matriz para luego convertirlo en una imagen que podamos ver
 	return solucion.first;
 }
