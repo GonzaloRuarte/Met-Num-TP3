@@ -15,7 +15,7 @@ size_t VectorMapMatrix::cantFilas() const {return m.size();}
 size_t VectorMapMatrix::cantColumnas() const {return width;}
 
 void VectorMapMatrix::asignar(uint f, uint c, const double value) {
-    if (abs(value) < 0.001) {
+    if (abs(value) < 0.00001) {
         m[f].erase(c);
     } else if (f < m.size() and c < width) {
         m[f][c] = value;
