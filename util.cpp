@@ -167,7 +167,7 @@ vector<double> uniformNoise(const vector<double>& t, double init, double end, do
     return res;
 }
 
-VectorMapMatrix getTraspuesta(VectorMapMatrix &W) {
+VectorMapMatrix getTraspuesta(const VectorMapMatrix &W) {
     VectorMapMatrix ret(W.cantColumnas(), W.cantFilas());
 
     for(uint i = 0; i < W.cantFilas(); ++i)
@@ -246,14 +246,14 @@ pair<vector<double>,short> EG2(vector<vector<double>> &mat, vector<double> bb) {
     return make_pair(res,status);
 }
 
-double operator*(vector<double> u, vector<double> v){   //Deben ser del mismo tamaño.
+double operator*(const vector<double>& u, const vector<double>& v){   //Deben ser del mismo tamaño.
     double res = 0;
     for(size_t i = 0; i < u.size(); ++i)
         res += u[i]*v[i];
     return res;
 }
 
-vector<double> operator*(vector<vector<double> > M, vector<double> v){
+vector<double> operator*(const vector<vector<double> >& M, const vector<double>& v){
     vector<double> res(v.size());
     for(size_t i = 0; i < M.size(); ++i)
         res[i] = M[i]*v;
@@ -275,7 +275,7 @@ void experimentacion_barrido_H(const string& directorio, uint taman_imags, const
             VectorMapMatrix D = generarRayos_barrido_H(taman_imags/discretizaciones[ind_disc], espacios_entre_censores[ind_espac]);
             VectorMapMatrix Dt = getTraspuesta(D);
             vector<vector<double> > Dt_D = Dt * D;
-            salida.open("Discretización:"+to_string(discretizaciones[ind_disc])+" espaciado:"+to_string(espacios_entre_censores[ind_espac])+" .txt";
+            salida.open("Discretización:"+to_string(discretizaciones[ind_disc])+" espaciado:"+to_string(espacios_entre_censores[ind_espac])+" .txt");
             salida.close(); //La intención de estas 2 lineas es poner en blanco el archivo si ya existe.
             for(size_t ind_arch = 0; ind_arch < archivos.size(); ++ind_arch){
                 vector<vector<double> > *imagen_entera = leerCSV(archivos[ind_arch]);

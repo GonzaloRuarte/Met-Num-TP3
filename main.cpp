@@ -18,15 +18,8 @@ using namespace std;
 
 
 
-VectorMapMatrix getTraspuesta(VectorMapMatrix &W) {
-    VectorMapMatrix ret(W.cantColumnas(), W.cantFilas());
-    
-    for(uint i = 0; i < W.cantFilas(); ++i)
-        for (unsigned int j=0; j<W.cantColumnas(); ++j)
-            ret.asignar(j, i, W.at(i, j));
-    return ret;
+//VectorMapMatrix getTraspuesta(VectorMapMatrix &W)
 
-}
 /**
  * esta funcion toma como parametros las matrices D y V
  * @return el tiempo que tarda la senial en atravesar el cuerpo
@@ -87,30 +80,7 @@ VectorMapMatrix multMatPorMat(VectorMapMatrix &mat1, VectorMapMatrix &mat2) {
     	return res;
 }
 
-vector<double> uniformNoise(vector<double> t, double init, double end, double sign){
-	vector<double> res(t.size());
-	default_random_engine generator;
-	uniform_real_distribution<double> distribution(init,end);
-	for(uint i = 0; i< t.size(); i++){
-		double number = distribution(generator);
-		if (sign != 0){
-			res[i] = sign*number*t[i] + t[i];
-		}
-		else {
-			random_device rd;
-			mt19937 gen(rd());
-			uniform_int_distribution<> dis(1, 2);
-			if (dis(gen) == 1){
-				res[i] = number*t[i] + t[i];	
-			}
-			else {
-				res[i] = t[i] - number*t[i];
-			}
-		}
-		
-	}
-	return res;
-}
+//vector<double> uniformNoise(vector<double> t, double init, double end, double sign)
 
 vector<vector<uint16_t>> datosAMatriz(uchar &datos, uint ancho, uint alto) {
 	vector<vector<uint16_t>> ret (0);
@@ -195,7 +165,7 @@ VectorMapMatrix  generarRayos(size_t tamMatriz, bool fijos) {
             map<uint, double> D_k_map = pasarAMap(D_k);
             D_ks.agregarFila(D_k_map);
         }
-        rotarLaseres(laseres,sensores,tamMatriz);
+        barrerLaseres_H(laseres,sensores,tamMatriz);
 	}
 
 	return D_ks;
@@ -271,17 +241,7 @@ vector<double> reconstruirCuerpo(string nombreAchivoEntrada, vector<double>* V, 
 
 
 
-double ECM(vector<double> original, vector<double> reconstruido) {
-    uint n = original.size();
-    double ret = 0;
-    double dif;
-    for(uint i = 0; i< n; i++){
-        dif = original[i] - reconstruido[i];
-        ret += dif*dif;
-    }
-    return ret/n*n;
-}
-
+//double ECM(vector<double> original, vector<double> reconstruido)
 
 vector<double>& medirErrorDeReconstruccion(string nombreDirectorioEntrada, uint tamanoDiscretizacion, double inicioRuido, double finRuido, double signoRuido) {
 	vector<string> listadoDirectorio;
