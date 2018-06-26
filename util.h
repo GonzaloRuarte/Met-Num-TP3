@@ -5,14 +5,13 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <random>
 #include "ppmloader.h"
 #include "dirent.h"
 #include <sstream>
 #include <stdio.h>
 #include "VectorMapMatrix.h"
 #include "calcular_rayos.h"
-
-typedef unsigned short uint16_t;
 
 using namespace std;
 
@@ -24,8 +23,9 @@ VectorMapMatrix  generarRayos(size_t tamMatriz, bool fijos);
 VectorMapMatrix  generarRayos_barrido_H(size_t tamMatriz, size_t cada_cuanto);
 vector<double> uniformNoise(const vector<double>& t, double init, double end, double sign);
 VectorMapMatrix getTraspuesta(VectorMapMatrix &W);
-double ECM(vector<double> original, vector<double> reconstruido);
+double ECM(const vector<double>& original, const vector<double>& reconstruido);
 void experimentacion_barrido_H(const string& directorio, const vector<unsigned char>& discretizaciones, const vector<pair<float,float> >& ruidos, const vector<unsigned short int>& espacios_entre_censores);
 void listarDirectorio(const string& directorio,  vector<string>& v);
+
 
 #endif //TC_UTIL_H

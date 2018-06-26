@@ -44,6 +44,9 @@ vector<vector<double>>* leerCSV(string nombreArchivo) {
     return ret;
 }
 
+
+
+
 vector<vector<double>> discretizar(const vector<vector<double> >& mat, uint val){//supongo que la matriz mat es cuadrada
 	vector<vector<double>> res (mat.size()/val, vector<double> (mat.size()/val));
 	for(uint i = 0; i< res.size(); i++){
@@ -174,7 +177,7 @@ VectorMapMatrix getTraspuesta(VectorMapMatrix &W) {
 
 }
 
-double ECM(vector<double> original, vector<double> reconstruido) {
+double ECM(const vector<double>& original, const vector<double>& reconstruido) {
     uint n = original.size();
     double ret = 0;
     double dif;
@@ -185,29 +188,116 @@ double ECM(vector<double> original, vector<double> reconstruido) {
     return ret/n*n;
 }
 
+pair<vector<double>,short> EG2(vector<vector<double>> &mat, vector<double> bb) {
+    unsigned int i,j,l;
+    vector<double> res(mat[0].size(),0);
+    short status = 0; //status default, el sistema tiene una unica solucion posible
+    double A_kk, A_jk;
+    bool cont;
+
+    for(i = 0; i < mat[0].size()-1; i++){ //itero sobre las filas, excepto la ultima porque ahi no tengo que hacer nada
+        cont = false;
+        for(j = i; j < mat.size(); j++){ //itero sobre las filas desde i en adelante, estaria por fijarme si tengo que hacer o no calculo en el paso i de la EG
+            if(abs(mat[j][i]) > 0.00001){ //si no hay un 0 en la posicion j,i
+                cont = true;
+                if(abs(mat[i][i]) <= 0.00001){
+                    mat[i].swap(mat[j]); //cambio de lugar las filas porque habia un 0 en la diagonal pero no en el resto de la columna
+                    double temp = bb[i];
+                    bb[i] = bb[j];         //como se cambiaron de lugar las filas, también se cambian de lugar los valores de "bb"
+                    bb[j] = temp;
+                }
+                break;
+            }
+        }
+        A_kk = mat[i][i];
+        for(j = i+1; j < mat.size()-i-1; j++){ //cálculo del paso i si corresponde
+            if (!cont){break;} //si me tengo que saltear este paso no calculo nada
+            if(abs(mat[j][i]) >= 0.00001){//si el elemento j,i es 0 no hago nada en la fila j
+                A_jk = mat[j][i];
+                for(l = i+1; l < mat[0].size()-i-1; l++){
+                    mat[j][l] = mat[j][l]-(mat[i][l]*A_jk/A_kk);
+                }
+                bb[j] -= A_jk/A_kk*bb[i];
+            } //no me olvido de actualizar el vector b
+        }
+
+    }
+
+    for(i = 0; i < mat[0].size(); i++){
+        j = mat[0].size()-1-i;
+        if(mat[j][j] == 0 && bb[j] != 0){
+            status = -1; //el sistema es incompatible
+            break;
+        }
+        if(mat[j][j] == 0 && bb[j] == 0){
+            status = 1; //hay infinitos resultados
+            res[j] = 0;
+        }
+        else{
+            res[j] = bb[j]/mat[j][j]; //tengo A_jj*x_j = b_j, paso dividiendo el A_jj
+
+            if (j!=0){
+                for(unsigned int l = 0; l < j; l++){
+                    bb[l] = bb[l] - res[j]*mat[l][j]; //esto es importante, al b_l con l de 0 a j-1 le paso restando el A_lj*x_j, porque ya conozco el resultado de X_j, de forma que en la siguiente iteracion solo voy a tener algo de esta pinta A_jj*x_j = b_j
+                }
+            }
+        }
+    }
+    return make_pair(res,status);
+}
+
+double operator*(vector<double> u, vector<double> v){   //Deben ser del mismo tamaño.
+    double res = 0;
+    for(size_t i = 0; i < u.size(); ++i)
+        res += u[i]*v[i];
+    return res;
+}
+
+vector<double> operator*(vector<vector<double> > M, vector<double> v){
+    vector<double> res(v.size());
+    for(size_t i = 0; i < M.size(); ++i)
+        res[i] = M[i]*v;
+    return res;
+}
+
 /**
  *
  * @param discretizacion: cantidad de pixeles de lado y alto por casillero.
  * @param ruido: intervalo del porcentaje de ruido (expresado como valor entre 0 y 1)
  * @param espacio_entre_censores
  */
-void experimentacion_barrido_H(const string& directorio, const vector<unsigned char>& discretizaciones, const vector<pair<float,float> >& ruidos, const vector<unsigned short int>& espacios_entre_censores) {
+void experimentacion_barrido_H(const string& directorio, uint taman_imags, const vector<unsigned char>& discretizaciones, const vector<pair<float,float> >& ruidos, const vector<unsigned short int>& espacios_entre_censores) {   //Necesito saber el tamaño de las imagenes de antemano.
     vector<string> archivos;
     listarDirectorio(directorio, archivos);
-    for(size_t ind_arch = 0; ind_arch < archivos.size(); ++ind_arch){
-        vector<vector<double> > *imagen_entera = leerCSV(archivos[ind_arch]);
-        for(size_t ind_disc = 0; ind_disc < discretizaciones.size(); ++ind_disc){
-            vector<vector<double> > imagen_discreta = discretizar(*imagen_entera, discretizaciones[ind_disc]);
-            vector<double> vec_imagen_discreta = pasarAVector(imagen_discreta);
-            VectorMapMatrix D = generarRayos_barrido_H(imagen_discreta.size(), espacio_entre_censores);
-            vector<double> t_sin_ruido = D * vec_imagen_discreta;
-            vector<double> t_con_ruido = uniformNoise(t_sin_ruido, ruido.first, ruido.second, 0);
-            VectorMapMatrix Dt_D = getTraspuesta(D) * D;
-            pair<vector<double>, short> v = Dt_D.EG(Dt_D, t_con_ruido);
-            double error = ECM(vec_imagen_discreta, v.first);
-            ofstream salida(archivo_salida);
-            salida << error;
-            salida.close();
+    ofstream salida;
+    for(size_t ind_disc = 0; ind_disc < discretizaciones.size(); ++ind_disc){
+        for(size_t ind_espac = 0; ind_espac < espacios_entre_censores.size(); ++ind_espac){
+            VectorMapMatrix D = generarRayos_barrido_H(taman_imags/discretizaciones[ind_disc], espacios_entre_censores[ind_espac]);
+            VectorMapMatrix Dt = getTraspuesta(D);
+            vector<vector<double> > Dt_D = Dt * D;
+            salida.open("Discretización:"+to_string(discretizaciones[ind_disc])+" espaciado:"+to_string(espacios_entre_censores[ind_espac])+" .txt";
+            salida.close(); //La intención de estas 2 lineas es poner en blanco el archivo si ya existe.
+            for(size_t ind_arch = 0; ind_arch < archivos.size(); ++ind_arch){
+                vector<vector<double> > *imagen_entera = leerCSV(archivos[ind_arch]);
+                vector<vector<double> > imagen_discreta = discretizar(*imagen_entera, discretizaciones[ind_disc]);
+                vector<double> vec_imagen_discreta = pasarAVector(imagen_discreta);
+                vector<double> t_sin_ruido = D * vec_imagen_discreta;
+                salida.open("Discretización:"+to_string(discretizaciones[ind_disc])+" espaciado:"+to_string(espacios_entre_censores[ind_espac])+" .txt", ios::app);
+                salida << "Imagen "+archivos[ind_arch]+":\t";
+                salida.close();
+                for(size_t ind_ruido = 0; ind_ruido < ruidos.size(); ++ind_ruido){
+                    vector<double> t_con_ruido = uniformNoise(t_sin_ruido, ruidos[ind_ruido].first, ruidos[ind_ruido].second, 0);
+                    pair<vector<double>, short> v = EG2(Dt_D, Dt * t_con_ruido);
+                    double error = ECM(vec_imagen_discreta, v.first);
+                    salida.open("Discretización:"+to_string(discretizaciones[ind_disc])+" espaciado:"+to_string(espacios_entre_censores[ind_espac])+" .txt", ios::app);
+                    salida << error << ",\t";
+                    salida.close();
+                }
+                salida.open("Discretización:"+to_string(discretizaciones[ind_disc])+" espaciado:"+to_string(espacios_entre_censores[ind_espac])+" .txt", ios::app);
+                salida << endl;
+                salida << endl; //Lo hago 2 veces para mejor visibilidad.
+                salida.close();
+            }
         }
     }
     return;
@@ -228,3 +318,4 @@ void listarDirectorio(const string& directorio,  vector<string>& v)
     }
     closedir(dirp);
 }
+

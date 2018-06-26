@@ -35,11 +35,11 @@ int main() {
 
     vector<vector<double> > D = trazar_recta_en_matriz_D(Laseres[0],Miras[0],500);
 
-    rotarLaseres(Laseres,Miras,500);
-    rotarLaseres(Laseres,Miras,500);
-    rotarLaseres(Laseres,Miras,500);
-    rotarLaseres(Laseres,Miras,500);
-    rotarLaseres(Laseres,Miras,500);
+    barrerLaseres_H(Laseres,Miras,500);
+    barrerLaseres_H(Laseres,Miras,500);
+    barrerLaseres_H(Laseres,Miras,500);
+    barrerLaseres_H(Laseres,Miras,500);
+    barrerLaseres_H(Laseres,Miras,500);
 
     D = trazar_recta_en_matriz_D(Laseres[0],Miras[0],500);
 

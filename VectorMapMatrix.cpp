@@ -8,14 +8,14 @@
 
 VectorMapMatrix::VectorMapMatrix() : width(0) {}
 
-VectorMapMatrix::VectorMapMatrix(size_t h, size_t w) : m(h, map<uint,double>()) , width(w) {}
+VectorMapMatrix::VectorMapMatrix(uint h, uint w) : m(h, map<uint,double>()) , width(w) {}
 
 size_t VectorMapMatrix::cantFilas() const {return m.size();}
 
 size_t VectorMapMatrix::cantColumnas() const {return width;}
 
 void VectorMapMatrix::asignar(uint f, uint c, const double value) {
-    if (abs(value) < 0.001) {
+    if (abs(value) < 0.00001) {
         m[f].erase(c);
     } else if (f < m.size() and c < width) {
         m[f][c] = value;
@@ -87,7 +87,7 @@ VectorMapMatrix VectorMapMatrix::operator+(VectorMapMatrix const &B) {
     }
 }
 
-VectorMapMatrix VectorMapMatrix::operator*(const VectorMapMatrix &B) {
+vector<vector<double>> VectorMapMatrix::operator*(const VectorMapMatrix &B) {
     if(cantColumnas() == B.cantFilas()) {
         VectorMapMatrix result(cantFilas(), B.cantColumnas());
         vector<vector<double> > sumasParciales(cantFilas(),vector<double>(B.cantColumnas(), 0));
@@ -119,9 +119,10 @@ VectorMapMatrix VectorMapMatrix::operator*(const VectorMapMatrix &B) {
             c=0;
             f++;
         }
-        return result;
+        return sumasParciales;
     } else {
-        return VectorMapMatrix(); //No está definida la multiplicación.
+	vector<vector<double>> ads;
+        return ads; //No está definida la multiplicación.
     }
 }
 /*
@@ -202,11 +203,19 @@ VectorMapMatrix VectorMapMatrix::permutar(unsigned int j, unsigned int i){
 	return p;
 }
 */
-
+/*
+void VectorMapMatrix::agregarFila(map<uint, double> map) {
+    std::map<unsigned int,double>::iterator it = map.end();
+    if(it != map.begin()){
+        it--;
+        if (it->first >= width) {
+            throw runtime_error("El map es mas grande que el ancho de este VectorMapMatrix");
+        }
+    }*/
 void VectorMapMatrix::agregarFila(const map<uint, double>& map) {
     std::map<unsigned int,double>::const_reverse_iterator it = map.rbegin();
     if(!map.empty() && it->first >= width)
-        throw runtime_error("El map es mas grande que el ancho de este VectorMapMatrix");
+       throw runtime_error("El map es mas grande que el ancho de este VectorMapMatrix");
     m.emplace_back(map);
 }
 
