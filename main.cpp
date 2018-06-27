@@ -166,7 +166,7 @@ VectorMapMatrix  generarRayos(size_t tamMatriz, int metodo_usado, int cantLasere
 
         VectorMapMatrix D_ks(0, tamMatriz*tamMatriz); /*creamos el result con 0 maps (los vamos a agregar despues
  * uno por uno.*/
-        D_ks.reservar(2 * cantLaseres * tamMatriz, tamMatriz*tamMatriz); /* Este es el vector con las matrices D, para cada uno de los K rayos (hay que convertirlas en vectores).
+        D_ks.reservar(tamMatriz*tamMatriz, 2 * cantLaseres * tamMatriz); /* Este es el vector con las matrices D, para cada uno de los K rayos (hay que convertirlas en vectores).
         Tenemos cantLaseres rayos que rotaremos aproximadamente 2n veces (y asi los rotamos 180º). */
 
         vector<vector<double> > D_k; //matriz auxiliar del D_k del laser a calcular.
@@ -195,7 +195,7 @@ VectorMapMatrix  generarRayos(size_t tamMatriz, int metodo_usado, int cantLasere
 
         VectorMapMatrix D_ks(0, tamMatriz*tamMatriz);
 
-        D_ks.reservar(6 * tamMatriz*cantLaseres, tamMatriz*tamMatriz);
+        D_ks.reservar(tamMatriz*tamMatriz, 6 * tamMatriz*cantLaseres);
         /* Este es el vector con las matrices D, para cada uno de los K rayos (hay que convertirlas en vectores).
         Tenemos 2*cantLaseres rayos que rotaremos aproximadamente 3tamMatriz veces. */
 
@@ -225,7 +225,7 @@ VectorMapMatrix  generarRayos(size_t tamMatriz, int metodo_usado, int cantLasere
 
         VectorMapMatrix D_ks(0, tamMatriz*tamMatriz);
 
-        D_ks.reservar(6 * tamMatriz*cantLaseres, tamMatriz*tamMatriz);
+        D_ks.reservar(tamMatriz*tamMatriz, 6 * tamMatriz*cantLaseres); //ancho, alto
         /* Este es el vector con las matrices D, para cada uno de los K rayos (hay que convertirlas en vectores).
         Tenemos 2*cantLaseres rayos que rotaremos aproximadamente 3tamMatriz veces. */
 
