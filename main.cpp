@@ -166,7 +166,7 @@ VectorMapMatrix  generarRayos(size_t tamMatriz, int metodo_usado, int cantLasere
 
         VectorMapMatrix D_ks(0, tamMatriz*tamMatriz); /*creamos el result con 0 maps (los vamos a agregar despues
  * uno por uno.*/
-        D_ks.reservar(2 * cantLaseres * tamMatriz, tamMatriz*tamMatriz); /* Este es el vector con las matrices D, para cada uno de los K rayos (hay que convertirlas en vectores).
+        D_ks.reservar(tamMatriz*tamMatriz, 2 * cantLaseres * tamMatriz); /* Este es el vector con las matrices D, para cada uno de los K rayos (hay que convertirlas en vectores).
         Tenemos cantLaseres rayos que rotaremos aproximadamente 2n veces (y asi los rotamos 180º). */
 
         vector<vector<double> > D_k; //matriz auxiliar del D_k del laser a calcular.
@@ -195,7 +195,7 @@ VectorMapMatrix  generarRayos(size_t tamMatriz, int metodo_usado, int cantLasere
 
         VectorMapMatrix D_ks(0, tamMatriz*tamMatriz);
 
-        D_ks.reservar(6 * tamMatriz*cantLaseres, tamMatriz*tamMatriz);
+        D_ks.reservar(tamMatriz*tamMatriz, 6 * tamMatriz*cantLaseres);
         /* Este es el vector con las matrices D, para cada uno de los K rayos (hay que convertirlas en vectores).
         Tenemos 2*cantLaseres rayos que rotaremos aproximadamente 3tamMatriz veces. */
 
@@ -225,7 +225,7 @@ VectorMapMatrix  generarRayos(size_t tamMatriz, int metodo_usado, int cantLasere
 
         VectorMapMatrix D_ks(0, tamMatriz*tamMatriz);
 
-        D_ks.reservar(6 * tamMatriz*cantLaseres, tamMatriz*tamMatriz);
+        D_ks.reservar(tamMatriz*tamMatriz, 6 * tamMatriz*cantLaseres); //ancho, alto
         /* Este es el vector con las matrices D, para cada uno de los K rayos (hay que convertirlas en vectores).
         Tenemos 2*cantLaseres rayos que rotaremos aproximadamente 3tamMatriz veces. */
 
@@ -300,13 +300,13 @@ vector<double> reconstruirCuerpo(string nombreAchivoEntrada, vector<double>* V, 
 	// 6) multiplicamos la matriz D por el vector V invertido
 	vector<double> T = D*Vinv;
 	// 7) le aplicamos ruido al vector T
-	vector<double> vectorCuerpoDiscretizadoConRuido = uniformNoise(T, inicioRuido, finRuido, signoRuido);
+	vector<double> Tr = uniformNoise(T, inicioRuido, finRuido, signoRuido);
 	// 8) generamos DtD
 	VectorMapMatrix Dt = getTraspuesta(D);
 	vector<vector<double>> DtD = Dt*D;//multMatPorMat(Dt,D);
 	
 	// 9) generamos el vector Dt*T
-	vector<double> DtT = Dt*T;
+	vector<double> DtT = Dt*Tr;
 	// 10) resolvemos el sistema DtDx = DtT con EG
 	pair<vector<double>,short> solucion = EG2(DtD, DtT);
 	vector<double> Check (V->size(), 0);
@@ -358,14 +358,14 @@ void experimentacion_barrido_H(unsigned char discretizacion, pair<float,float> r
 int main(int argc, char * argv[]) {
 
 	//reconstruirCuerpos("dicom_csv2", 4, 3, 2, 1);
-
+	
 	//VectorMapMatrix  D = generarRayos(500,true);
     vector<double>* cuerpo;
     //cuerpo = leerCSV("dicom_csv2/1.2.826.0.1.3680043.2.656.1.138.1.csv");
 
 	//cout << (*matriz)[0].size() << endl;
 
-	vector<double> asd = reconstruirCuerpo("dicom_csv2/1.2.826.0.1.3680043.2.656.1.138.1.csv", cuerpo, 16, 0, 1, 0.5);
+	vector<double> asd = reconstruirCuerpo("dicom_csv2/1.2.826.0.1.3680043.2.656.1.138.1.csv", cuerpo, 16, 0.4, 0.5, 0);
 
 /*	vector<vector<double>> mat(20,vector<double> (20,0));
 
