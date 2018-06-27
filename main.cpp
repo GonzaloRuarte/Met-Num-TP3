@@ -300,7 +300,7 @@ vector<double> reconstruirCuerpo(string nombreAchivoEntrada, vector<double>* V, 
 	// 6) multiplicamos la matriz D por el vector V invertido
 	vector<double> T = D*Vinv;
 	// 7) le aplicamos ruido al vector T
-	vector<double> vectorCuerpoDiscretizadoConRuido = uniformNoise(T, inicioRuido, finRuido, signoRuido);
+	vector<double> Tr = uniformNoise(T, inicioRuido, finRuido, signoRuido);
 	// 8) generamos DtD
 	VectorMapMatrix Dt = getTraspuesta(D);
 	vector<vector<double>> DtD = Dt*D;//multMatPorMat(Dt,D);
@@ -358,14 +358,14 @@ void experimentacion_barrido_H(unsigned char discretizacion, pair<float,float> r
 int main(int argc, char * argv[]) {
 
 	//reconstruirCuerpos("dicom_csv2", 4, 3, 2, 1);
-
+	
 	//VectorMapMatrix  D = generarRayos(500,true);
     vector<double>* cuerpo;
     //cuerpo = leerCSV("dicom_csv2/1.2.826.0.1.3680043.2.656.1.138.1.csv");
 
 	//cout << (*matriz)[0].size() << endl;
 
-	vector<double> asd = reconstruirCuerpo("dicom_csv2/1.2.826.0.1.3680043.2.656.1.138.1.csv", cuerpo, 16, 0, 1, 0.5);
+	vector<double> asd = reconstruirCuerpo("dicom_csv2/1.2.826.0.1.3680043.2.656.1.138.1.csv", cuerpo, 16, 0, 0.5, 0);
 
 /*	vector<vector<double>> mat(20,vector<double> (20,0));
 
