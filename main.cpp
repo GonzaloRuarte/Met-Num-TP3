@@ -306,7 +306,7 @@ vector<double> reconstruirCuerpo(string nombreAchivoEntrada, vector<double>* V, 
 	vector<vector<double>> DtD = Dt*D;//multMatPorMat(Dt,D);
 	
 	// 9) generamos el vector Dt*T
-	vector<double> DtT = Dt*T;
+	vector<double> DtT = Dt*Tr;
 	// 10) resolvemos el sistema DtDx = DtT con EG
 	pair<vector<double>,short> solucion = EG2(DtD, DtT);
 	vector<double> Check (V->size(), 0);
@@ -365,7 +365,7 @@ int main(int argc, char * argv[]) {
 
 	//cout << (*matriz)[0].size() << endl;
 
-	vector<double> asd = reconstruirCuerpo("dicom_csv2/1.2.826.0.1.3680043.2.656.1.138.1.csv", cuerpo, 16, 0, 0.5, 0);
+	vector<double> asd = reconstruirCuerpo("dicom_csv2/1.2.826.0.1.3680043.2.656.1.138.1.csv", cuerpo, 16, 0.4, 0.5, 0);
 
 /*	vector<vector<double>> mat(20,vector<double> (20,0));
 
