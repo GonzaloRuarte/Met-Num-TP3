@@ -27,7 +27,7 @@ double ECM(const vector<double>& original, const vector<double>& reconstruido);
 pair<vector<double>,short> EG2(vector<vector<double>> &mat, vector<double> bb);
 double operator*(const vector<double>& u, const vector<double>& v);
 vector<double> operator*(const vector<vector<double> >& M, const vector<double>& v);
-void experimentacion_barrido_H(const string& directorio, const vector<unsigned char>& discretizaciones, const vector<pair<float,float> >& ruidos, const vector<unsigned short int>& espacios_entre_censores);
+void experimentacion_barrido_H(const string& directorio, uint taman_imags, const vector<unsigned char>& discretizaciones, const vector<pair<float,float> >& ruidos, const vector<unsigned short int>& espacios_entre_censores);
 void listarDirectorio(const string& directorio,  vector<string>& v);
 
 

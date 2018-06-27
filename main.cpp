@@ -325,7 +325,7 @@ vector<double> reconstruirCuerpo(string nombreAchivoEntrada, vector<double>* V, 
 
 //double ECM(vector<double> original, vector<double> reconstruido)
 
-vector<double>& medirErrorDeReconstruccion(string nombreDirectorioEntrada, uint tamanoDiscretizacion, double inicioRuido, double finRuido, double signoRuido) {
+vector<double> medirErrorDeReconstruccion(string nombreDirectorioEntrada, uint tamanoDiscretizacion, double inicioRuido, double finRuido, double signoRuido) {
 	vector<string> listadoDirectorio;
     listarDirectorio(nombreDirectorioEntrada, listadoDirectorio);
 	vector<double>* cuerpoDiscretizado;

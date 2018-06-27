@@ -289,38 +289,38 @@ vector<double> operator*(const vector<vector<double> >& M, const vector<double>&
 void experimentacion_barrido_H(const string& directorio, uint taman_imags, const vector<unsigned char>& discretizaciones, const vector<pair<float,float> >& ruidos, const vector<unsigned short int>& espacios_entre_censores) {   //Necesito saber el tamaño de las imagenes de antemano.
     vector<string> archivos;
     listarDirectorio(directorio, archivos);
+    /*archivos.push_back("Imagenes_para_probar/1.2.826.0.1.3680043.2.656.1.138.1.csv");*/
     ofstream salida;
     for(size_t ind_disc = 0; ind_disc < discretizaciones.size(); ++ind_disc){
         for(size_t ind_espac = 0; ind_espac < espacios_entre_censores.size(); ++ind_espac){
             VectorMapMatrix D = generarRayos_barrido_H(taman_imags/discretizaciones[ind_disc], espacios_entre_censores[ind_espac]);
             VectorMapMatrix Dt = getTraspuesta(D);
             vector<vector<double> > Dt_D = Dt * D;
-            salida.open("Discretización:"+to_string(discretizaciones[ind_disc])+" espaciado:"+to_string(espacios_entre_censores[ind_espac])+" .txt");
+            salida.open("resultados de prueba/Discretización:"+to_string(discretizaciones[ind_disc])+" espaciado:"+to_string(espacios_entre_censores[ind_espac])+" .txt");
             salida.close(); //La intención de estas 2 lineas es poner en blanco el archivo si ya existe.
             for(size_t ind_arch = 0; ind_arch < archivos.size(); ++ind_arch){
                 vector<vector<double> > *imagen_entera = leerCSV(archivos[ind_arch]);
                 vector<vector<double> > imagen_discreta = discretizar(*imagen_entera, discretizaciones[ind_disc]);
                 vector<double> vec_imagen_discreta = pasarAVector(imagen_discreta);
                 vector<double> t_sin_ruido = D * vec_imagen_discreta;
-                salida.open("Discretización:"+to_string(discretizaciones[ind_disc])+" espaciado:"+to_string(espacios_entre_censores[ind_espac])+" .txt", ios::app);
+                salida.open("resultados de prueba/Discretización:"+to_string(discretizaciones[ind_disc])+" espaciado:"+to_string(espacios_entre_censores[ind_espac])+" .txt", ios::app);
                 salida << "Imagen "+archivos[ind_arch]+":\t";
                 salida.close();
                 for(size_t ind_ruido = 0; ind_ruido < ruidos.size(); ++ind_ruido){
                     vector<double> t_con_ruido = uniformNoise(t_sin_ruido, ruidos[ind_ruido].first, ruidos[ind_ruido].second, 0);
                     pair<vector<double>, short> v = EG2(Dt_D, Dt * t_con_ruido);
                     double error = ECM(vec_imagen_discreta, v.first);
-                    salida.open("Discretización:"+to_string(discretizaciones[ind_disc])+" espaciado:"+to_string(espacios_entre_censores[ind_espac])+" .txt", ios::app);
+                    salida.open("resultados de prueba/Discretización:"+to_string(discretizaciones[ind_disc])+" espaciado:"+to_string(espacios_entre_censores[ind_espac])+" .txt", ios::app);
                     salida << error << ",\t";
                     salida.close();
                 }
-                salida.open("Discretización:"+to_string(discretizaciones[ind_disc])+" espaciado:"+to_string(espacios_entre_censores[ind_espac])+" .txt", ios::app);
+                salida.open("resultados de prueba/Discretización:"+to_string(discretizaciones[ind_disc])+" espaciado:"+to_string(espacios_entre_censores[ind_espac])+" .txt", ios::app);
                 salida << endl;
                 salida << endl; //Lo hago 2 veces para mejor visibilidad.
                 salida.close();
             }
         }
     }
-    return;
 }
 
 void listarDirectorio(const string& directorio,  vector<string>& v)
