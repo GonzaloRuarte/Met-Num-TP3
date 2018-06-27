@@ -33,9 +33,11 @@ void rotarContrarreloj(pair<uint,uint>& p1, pair<uint,uint>& p2, size_t n);
  * posición i-ésima al punto del pixel de inicio, de la recta rayo, que pasa por la fila i-ésima, el segundo vector
  * tiene el punto del pixel donde termina dicha recta.
  * @param n tamaño de la matriz imagen resultante, que será del mismo tamaño que la matriz D^k.
+ * @param cada_cuanto distancia entre cada laser generado.
+ * @param offset distancia inicial al primer laser.
  * @result par de vectores con los pixeles inicio fin de las rectas horizontales de toda una matriz imagen de nxn.
  */
-pair<vector<pair<uint,uint> >, vector<pair<uint,uint> > > inicios_fines_horizontales(size_t n);
+pair<vector<pair<uint,uint> >, vector<pair<uint,uint> > > inicios_fines_horizontales(size_t n, size_t cada_cuanto, size_t offset);
 
 /**
  * Crea una matriz D_k del mismo tamaño que la imágen que será el resultado (nxn), donde un 1 en esa posición indica
