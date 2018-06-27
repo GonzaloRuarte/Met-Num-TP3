@@ -150,9 +150,12 @@ vector<vector<uint16_t>> datosAMatriz(uchar &datos, uint ancho, uint alto) {
  * la imagen y rotaran, si vale 2, estos rayos son colocados en el tope y fondo verticales de la imagen, y tambien rotan.
  * @param cantLaseres es la cantidad de laseres que se desean, DEBE SER DIVISOR DE tamMatriz o la función puede tener
  * resultados indeseables, (como minimo puede pasar que no se obtenga la cantidad deseada de laseres, o cosas peores).
+ * @param saltear_hasta_n es la cantidad de pixeles rotados que saltearemos despues de cada rayo disparado, el minimo
+ * valor permitido es 1 (CON 0 SE ROMPE) y aumentar el valor reduce el tiempo de computo, pero tambien reduce la
+ * precision.
  * @return La matriz D con todos los D_k.
  */
-VectorMapMatrix  generarRayos(size_t tamMatriz, int metodo_usado, int cantLaseres) {
+VectorMapMatrix  generarRayos(size_t tamMatriz, int metodo_usado, int cantLaseres, int saltear_hasta_n) {
 	// creamos un laser de cada una de las esquinas
 	if (metodo_usado == 0){
         pair<vector<pair<uint,uint> >, vector<pair<uint,uint> > > laseresYsensores =
@@ -167,15 +170,20 @@ VectorMapMatrix  generarRayos(size_t tamMatriz, int metodo_usado, int cantLasere
         Tenemos cantLaseres rayos que rotaremos aproximadamente 2n veces (y asi los rotamos 180º). */
 
         vector<vector<double> > D_k; //matriz auxiliar del D_k del laser a calcular.
+        int rotaciones = 0; //Cantidad de rotaciones ejecutadas, solo calcularemos cuando rotaciones%saltear_hasta_n == 0
         for(int i = 0; i < 2 * tamMatriz; i++) {
-            for(uint j = 0; j < laseres.size(); j++) {
-                D_k = trazar_recta_en_matriz_D(laseres[j], sensores[j], tamMatriz);
-                map<uint, double> D_k_map = pasarAMap(D_k);
-                D_ks.agregarFila(D_k_map);
+            if (rotaciones % saltear_hasta_n == 0){ //si rotamos la cantidad correcta entonces calculamos.
+                for(uint j = 0; j < laseres.size(); j++) {
+                    D_k = trazar_recta_en_matriz_D(laseres[j], sensores[j], tamMatriz);
+                    map<uint, double> D_k_map = pasarAMap(D_k);
+                    D_ks.agregarFila(D_k_map);
+                }
             }
-            for(uint i = 0; i<laseres.size(); i++) {
-                rotarContrarreloj(laseres[i],sensores[i],tamMatriz);
+
+            for(uint j = 0; j<laseres.size(); j++) {
+                rotarContrarreloj(laseres[j],sensores[j],tamMatriz);
             }
+            rotaciones++;
         }
 
         return D_ks;
@@ -192,15 +200,20 @@ VectorMapMatrix  generarRayos(size_t tamMatriz, int metodo_usado, int cantLasere
         Tenemos 2*cantLaseres rayos que rotaremos aproximadamente 3tamMatriz veces. */
 
         vector<vector<double> > D_k; //matriz auxiliar del D_k del laser a calcular.
+
+        int rotaciones = 0; //Cantidad de rotaciones ejecutadas, solo calcularemos cuando rotaciones%saltear_hasta_n == 0
         while(sensores[0].first != tamMatriz - 1 or sensores[0].second != 0) { //Esto quiza es dificil de ver, pero para los laseres izquierdos
             // que se saltean el horizontal, este es la ultima posicion interesante a la que apuntan. NOTA IMPORTANTE,
             // SI SE HACEN MAS DE UN SALTO PUEDE QUE ESTO NO TERMINE. ASIQUE CUIDADO CON PONER MAS DE UN rotarLaseres.
-            for(uint i = 0; i < laseres.size(); i++) {
-                D_k = trazar_recta_en_matriz_D(laseres[i], sensores[i], tamMatriz);
-                map<uint, double> D_k_map = pasarAMap(D_k);
-                D_ks.agregarFila(D_k_map);
+            if (rotaciones % saltear_hasta_n == 0) { //si rotamos la cantidad correcta entonces calculamos.
+                for (uint i = 0; i < laseres.size(); i++) {
+                    D_k = trazar_recta_en_matriz_D(laseres[i], sensores[i], tamMatriz);
+                    map<uint, double> D_k_map = pasarAMap(D_k);
+                    D_ks.agregarFila(D_k_map);
+                }
             }
             barrerLaseres_H(laseres,sensores,tamMatriz);
+            rotaciones++;
         }
 
         return D_ks;
@@ -217,23 +230,29 @@ VectorMapMatrix  generarRayos(size_t tamMatriz, int metodo_usado, int cantLasere
         Tenemos 2*cantLaseres rayos que rotaremos aproximadamente 3tamMatriz veces. */
 
         vector<vector<double> > D_k; //matriz auxiliar del D_k del laser a calcular.
+        int rotaciones = 0; //Cantidad de rotaciones ejecutadas, solo calcularemos cuando rotaciones%saltear_hasta_n == 0
+
+
         while(sensores[0].first != tamMatriz - 1 or sensores[0].second != 0) { //Esto quiza es dificil de ver, pero para los laseres izquierdos
             // que se saltean el horizontal, este es la ultima posicion interesante a la que apuntan. NOTA IMPORTANTE,
             // SI SE HACEN MAS DE UN SALTO PUEDE QUE ESTO NO TERMINE. ASIQUE CUIDADO CON PONER MAS DE UN rotarLaseres.
-            for(uint i = 0; i < laseres.size(); i++) {
-                D_k = trazar_recta_en_matriz_D(laseres[i], sensores[i], tamMatriz);
-                //Traspongo para conseguir la recta si el rayo fuese vertical.
-                vector<vector<double> > D_k_transp(D_k.size(), vector<double>(D_k[0].size()) );
+            if (rotaciones % saltear_hasta_n == 0) { //si rotamos la cantidad correcta entonces calculamos.
+                for(uint i = 0; i < laseres.size(); i++) {
+                    D_k = trazar_recta_en_matriz_D(laseres[i], sensores[i], tamMatriz);
+                    //Traspongo para conseguir la recta si el rayo fuese vertical.
+                    vector<vector<double> > D_k_transp(D_k.size(), vector<double>(D_k[0].size()) );
 
-                for(uint i = 0; i < D_k.size(); ++i)
-                    for (unsigned int j=0; j < D_k[0].size(); ++j)
-                        D_k_transp[j][i] = D_k[i][j];
+                    for(uint i = 0; i < D_k.size(); ++i)
+                        for (unsigned int j=0; j < D_k[0].size(); ++j)
+                            D_k_transp[j][i] = D_k[i][j];
 
 
-                map<uint, double> D_k_map = pasarAMap(D_k_transp);
-                D_ks.agregarFila(D_k_map);
+                    map<uint, double> D_k_map = pasarAMap(D_k_transp);
+                    D_ks.agregarFila(D_k_map);
+                }
             }
             barrerLaseres_H(laseres,sensores,tamMatriz);
+            rotaciones++;
         }
 
         return D_ks;
@@ -267,7 +286,7 @@ vector<double> reconstruirCuerpo(string nombreAchivoEntrada, vector<double>* V, 
 	vector<vector<double> > cuerpoDiscretizado = discretizar(*cuerpo, tamanoDiscretizacion);
 	size_t tamMatriz = cuerpoDiscretizado.size();
 	// 3) obtenemos D (la matriz con las trayectorias de los rayos
-	VectorMapMatrix  D = generarRayos(tamMatriz,1, 4);
+	VectorMapMatrix  D = generarRayos(tamMatriz,0, 32, 4); //tamaño discretizado, metodo a utilizar, cantidad de rayos, pixeles salteados-1.
 	// 4) pasamos la imagen discretizada a vector
 	vector<double> Vtemp = pasarAVector(cuerpoDiscretizado);
 	V = &Vtemp;
