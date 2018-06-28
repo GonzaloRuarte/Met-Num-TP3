@@ -464,3 +464,25 @@ void listarDirectorio(const string& directorio,  vector<string>& v)
     closedir(dirp);
 }
 
+void escribirVector(string nombreArchivo, vector<double>& vector) {
+    ofstream salida(nombreArchivo, ios_base::out);
+    for (int i=0; i < vector.size(); i++) {
+        salida << vector[i] << endl;
+    }
+    salida.close();
+}
+
+
+void escribirVectorDeVectores(string nombreArchivo, vector<vector<double>>& vector) {
+    ofstream salida(nombreArchivo, ios_base::out);
+    string linea = "";
+    for (int i=0; i < vector.size(); i++) {
+        for (int j=0; j <vector[i].size(); j++) {
+            linea += to_string(vector[i][j]) + " ";
+
+        }
+        salida << linea << endl;
+        linea = "";
+    }
+    salida.close();
+}
