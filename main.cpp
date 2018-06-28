@@ -175,14 +175,14 @@ vector<double> reconstruirCuerpo(string nombreAchivoEntrada, vector<double>* V, 
 	vector<double> Vtemp = pasarAVector(cuerpoDiscretizado);
 	V = &Vtemp;
 	// 5) invertimos el vector V
-	vector<double> Vinv (V->size(), 0);
+	/*vector<double> Vinv (V->size(), 0);
 	for (uint i = 0; i< V->size(); i++){
 		if ((*V)[i] != 0){
 			Vinv[i] = 1/(*V)[i];
 		}
-	}
-	// 6) multiplicamos la matriz D por el vector V invertido
-	vector<double> T = D*Vinv;
+	} No hay que invertir.*/
+	// 6) multiplicamos la matriz D por el vector V
+	vector<double> T = D*Vtemp;
 	// 7) le aplicamos ruido al vector T
 	vector<double> Tr = uniformNoise(T, inicioRuido, finRuido, signoRuido);
 	// 8) generamos DtD
@@ -193,14 +193,14 @@ vector<double> reconstruirCuerpo(string nombreAchivoEntrada, vector<double>* V, 
 	vector<double> DtT = Dt*Tr;
 	// 10) resolvemos el sistema DtDx = DtT con EG
 	pair<vector<double>,short> solucion = EG2(DtD, DtT);
-	vector<double> Check (V->size(), 0);
+	/*vector<double> Check (V->size(), 0);
 	for (uint i = 0; i< V->size(); i++){
 		if (abs(solucion.first[i]) > 0.00001){
 			Check[i] = 1/solucion.first[i];
 		}
-	}
+	} No hay que invertir.*/
 
-	cout << ECM(*V,Check) << endl;
+	cout << ECM(*V,solucion.first) << endl;
 	// invertir los valores de la solucion y volverlo a pasar a matriz para luego convertirlo en una imagen que podamos ver
 	return solucion.first;
 }
@@ -290,7 +290,7 @@ int main(int argc, char * argv[]) {
     experimentacion('h', archivos, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
     experimentacion('v', archivos, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
     experimentacion('r', archivos, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
-    
+
     return 0;
 }
 
