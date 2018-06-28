@@ -6,10 +6,11 @@
 #include <iostream>
 #include <fstream>
 #include <random>
-#include "ppmloader.h"
-#include "dirent.h"
-#include <sstream>
 #include <stdio.h>
+#include <sstream>
+#include "dirent.h"
+#include "rdtsc.h"
+#include "ppmloader.h"
 #include "VectorMapMatrix.h"
 #include "calcular_rayos.h"
 

@@ -86,46 +86,6 @@ vector<double> pasarAVector(const vector<vector<double> >& mat){
 	return res;
 
 }
-/*
-
-*/
-/**
- * Genera Matriz con todos los D_kij
- * @param tamMatriz tamaño de la imagen discretizada.
- * @param horizontales Si se desea generar rayos fijos se coloca en true, si se coloca en false se crean n rayos horizontales y se rotan 2n veces.
- * @return La matriz D con todos los D_k (falta convertir las matrices D_k en vectores.
- *//*
-
-VectorMapMatrix  generarRayos(size_t tamMatriz, bool fijos) {
-    // creamos un laser de cada una de las esquinas
-    vector<pair<uint,uint> > laseres = crearLaseres(tamMatriz, tamMatriz/4, tamMatriz/8, 0); //tamano, despues cada_cuanta_dist, offset, max_cant de rayos.
-    vector<pair<uint,uint> > sensores = crearPuntosDeFin(laseres, tamMatriz);
-
-    VectorMapMatrix D_ks((tamMatriz^2)*6, tamMatriz*tamMatriz); // Este es el vector con las matrices D, para cada uno de los K rayos (hay que convertirlas en vectores).
-    //Tenemos 2n rayos que rotaremos aproximadamente 3n veces.
-
-    vector<vector<double> > D_k; //matriz auxiliar del D_k del laser calculado recien.
-    while(sensores[0].first != tamMatriz - 1 or sensores[0].second != 0) { //Esto quiza es dificil de ver, pero para los laseres izquierdos
-        // que se saltean el horizontal, este es la ultima posicion interesante a la que apuntan. NOTA IMPORTANTE,
-        // SI SE HACEN MAS DE UN SALTO PUEDE QUE ESTO NO TERMINE. ASIQUE CUIDADO CON PONER MAS DE UN rotarLaseres.
-        for(uint i = 0; i < laseres.size(); i++) {
-            D_k = trazar_recta_en_matriz_D(laseres[i], sensores[i], tamMatriz);
-            map<uint, double> D_k_map = pasarAMap(D_k);
-            D_ks.agregarFila(D_k_map);
-        }
-        rotarLaseres(laseres,sensores,tamMatriz);
-    }
-
-    return D_ks;
-
-    */
-/*for (int i = 0; i<tamMatriz; i++) {
-//		trazar_recta_en_matriz_D(laseres, sensores, tamMatriz);
-
-    }*//*
-
-}
-*/
 
 VectorMapMatrix generarRayos_barrido_H(size_t tamMatriz, size_t cada_cuanto) {
     vector<pair<uint,uint> > laseres = crearLaseres(tamMatriz, cada_cuanto, cada_cuanto/2, 0);
@@ -337,110 +297,70 @@ void experimentacion_barrido_H(const string& directorio, uint taman_imags, const
  */
 void experimentacion(char tipo, const vector<string>& archivos, uint taman_imags, const vector<unsigned short int>& discretizaciones, const vector<unsigned short int>& cantidades_de_fuentes, const vector<unsigned short int>& separaciones, const vector<pair<float,float> >& ruidos) {   //Necesito saber el tamaño de las imagenes de antemano.
     ofstream salida;
-    if(tipo == 'h'){  //Barrido horizontal:
-        for(size_t ind_disc = 0; ind_disc < discretizaciones.size(); ++ind_disc){
-            for(size_t ind_fuent = 0; ind_fuent < cantidades_de_fuentes.size(); ++ind_fuent){
-                for(size_t ind_separ = 0; ind_separ < separaciones.size(); ++ind_separ){
-                    uint cant_casilleros = taman_imags/discretizaciones[ind_disc];
-                    if(cantidades_de_fuentes[ind_fuent] <= cant_casilleros && separaciones[ind_separ] < cant_casilleros/2){ //Quiero que cada fuente genere al menos 6 rayos (aproximadamente).
-                        VectorMapMatrix D = generarRayos(cant_casilleros, 1, cantidades_de_fuentes[ind_fuent], separaciones[ind_separ]);
-                        VectorMapMatrix Dt = getTraspuesta(D);
-                        vector<vector<double> > Dt_D = Dt * D;
-                        string nombre_arch_salida = "resultados de prueba/Tipo:H Discretización:"+to_string(discretizaciones[ind_disc])+" cantidad_fuentes:"+to_string(cantidades_de_fuentes[ind_fuent])+" separacion:"+to_string(separaciones[ind_separ])+" .txt";
-                        salida.open(nombre_arch_salida);
-                        salida.close(); //La intención de estas 2 lineas es poner en blanco el archivo si ya existe.
-                        for(size_t ind_arch = 0; ind_arch < archivos.size(); ++ind_arch){
-                            vector<vector<double> > *imagen_entera = leerCSV(archivos[ind_arch]);
-                            vector<vector<double> > imagen_discreta = discretizar(*imagen_entera, discretizaciones[ind_disc]);
-                            vector<double> vec_imagen_discreta = pasarAVector(imagen_discreta);
-                            vector<double> t_sin_ruido = D * vec_imagen_discreta;
-                            salida.open(nombre_arch_salida, ios::app);
-                            salida << "Imagen "+archivos[ind_arch]+":\t";
-                            salida.close();
-                            for(size_t ind_ruido = 0; ind_ruido < ruidos.size(); ++ind_ruido){
-                                vector<double> t_con_ruido = uniformNoise(t_sin_ruido, ruidos[ind_ruido].first, ruidos[ind_ruido].second, 0);
-                                pair<vector<double>, short> v = EG2(Dt_D, Dt * t_con_ruido);
-                                double error = ECM(vec_imagen_discreta, v.first);
-                                salida.open(nombre_arch_salida, ios::app);
-                                salida << error << ",\t";
-                                salida.close();
-                            }
-                            salida.open(nombre_arch_salida, ios::app);
-                            salida << endl << endl; //Lo hago 2 veces para mejor visibilidad.
-                            salida.close();
-                        }
+    for(size_t ind_disc = 0; ind_disc < discretizaciones.size(); ++ind_disc){
+        for(size_t ind_fuent = 0; ind_fuent < cantidades_de_fuentes.size(); ++ind_fuent){
+            for(size_t ind_separ = 0; ind_separ < separaciones.size(); ++ind_separ){
+                uint cant_casilleros = taman_imags/discretizaciones[ind_disc];
+                if(cantidades_de_fuentes[ind_fuent] <= cant_casilleros && separaciones[ind_separ] < cant_casilleros/2){ //Quiero que cada fuente genere al menos 6 o 4 rayos aproximadamente (6 para blos barridos y 4 para la rotación)
+                    VectorMapMatrix D;
+                    string nombre_arch_salida;
+                    unsigned long comienzo, final, ciclos_clock;
+                    if(tipo == 'r') {  //Rotaciones
+                        RDTSC_START(comienzo);
+                        D = generarRayos(cant_casilleros, 0, cantidades_de_fuentes[ind_fuent], separaciones[ind_separ]);
+                        RDTSC_STOP(final);
+                        nombre_arch_salida = "resultados de prueba/Tipo:R";
+                    }else if(tipo == 'h'){  //Barrido horizontal
+                        RDTSC_START(comienzo);
+                        D = generarRayos(cant_casilleros, 1, cantidades_de_fuentes[ind_fuent], separaciones[ind_separ]);
+                        RDTSC_STOP(final);
+                        nombre_arch_salida = "resultados de prueba/Tipo:H";
+                    }else if(tipo == 'v') {  //Barrido vertical
+                        RDTSC_START(comienzo);
+                        D = generarRayos(cant_casilleros, 2, cantidades_de_fuentes[ind_fuent], separaciones[ind_separ]);
+                        RDTSC_STOP(final);
+                        nombre_arch_salida = "resultados de prueba/Tipo:V";
                     }
-                }
-            }
-        }
-    }else if(tipo == 'v'){  //Barrido vertical:
-        for(size_t ind_disc = 0; ind_disc < discretizaciones.size(); ++ind_disc){
-            for(size_t ind_fuent = 0; ind_fuent < cantidades_de_fuentes.size(); ++ind_fuent){
-                for(size_t ind_separ = 0; ind_separ < separaciones.size(); ++ind_separ){
-                    uint cant_casilleros = taman_imags/discretizaciones[ind_disc];
-                    if(cantidades_de_fuentes[ind_fuent] <= cant_casilleros && separaciones[ind_separ] < cant_casilleros/2){ //Quiero que cada fuente genere al menos 6 rayos (aproximadamente).
-                        VectorMapMatrix D = generarRayos(cant_casilleros, 2, cantidades_de_fuentes[ind_fuent], separaciones[ind_separ]);
-                        VectorMapMatrix Dt = getTraspuesta(D);
-                        vector<vector<double> > Dt_D = Dt * D;
-                        string nombre_arch_salida = "resultados de prueba/Tipo:V Discretización:"+to_string(discretizaciones[ind_disc])+" cantidad_fuentes:"+to_string(cantidades_de_fuentes[ind_fuent])+" separacion:"+to_string(separaciones[ind_separ])+" .txt";
-                        salida.open(nombre_arch_salida);
-                        salida.close(); //La intención de estas 2 lineas es poner en blanco el archivo si ya existe.
-                        for(size_t ind_arch = 0; ind_arch < archivos.size(); ++ind_arch){
-                            vector<vector<double> > *imagen_entera = leerCSV(archivos[ind_arch]);
-                            vector<vector<double> > imagen_discreta = discretizar(*imagen_entera, discretizaciones[ind_disc]);
-                            vector<double> vec_imagen_discreta = pasarAVector(imagen_discreta);
-                            vector<double> t_sin_ruido = D * vec_imagen_discreta;
+                    ciclos_clock = final - comienzo;
+                    nombre_arch_salida += " Discretización:"+to_string(discretizaciones[ind_disc])+" cantidad_fuentes:"+to_string(cantidades_de_fuentes[ind_fuent])+" separacion:"+to_string(separaciones[ind_separ])+" .txt";
+                    salida.open(nombre_arch_salida);
+                    salida << "Cantidad rayos: " << D.cantFilas() << endl;
+                    salida << "Cantidad ciclos del calculo de los mismos: " << ciclos_clock << endl << endl;
+                    salida.close();
+                    RDTSC_START(comienzo);
+                    VectorMapMatrix Dt = getTraspuesta(D);
+                    vector<vector<double> > Dt_D = Dt * D;
+                    RDTSC_STOP(final);
+                    ciclos_clock += final - comienzo;
+                    unsigned long ciclos_antes_de_leer_imagenes = ciclos_clock;
+                    for(size_t ind_arch = 0; ind_arch < archivos.size(); ++ind_arch){
+                        ciclos_clock = ciclos_antes_de_leer_imagenes;
+                        vector<vector<double> > *imagen_entera = leerCSV(archivos[ind_arch]);
+                        RDTSC_START(comienzo);
+                        vector<vector<double> > imagen_discreta = discretizar(*imagen_entera, discretizaciones[ind_disc]);
+                        vector<double> vec_imagen_discreta = pasarAVector(imagen_discreta);
+                        vector<double> t_sin_ruido = D * vec_imagen_discreta;
+                        RDTSC_STOP(final);
+                        ciclos_clock += final - comienzo;
+                        unsigned long ciclos_antes_del_ruido = ciclos_clock;
+                        salida.open(nombre_arch_salida, ios::app);
+                        salida << "Imagen "+archivos[ind_arch]+":\t";
+                        salida.close();
+                        for(size_t ind_ruido = 0; ind_ruido < ruidos.size(); ++ind_ruido){
+                            ciclos_clock = ciclos_antes_del_ruido;
+                            RDTSC_START(comienzo);
+                            vector<double> t_con_ruido = uniformNoise(t_sin_ruido, ruidos[ind_ruido].first, ruidos[ind_ruido].second, 0);
+                            pair<vector<double>, short> v = EG2(Dt_D, Dt * t_con_ruido);
+                            double error = ECM(vec_imagen_discreta, v.first);
+                            RDTSC_STOP(final);
+                            ciclos_clock += final - comienzo;
                             salida.open(nombre_arch_salida, ios::app);
-                            salida << "Imagen "+archivos[ind_arch]+":\t";
-                            salida.close();
-                            for(size_t ind_ruido = 0; ind_ruido < ruidos.size(); ++ind_ruido){
-                                vector<double> t_con_ruido = uniformNoise(t_sin_ruido, ruidos[ind_ruido].first, ruidos[ind_ruido].second, 0);
-                                pair<vector<double>, short> v = EG2(Dt_D, Dt * t_con_ruido);
-                                double error = ECM(vec_imagen_discreta, v.first);
-                                salida.open(nombre_arch_salida, ios::app);
-                                salida << error << ",\t";
-                                salida.close();
-                            }
-                            salida.open(nombre_arch_salida, ios::app);
-                            salida << endl << endl; //Lo hago 2 veces para mejor visibilidad.
-                            salida.close();
-                        }
-                    }
-                }
-            }
-        }
-    }else if(tipo == 'r'){  //Rotaciones:
-        for(size_t ind_disc = 0; ind_disc < discretizaciones.size(); ++ind_disc){
-            for(size_t ind_fuent = 0; ind_fuent < cantidades_de_fuentes.size(); ++ind_fuent){
-                for(size_t ind_separ = 0; ind_separ < separaciones.size(); ++ind_separ){
-                    uint cant_casilleros = taman_imags/discretizaciones[ind_disc];
-                    if(cantidades_de_fuentes[ind_fuent] <= cant_casilleros && separaciones[ind_separ] < cant_casilleros/2){ //Quiero que cada fuente genere al menos 4 rayos (aproximadamente).
-                        VectorMapMatrix D = generarRayos(cant_casilleros, 0, cantidades_de_fuentes[ind_fuent], separaciones[ind_separ]);
-                        VectorMapMatrix Dt = getTraspuesta(D);
-                        vector<vector<double> > Dt_D = Dt * D;
-                        string nombre_arch_salida = "resultados de prueba/Tipo:R Discretización:"+to_string(discretizaciones[ind_disc])+" cantidad_fuentes:"+to_string(cantidades_de_fuentes[ind_fuent])+" separacion:"+to_string(separaciones[ind_separ])+" .txt";
-                        salida.open(nombre_arch_salida);
-                        salida.close(); //La intención de estas 2 lineas es poner en blanco el archivo si ya existe.
-                        for(size_t ind_arch = 0; ind_arch < archivos.size(); ++ind_arch){
-                            vector<vector<double> > *imagen_entera = leerCSV(archivos[ind_arch]);
-                            vector<vector<double> > imagen_discreta = discretizar(*imagen_entera, discretizaciones[ind_disc]);
-                            vector<double> vec_imagen_discreta = pasarAVector(imagen_discreta);
-                            vector<double> t_sin_ruido = D * vec_imagen_discreta;
-                            salida.open(nombre_arch_salida, ios::app);
-                            salida << "Imagen "+archivos[ind_arch]+":\t";
-                            salida.close();
-                            for(size_t ind_ruido = 0; ind_ruido < ruidos.size(); ++ind_ruido){
-                                vector<double> t_con_ruido = uniformNoise(t_sin_ruido, ruidos[ind_ruido].first, ruidos[ind_ruido].second, 0);
-                                pair<vector<double>, short> v = EG2(Dt_D, Dt * t_con_ruido);
-                                double error = ECM(vec_imagen_discreta, v.first);
-                                salida.open(nombre_arch_salida, ios::app);
-                                salida << error << ",\t";
-                                salida.close();
-                            }
-                            salida.open(nombre_arch_salida, ios::app);
-                            salida << endl << endl; //Lo hago 2 veces para mejor visibilidad.
+                            salida <<"Error: " << error << ", Ciclos de clock:" << ciclos_clock << ";\t";
                             salida.close();
                         }
+                        salida.open(nombre_arch_salida, ios::app);
+                        salida << endl << endl; //Lo hago 2 veces para mejor visibilidad.
+                        salida.close();
                     }
                 }
             }
