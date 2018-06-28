@@ -1,8 +1,30 @@
-cmake_minimum_required(VERSION 3.9)
-project(PageRank)
+cmake_minimum_required(VERSION 3.10)
+project(Código)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(tp3 main.cpp util.cpp rdtsc.h ppmloader.cpp ppmloader.h calcular_rayos.cpp calcular_rayos.h VectorMapMatrix.cpp)
+include_directories(.)
 
-add_executable(testcalcular_rayos test_main.cpp )
+add_executable(Test
+        calcular_rayos.cpp
+        calcular_rayos.h
+        ppmloader.cpp
+        ppmloader.h
+        rdtsc.h
+        test_main.cpp
+        util.cpp
+        util.h
+        VectorMapMatrix.cpp
+        VectorMapMatrix.h)
+
+add_executable(TP3
+        calcular_rayos.cpp
+        calcular_rayos.h
+        ppmloader.cpp
+        ppmloader.h
+        rdtsc.h
+        main.cpp
+        util.cpp
+        util.h
+        VectorMapMatrix.cpp
+        VectorMapMatrix.h)

@@ -45,91 +45,91 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /snap/clion/25/bin/cmake/bin/cmake
+CMAKE_COMMAND = /snap/clion/27/bin/cmake/bin/cmake
 
 # The command to remove a file.
-RM = /snap/clion/25/bin/cmake/bin/cmake -E remove -f
+RM = /snap/clion/27/bin/cmake/bin/cmake -E remove -f
 
 # Escaping for special characters.
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = "/home/nahuel/Escritorio/UBA/Mét. num./TP3/Código"
+CMAKE_SOURCE_DIR = "/home/nahuel/Escritorio/UBA/Mét. num./TP3/Codigo"
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = "/home/nahuel/Escritorio/UBA/Mét. num./TP3/Código/cmake-build-debug"
+CMAKE_BINARY_DIR = "/home/nahuel/Escritorio/UBA/Mét. num./TP3/Codigo/cmake-build-debug"
 
 #=============================================================================
-# Target rules for target CMakeFiles/testcalcular_rayos.dir
+# Target rules for target CMakeFiles/TP3.dir
 
 # All Build rule for target.
-CMakeFiles/testcalcular_rayos.dir/all:
-	$(MAKE) -f CMakeFiles/testcalcular_rayos.dir/build.make CMakeFiles/testcalcular_rayos.dir/depend
-	$(MAKE) -f CMakeFiles/testcalcular_rayos.dir/build.make CMakeFiles/testcalcular_rayos.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir="/home/nahuel/Escritorio/UBA/Mét. num./TP3/Código/cmake-build-debug/CMakeFiles" --progress-num=1,2 "Built target testcalcular_rayos"
-.PHONY : CMakeFiles/testcalcular_rayos.dir/all
+CMakeFiles/TP3.dir/all:
+	$(MAKE) -f CMakeFiles/TP3.dir/build.make CMakeFiles/TP3.dir/depend
+	$(MAKE) -f CMakeFiles/TP3.dir/build.make CMakeFiles/TP3.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir="/home/nahuel/Escritorio/UBA/Mét. num./TP3/Codigo/cmake-build-debug/CMakeFiles" --progress-num=1,2,3,4,5,6 "Built target TP3"
+.PHONY : CMakeFiles/TP3.dir/all
 
 # Include target in all.
-all: CMakeFiles/testcalcular_rayos.dir/all
+all: CMakeFiles/TP3.dir/all
 
 .PHONY : all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/testcalcular_rayos.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "/home/nahuel/Escritorio/UBA/Mét. num./TP3/Código/cmake-build-debug/CMakeFiles" 2
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/testcalcular_rayos.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start "/home/nahuel/Escritorio/UBA/Mét. num./TP3/Código/cmake-build-debug/CMakeFiles" 0
-.PHONY : CMakeFiles/testcalcular_rayos.dir/rule
+CMakeFiles/TP3.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start "/home/nahuel/Escritorio/UBA/Mét. num./TP3/Codigo/cmake-build-debug/CMakeFiles" 6
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/TP3.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start "/home/nahuel/Escritorio/UBA/Mét. num./TP3/Codigo/cmake-build-debug/CMakeFiles" 0
+.PHONY : CMakeFiles/TP3.dir/rule
 
 # Convenience name for target.
-testcalcular_rayos: CMakeFiles/testcalcular_rayos.dir/rule
+TP3: CMakeFiles/TP3.dir/rule
 
-.PHONY : testcalcular_rayos
-
-# clean rule for target.
-CMakeFiles/testcalcular_rayos.dir/clean:
-	$(MAKE) -f CMakeFiles/testcalcular_rayos.dir/build.make CMakeFiles/testcalcular_rayos.dir/clean
-.PHONY : CMakeFiles/testcalcular_rayos.dir/clean
+.PHONY : TP3
 
 # clean rule for target.
-clean: CMakeFiles/testcalcular_rayos.dir/clean
+CMakeFiles/TP3.dir/clean:
+	$(MAKE) -f CMakeFiles/TP3.dir/build.make CMakeFiles/TP3.dir/clean
+.PHONY : CMakeFiles/TP3.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/TP3.dir/clean
 
 .PHONY : clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/tp3.dir
+# Target rules for target CMakeFiles/Test.dir
 
 # All Build rule for target.
-CMakeFiles/tp3.dir/all:
-	$(MAKE) -f CMakeFiles/tp3.dir/build.make CMakeFiles/tp3.dir/depend
-	$(MAKE) -f CMakeFiles/tp3.dir/build.make CMakeFiles/tp3.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir="/home/nahuel/Escritorio/UBA/Mét. num./TP3/Código/cmake-build-debug/CMakeFiles" --progress-num=3,4,5,6,7,8 "Built target tp3"
-.PHONY : CMakeFiles/tp3.dir/all
+CMakeFiles/Test.dir/all:
+	$(MAKE) -f CMakeFiles/Test.dir/build.make CMakeFiles/Test.dir/depend
+	$(MAKE) -f CMakeFiles/Test.dir/build.make CMakeFiles/Test.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir="/home/nahuel/Escritorio/UBA/Mét. num./TP3/Codigo/cmake-build-debug/CMakeFiles" --progress-num=7,8,9,10,11,12 "Built target Test"
+.PHONY : CMakeFiles/Test.dir/all
 
 # Include target in all.
-all: CMakeFiles/tp3.dir/all
+all: CMakeFiles/Test.dir/all
 
 .PHONY : all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/tp3.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "/home/nahuel/Escritorio/UBA/Mét. num./TP3/Código/cmake-build-debug/CMakeFiles" 6
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/tp3.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start "/home/nahuel/Escritorio/UBA/Mét. num./TP3/Código/cmake-build-debug/CMakeFiles" 0
-.PHONY : CMakeFiles/tp3.dir/rule
+CMakeFiles/Test.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start "/home/nahuel/Escritorio/UBA/Mét. num./TP3/Codigo/cmake-build-debug/CMakeFiles" 6
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/Test.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start "/home/nahuel/Escritorio/UBA/Mét. num./TP3/Codigo/cmake-build-debug/CMakeFiles" 0
+.PHONY : CMakeFiles/Test.dir/rule
 
 # Convenience name for target.
-tp3: CMakeFiles/tp3.dir/rule
+Test: CMakeFiles/Test.dir/rule
 
-.PHONY : tp3
-
-# clean rule for target.
-CMakeFiles/tp3.dir/clean:
-	$(MAKE) -f CMakeFiles/tp3.dir/build.make CMakeFiles/tp3.dir/clean
-.PHONY : CMakeFiles/tp3.dir/clean
+.PHONY : Test
 
 # clean rule for target.
-clean: CMakeFiles/tp3.dir/clean
+CMakeFiles/Test.dir/clean:
+	$(MAKE) -f CMakeFiles/Test.dir/build.make CMakeFiles/Test.dir/clean
+.PHONY : CMakeFiles/Test.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/Test.dir/clean
 
 .PHONY : clean
 

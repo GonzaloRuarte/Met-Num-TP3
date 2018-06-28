@@ -10,6 +10,7 @@
 #include <tuple>
 #include <stdlib.h>
 #include "VectorMapMatrix.h"
+#include "util.h"
 
 
 #include <cmath>
@@ -102,5 +103,20 @@ void barrerLaseres_H(const vector<pair<uint,uint> >& Laseres, vector<pair<uint,u
  */
 
 void barrerLaseres_H_sin_salto(const vector<pair<uint,uint> >& Laseres, vector<pair<uint,uint> >& A_donde_apuntan, size_t n);
+
+/**
+ * Genera Matriz con todos los D_kij (cada fila es una de las matrices D_k).
+ * @param tamMatriz tamaño de la imagen discretizada.
+ * @param metodo_usado es un numero QUE DEBE VALER 0,1 o 2, y que indica, si es 0, que se usara el metodo de rotaciones
+ * iniciando con rayos horizontales, si vale 1, serán unos rayos fijos, que son colocados en los lados horizontales de
+ * la imagen y rotaran, si vale 2, estos rayos son colocados en el tope y fondo verticales de la imagen, y tambien rotan.
+ * @param cantLaseres es la cantidad de laseres que se desean, DEBE SER DIVISOR DE tamMatriz o la función puede tener
+ * resultados indeseables, (como minimo puede pasar que no se obtenga la cantidad deseada de laseres, o cosas peores).
+ * @param saltear_hasta_n es la cantidad de pixeles rotados que saltearemos despues de cada rayo disparado, el minimo
+ * valor permitido es 1 (CON 0 SE ROMPE) y aumentar el valor reduce el tiempo de computo, pero tambien reduce la
+ * precision.
+ * @return La matriz D con todos los D_k.
+ */
+VectorMapMatrix  generarRayos(size_t tamMatriz, int metodo_usado, int cantLaseres, int saltear_hasta_n);
 
 #endif //CALCULAR_RAYOS_H
