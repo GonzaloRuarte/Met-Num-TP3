@@ -96,4 +96,11 @@ vector<pair<uint,uint> > crearPuntosDeFin(vector<pair<uint,uint> > Laseres, size
 
 void barrerLaseres_H(const vector<pair<uint,uint> >& Laseres, vector<pair<uint,uint> >& A_donde_apuntan, size_t n);
 
+/**
+ * Igual que arriba pero no se saltean los horizontales, (esta incorporado en otra funcion el salto, ya que existen
+ * otros repetidos, y queriamos evitarlos.
+ */
+
+void barrerLaseres_H_sin_salto(const vector<pair<uint,uint> >& Laseres, vector<pair<uint,uint> >& A_donde_apuntan, size_t n);
+
 #endif //CALCULAR_RAYOS_H

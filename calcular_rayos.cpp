@@ -236,3 +236,34 @@ void barrerLaseres_H(const vector<pair<uint,uint> >& Laseres, vector<pair<uint,u
     }
     return;
 }
+
+void barrerLaseres_H_sin_salto(const vector<pair<uint,uint> >& Laseres, vector<pair<uint,uint> >& A_donde_apuntan, size_t n) {
+    for(uint i = 0; i<Laseres.size(); i++) {
+        if(Laseres[i].second == 0){ //roto en direccion del reloj.
+            if(A_donde_apuntan[i].second == 0 and A_donde_apuntan[i].first != 0) { //Si la columna es 0, entonces si la fila no es la primera lo movemos para
+                // arriba.
+                A_donde_apuntan[i].first--;
+            } else if(A_donde_apuntan[i].first == n-1 and A_donde_apuntan[i].second != 0) { //Estamos en última fila, y no estamos en primera columna,
+                // movemos a izquierda.
+                A_donde_apuntan[i].second--;
+            } else if(A_donde_apuntan[i].second == n-1 and A_donde_apuntan[i].first != n-1) { //Última columna, y no en la ultima fila, movemos para abajo.
+                A_donde_apuntan[i].first++;
+            } else { //Estamos en la primera fila, y no estamos en la última columna, entonces movemos a derecha.
+                A_donde_apuntan[i].second++;
+            }
+        } else { //rota contrarreloj.
+            if(A_donde_apuntan[i].second == 0 and A_donde_apuntan[i].first != n-1) { //Si la columna es 0, entonces si la fila no es la última lo movemos para
+                // abajo.
+                A_donde_apuntan[i].first++;
+            } else if(A_donde_apuntan[i].first == n-1 and A_donde_apuntan[i].second != n-1) { //Estamos en última fila, y no estamos en última columna,
+                // movemos a derecha.
+                A_donde_apuntan[i].second++;
+            } else if(A_donde_apuntan[i].second == n-1 and A_donde_apuntan[i].first != 0) { //Última columna, y no en la primera fila, movemos para arriba.
+                A_donde_apuntan[i].first--;
+            } else { //Estamos en la primera fila, y no estamos en la primera columna, entonces movemos a izquierda.
+                A_donde_apuntan[i].second--;
+            }
+        }
+    }
+    return;
+}
