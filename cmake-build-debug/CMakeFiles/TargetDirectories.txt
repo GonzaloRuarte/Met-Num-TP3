@@ -1,4 +1,4 @@
-/home/nahuel/Escritorio/UBA/Mét. num./TP3/Codigo/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/nahuel/Escritorio/UBA/Mét. num./TP3/Codigo/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/nahuel/Escritorio/UBA/Mét. num./TP3/Codigo/cmake-build-debug/CMakeFiles/TP3.dir
-/home/nahuel/Escritorio/UBA/Mét. num./TP3/Codigo/cmake-build-debug/CMakeFiles/Test.dir
+/home/leandro/CLionProjects/Met-Num-TP3/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/leandro/CLionProjects/Met-Num-TP3/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/leandro/CLionProjects/Met-Num-TP3/cmake-build-debug/CMakeFiles/TP3.dir
+/home/leandro/CLionProjects/Met-Num-TP3/cmake-build-debug/CMakeFiles/Test.dir

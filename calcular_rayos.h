@@ -98,6 +98,13 @@ vector<pair<uint,uint> > crearPuntosDeFin(vector<pair<uint,uint> > Laseres, size
 void barrerLaseres_H(const vector<pair<uint,uint> >& Laseres, vector<pair<uint,uint> >& A_donde_apuntan, size_t n);
 
 /**
+ * Igual que arriba pero no se saltean los horizontales, (esta incorporado en otra funcion el salto, ya que existen
+ * otros repetidos, y queriamos evitarlos.
+ */
+
+void barrerLaseres_H_sin_salto(const vector<pair<uint,uint> >& Laseres, vector<pair<uint,uint> >& A_donde_apuntan, size_t n);
+
+/**
  * Genera Matriz con todos los D_kij (cada fila es una de las matrices D_k).
  * @param tamMatriz tamaño de la imagen discretizada.
  * @param metodo_usado es un numero QUE DEBE VALER 0,1 o 2, y que indica, si es 0, que se usara el metodo de rotaciones

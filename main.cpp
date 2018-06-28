@@ -141,7 +141,23 @@ vector<vector<uint16_t>> datosAMatriz(uchar &datos, uint ancho, uint alto) {
 
 	} // end of readPPM
 
-//VectorMapMatrix  generarRayos(size_t tamMatriz, int metodo_usado, int cantLaseres, int saltear_hasta_n)
+
+/**
+ * Genera Matriz con todos los D_kij (cada fila es una de las matrices D_k).
+ * @param tamMatriz tamaño de la imagen discretizada.
+ * @param metodo_usado es un numero QUE DEBE VALER 0,1 o 2, y que indica, si es 0, que se usara el metodo de rotaciones
+ * iniciando con rayos horizontales, si vale 1, serán unos rayos fijos, que son colocados en los lados horizontales de
+ * la imagen y rotaran, si vale 2, estos rayos son colocados en el tope y fondo verticales de la imagen, y tambien rotan,
+ * si vale 3 entonces se usa el metodo de horizontales agregando rayos que vengan del tope, si vale 4 usa un metodo en
+ * el que evita repetir rayos.
+ * @param cantLaseres es la cantidad de laseres que se desean, DEBE SER DIVISOR DE tamMatriz o la función puede tener
+ * resultados indeseables, (como minimo puede pasar que no se obtenga la cantidad deseada de laseres, o cosas peores).
+ * @param saltear_hasta_n es la cantidad de pixeles rotados que saltearemos despues de cada rayo disparado, el minimo
+ * valor permitido es 1 (CON 0 SE ROMPE) y aumentar el valor reduce el tiempo de computo, pero tambien reduce la
+ * precision.
+ * @return La matriz D con todos los D_k.
+ */
+/*VectorMapMatrix  generarRayos(size_t tamMatriz, int metodo_usado, int cantLaseres, int saltear_hasta_n);*/
 
 vector<vector<double>> obtenerTrayectorias() {
 
@@ -170,7 +186,7 @@ vector<double> reconstruirCuerpo(string nombreAchivoEntrada, vector<double>* V, 
 	vector<vector<double> > cuerpoDiscretizado = discretizar(*cuerpo, tamanoDiscretizacion);
 	size_t tamMatriz = cuerpoDiscretizado.size();
 	// 3) obtenemos D (la matriz con las trayectorias de los rayos
-	VectorMapMatrix  D = generarRayos(tamMatriz, 1, 32, 1); //tamaño discretizado, metodo a utilizar, cantidad de rayos, pixeles salteados-1.
+	VectorMapMatrix  D = generarRayos(tamMatriz, 4, 32, 1); //tamaño discretizado, metodo a utilizar, cantidad de rayos, pixeles salteados-1.
 	// 4) pasamos la imagen discretizada a vector
 	vector<double> Vtemp = pasarAVector(cuerpoDiscretizado);
 	V = &Vtemp;
@@ -250,6 +266,7 @@ int main(int argc, char * argv[]) {
 	//cout << (*matriz)[0].size() << endl;
 
 	//vector<double> asd = reconstruirCuerpo("dicom_csv2/1.2.826.0.1.3680043.2.656.1.138.1.csv", cuerpo, 16, 0.4, 0.5, 0);
+	//vector<double> asd = reconstruirCuerpo("dicom_csv2/1.2.826.0.1.3680043.2.656.1.138.1.csv", cuerpo, 16, 0, 0, 0);
 
 /*	vector<vector<double>> mat(20,vector<double> (20,0));
 
