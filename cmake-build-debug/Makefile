@@ -39,19 +39,19 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /snap/clion/25/bin/cmake/bin/cmake
+CMAKE_COMMAND = /snap/clion/27/bin/cmake/bin/cmake
 
 # The command to remove a file.
-RM = /snap/clion/25/bin/cmake/bin/cmake -E remove -f
+RM = /snap/clion/27/bin/cmake/bin/cmake -E remove -f
 
 # Escaping for special characters.
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = "/home/nahuel/Escritorio/UBA/Mét. num./TP3/Código"
+CMAKE_SOURCE_DIR = "/home/nahuel/Escritorio/UBA/Mét. num./TP3/Codigo"
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = "/home/nahuel/Escritorio/UBA/Mét. num./TP3/Código/cmake-build-debug"
+CMAKE_BINARY_DIR = "/home/nahuel/Escritorio/UBA/Mét. num./TP3/Codigo/cmake-build-debug"
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -59,7 +59,7 @@ CMAKE_BINARY_DIR = "/home/nahuel/Escritorio/UBA/Mét. num./TP3/Código/cmake-bui
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/snap/clion/25/bin/cmake/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+	/snap/clion/27/bin/cmake/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : rebuild_cache
 
 # Special rule for the target rebuild_cache
@@ -70,7 +70,7 @@ rebuild_cache/fast: rebuild_cache
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/snap/clion/25/bin/cmake/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+	/snap/clion/27/bin/cmake/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -80,9 +80,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "/home/nahuel/Escritorio/UBA/Mét. num./TP3/Código/cmake-build-debug/CMakeFiles" "/home/nahuel/Escritorio/UBA/Mét. num./TP3/Código/cmake-build-debug/CMakeFiles/progress.marks"
+	$(CMAKE_COMMAND) -E cmake_progress_start "/home/nahuel/Escritorio/UBA/Mét. num./TP3/Codigo/cmake-build-debug/CMakeFiles" "/home/nahuel/Escritorio/UBA/Mét. num./TP3/Codigo/cmake-build-debug/CMakeFiles/progress.marks"
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start "/home/nahuel/Escritorio/UBA/Mét. num./TP3/Código/cmake-build-debug/CMakeFiles" 0
+	$(CMAKE_COMMAND) -E cmake_progress_start "/home/nahuel/Escritorio/UBA/Mét. num./TP3/Codigo/cmake-build-debug/CMakeFiles" 0
 .PHONY : all
 
 # The main clean target
@@ -111,30 +111,30 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named testcalcular_rayos
+# Target rules for targets named TP3
 
 # Build rule for target.
-testcalcular_rayos: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 testcalcular_rayos
-.PHONY : testcalcular_rayos
+TP3: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 TP3
+.PHONY : TP3
 
 # fast build rule for target.
-testcalcular_rayos/fast:
-	$(MAKE) -f CMakeFiles/testcalcular_rayos.dir/build.make CMakeFiles/testcalcular_rayos.dir/build
-.PHONY : testcalcular_rayos/fast
+TP3/fast:
+	$(MAKE) -f CMakeFiles/TP3.dir/build.make CMakeFiles/TP3.dir/build
+.PHONY : TP3/fast
 
 #=============================================================================
-# Target rules for targets named tp3
+# Target rules for targets named Test
 
 # Build rule for target.
-tp3: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 tp3
-.PHONY : tp3
+Test: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 Test
+.PHONY : Test
 
 # fast build rule for target.
-tp3/fast:
-	$(MAKE) -f CMakeFiles/tp3.dir/build.make CMakeFiles/tp3.dir/build
-.PHONY : tp3/fast
+Test/fast:
+	$(MAKE) -f CMakeFiles/Test.dir/build.make CMakeFiles/Test.dir/build
+.PHONY : Test/fast
 
 VectorMapMatrix.o: VectorMapMatrix.cpp.o
 
@@ -142,7 +142,8 @@ VectorMapMatrix.o: VectorMapMatrix.cpp.o
 
 # target to build an object file
 VectorMapMatrix.cpp.o:
-	$(MAKE) -f CMakeFiles/tp3.dir/build.make CMakeFiles/tp3.dir/VectorMapMatrix.cpp.o
+	$(MAKE) -f CMakeFiles/TP3.dir/build.make CMakeFiles/TP3.dir/VectorMapMatrix.cpp.o
+	$(MAKE) -f CMakeFiles/Test.dir/build.make CMakeFiles/Test.dir/VectorMapMatrix.cpp.o
 .PHONY : VectorMapMatrix.cpp.o
 
 VectorMapMatrix.i: VectorMapMatrix.cpp.i
@@ -151,7 +152,8 @@ VectorMapMatrix.i: VectorMapMatrix.cpp.i
 
 # target to preprocess a source file
 VectorMapMatrix.cpp.i:
-	$(MAKE) -f CMakeFiles/tp3.dir/build.make CMakeFiles/tp3.dir/VectorMapMatrix.cpp.i
+	$(MAKE) -f CMakeFiles/TP3.dir/build.make CMakeFiles/TP3.dir/VectorMapMatrix.cpp.i
+	$(MAKE) -f CMakeFiles/Test.dir/build.make CMakeFiles/Test.dir/VectorMapMatrix.cpp.i
 .PHONY : VectorMapMatrix.cpp.i
 
 VectorMapMatrix.s: VectorMapMatrix.cpp.s
@@ -160,7 +162,8 @@ VectorMapMatrix.s: VectorMapMatrix.cpp.s
 
 # target to generate assembly for a file
 VectorMapMatrix.cpp.s:
-	$(MAKE) -f CMakeFiles/tp3.dir/build.make CMakeFiles/tp3.dir/VectorMapMatrix.cpp.s
+	$(MAKE) -f CMakeFiles/TP3.dir/build.make CMakeFiles/TP3.dir/VectorMapMatrix.cpp.s
+	$(MAKE) -f CMakeFiles/Test.dir/build.make CMakeFiles/Test.dir/VectorMapMatrix.cpp.s
 .PHONY : VectorMapMatrix.cpp.s
 
 calcular_rayos.o: calcular_rayos.cpp.o
@@ -169,7 +172,8 @@ calcular_rayos.o: calcular_rayos.cpp.o
 
 # target to build an object file
 calcular_rayos.cpp.o:
-	$(MAKE) -f CMakeFiles/tp3.dir/build.make CMakeFiles/tp3.dir/calcular_rayos.cpp.o
+	$(MAKE) -f CMakeFiles/TP3.dir/build.make CMakeFiles/TP3.dir/calcular_rayos.cpp.o
+	$(MAKE) -f CMakeFiles/Test.dir/build.make CMakeFiles/Test.dir/calcular_rayos.cpp.o
 .PHONY : calcular_rayos.cpp.o
 
 calcular_rayos.i: calcular_rayos.cpp.i
@@ -178,7 +182,8 @@ calcular_rayos.i: calcular_rayos.cpp.i
 
 # target to preprocess a source file
 calcular_rayos.cpp.i:
-	$(MAKE) -f CMakeFiles/tp3.dir/build.make CMakeFiles/tp3.dir/calcular_rayos.cpp.i
+	$(MAKE) -f CMakeFiles/TP3.dir/build.make CMakeFiles/TP3.dir/calcular_rayos.cpp.i
+	$(MAKE) -f CMakeFiles/Test.dir/build.make CMakeFiles/Test.dir/calcular_rayos.cpp.i
 .PHONY : calcular_rayos.cpp.i
 
 calcular_rayos.s: calcular_rayos.cpp.s
@@ -187,7 +192,8 @@ calcular_rayos.s: calcular_rayos.cpp.s
 
 # target to generate assembly for a file
 calcular_rayos.cpp.s:
-	$(MAKE) -f CMakeFiles/tp3.dir/build.make CMakeFiles/tp3.dir/calcular_rayos.cpp.s
+	$(MAKE) -f CMakeFiles/TP3.dir/build.make CMakeFiles/TP3.dir/calcular_rayos.cpp.s
+	$(MAKE) -f CMakeFiles/Test.dir/build.make CMakeFiles/Test.dir/calcular_rayos.cpp.s
 .PHONY : calcular_rayos.cpp.s
 
 main.o: main.cpp.o
@@ -196,7 +202,7 @@ main.o: main.cpp.o
 
 # target to build an object file
 main.cpp.o:
-	$(MAKE) -f CMakeFiles/tp3.dir/build.make CMakeFiles/tp3.dir/main.cpp.o
+	$(MAKE) -f CMakeFiles/TP3.dir/build.make CMakeFiles/TP3.dir/main.cpp.o
 .PHONY : main.cpp.o
 
 main.i: main.cpp.i
@@ -205,7 +211,7 @@ main.i: main.cpp.i
 
 # target to preprocess a source file
 main.cpp.i:
-	$(MAKE) -f CMakeFiles/tp3.dir/build.make CMakeFiles/tp3.dir/main.cpp.i
+	$(MAKE) -f CMakeFiles/TP3.dir/build.make CMakeFiles/TP3.dir/main.cpp.i
 .PHONY : main.cpp.i
 
 main.s: main.cpp.s
@@ -214,7 +220,7 @@ main.s: main.cpp.s
 
 # target to generate assembly for a file
 main.cpp.s:
-	$(MAKE) -f CMakeFiles/tp3.dir/build.make CMakeFiles/tp3.dir/main.cpp.s
+	$(MAKE) -f CMakeFiles/TP3.dir/build.make CMakeFiles/TP3.dir/main.cpp.s
 .PHONY : main.cpp.s
 
 ppmloader.o: ppmloader.cpp.o
@@ -223,7 +229,8 @@ ppmloader.o: ppmloader.cpp.o
 
 # target to build an object file
 ppmloader.cpp.o:
-	$(MAKE) -f CMakeFiles/tp3.dir/build.make CMakeFiles/tp3.dir/ppmloader.cpp.o
+	$(MAKE) -f CMakeFiles/TP3.dir/build.make CMakeFiles/TP3.dir/ppmloader.cpp.o
+	$(MAKE) -f CMakeFiles/Test.dir/build.make CMakeFiles/Test.dir/ppmloader.cpp.o
 .PHONY : ppmloader.cpp.o
 
 ppmloader.i: ppmloader.cpp.i
@@ -232,7 +239,8 @@ ppmloader.i: ppmloader.cpp.i
 
 # target to preprocess a source file
 ppmloader.cpp.i:
-	$(MAKE) -f CMakeFiles/tp3.dir/build.make CMakeFiles/tp3.dir/ppmloader.cpp.i
+	$(MAKE) -f CMakeFiles/TP3.dir/build.make CMakeFiles/TP3.dir/ppmloader.cpp.i
+	$(MAKE) -f CMakeFiles/Test.dir/build.make CMakeFiles/Test.dir/ppmloader.cpp.i
 .PHONY : ppmloader.cpp.i
 
 ppmloader.s: ppmloader.cpp.s
@@ -241,7 +249,8 @@ ppmloader.s: ppmloader.cpp.s
 
 # target to generate assembly for a file
 ppmloader.cpp.s:
-	$(MAKE) -f CMakeFiles/tp3.dir/build.make CMakeFiles/tp3.dir/ppmloader.cpp.s
+	$(MAKE) -f CMakeFiles/TP3.dir/build.make CMakeFiles/TP3.dir/ppmloader.cpp.s
+	$(MAKE) -f CMakeFiles/Test.dir/build.make CMakeFiles/Test.dir/ppmloader.cpp.s
 .PHONY : ppmloader.cpp.s
 
 test_main.o: test_main.cpp.o
@@ -250,7 +259,7 @@ test_main.o: test_main.cpp.o
 
 # target to build an object file
 test_main.cpp.o:
-	$(MAKE) -f CMakeFiles/testcalcular_rayos.dir/build.make CMakeFiles/testcalcular_rayos.dir/test_main.cpp.o
+	$(MAKE) -f CMakeFiles/Test.dir/build.make CMakeFiles/Test.dir/test_main.cpp.o
 .PHONY : test_main.cpp.o
 
 test_main.i: test_main.cpp.i
@@ -259,7 +268,7 @@ test_main.i: test_main.cpp.i
 
 # target to preprocess a source file
 test_main.cpp.i:
-	$(MAKE) -f CMakeFiles/testcalcular_rayos.dir/build.make CMakeFiles/testcalcular_rayos.dir/test_main.cpp.i
+	$(MAKE) -f CMakeFiles/Test.dir/build.make CMakeFiles/Test.dir/test_main.cpp.i
 .PHONY : test_main.cpp.i
 
 test_main.s: test_main.cpp.s
@@ -268,7 +277,7 @@ test_main.s: test_main.cpp.s
 
 # target to generate assembly for a file
 test_main.cpp.s:
-	$(MAKE) -f CMakeFiles/testcalcular_rayos.dir/build.make CMakeFiles/testcalcular_rayos.dir/test_main.cpp.s
+	$(MAKE) -f CMakeFiles/Test.dir/build.make CMakeFiles/Test.dir/test_main.cpp.s
 .PHONY : test_main.cpp.s
 
 util.o: util.cpp.o
@@ -277,7 +286,8 @@ util.o: util.cpp.o
 
 # target to build an object file
 util.cpp.o:
-	$(MAKE) -f CMakeFiles/tp3.dir/build.make CMakeFiles/tp3.dir/util.cpp.o
+	$(MAKE) -f CMakeFiles/TP3.dir/build.make CMakeFiles/TP3.dir/util.cpp.o
+	$(MAKE) -f CMakeFiles/Test.dir/build.make CMakeFiles/Test.dir/util.cpp.o
 .PHONY : util.cpp.o
 
 util.i: util.cpp.i
@@ -286,7 +296,8 @@ util.i: util.cpp.i
 
 # target to preprocess a source file
 util.cpp.i:
-	$(MAKE) -f CMakeFiles/tp3.dir/build.make CMakeFiles/tp3.dir/util.cpp.i
+	$(MAKE) -f CMakeFiles/TP3.dir/build.make CMakeFiles/TP3.dir/util.cpp.i
+	$(MAKE) -f CMakeFiles/Test.dir/build.make CMakeFiles/Test.dir/util.cpp.i
 .PHONY : util.cpp.i
 
 util.s: util.cpp.s
@@ -295,7 +306,8 @@ util.s: util.cpp.s
 
 # target to generate assembly for a file
 util.cpp.s:
-	$(MAKE) -f CMakeFiles/tp3.dir/build.make CMakeFiles/tp3.dir/util.cpp.s
+	$(MAKE) -f CMakeFiles/TP3.dir/build.make CMakeFiles/TP3.dir/util.cpp.s
+	$(MAKE) -f CMakeFiles/Test.dir/build.make CMakeFiles/Test.dir/util.cpp.s
 .PHONY : util.cpp.s
 
 # Help Target
@@ -306,8 +318,8 @@ help:
 	@echo "... depend"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
-	@echo "... testcalcular_rayos"
-	@echo "... tp3"
+	@echo "... TP3"
+	@echo "... Test"
 	@echo "... VectorMapMatrix.o"
 	@echo "... VectorMapMatrix.i"
 	@echo "... VectorMapMatrix.s"
