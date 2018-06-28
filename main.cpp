@@ -170,7 +170,7 @@ vector<double> reconstruirCuerpo(string nombreAchivoEntrada, vector<double>* V, 
 	vector<vector<double> > cuerpoDiscretizado = discretizar(*cuerpo, tamanoDiscretizacion);
 	size_t tamMatriz = cuerpoDiscretizado.size();
 	// 3) obtenemos D (la matriz con las trayectorias de los rayos
-	VectorMapMatrix  D = generarRayos(tamMatriz,0, 32, 4); //tamaño discretizado, metodo a utilizar, cantidad de rayos, pixeles salteados-1.
+	VectorMapMatrix  D = generarRayos(tamMatriz, 1, 32, 1); //tamaño discretizado, metodo a utilizar, cantidad de rayos, pixeles salteados-1.
 	// 4) pasamos la imagen discretizada a vector
 	vector<double> Vtemp = pasarAVector(cuerpoDiscretizado);
 	V = &Vtemp;
