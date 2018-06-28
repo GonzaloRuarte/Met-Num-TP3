@@ -1,4 +1,4 @@
-# Install script for directory: /home/nahuel/Escritorio/UBA/Mét. num./TP3/Codigo
+# Install script for directory: /home/leandro/CLionProjects/Met-Num-TP3
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/nahuel/Escritorio/UBA/Mét. num./TP3/Codigo/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/leandro/CLionProjects/Met-Num-TP3/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
