@@ -244,12 +244,12 @@ int main(int argc, char * argv[]) {
 	//reconstruirCuerpos("dicom_csv2", 4, 3, 2, 1);
 	
 	//VectorMapMatrix  D = generarRayos(500,true);
-    vector<double>* cuerpo;
+    //vector<double>* cuerpo;
     //cuerpo = leerCSV("dicom_csv2/1.2.826.0.1.3680043.2.656.1.138.1.csv");
 
 	//cout << (*matriz)[0].size() << endl;
 
-	vector<double> asd = reconstruirCuerpo("dicom_csv2/1.2.826.0.1.3680043.2.656.1.138.1.csv", cuerpo, 16, 0.4, 0.5, 0);
+	//vector<double> asd = reconstruirCuerpo("dicom_csv2/1.2.826.0.1.3680043.2.656.1.138.1.csv", cuerpo, 16, 0.4, 0.5, 0);
 
 /*	vector<vector<double>> mat(20,vector<double> (20,0));
 
@@ -278,7 +278,20 @@ int main(int argc, char * argv[]) {
 		cout << vec[i]<< " ";
 	}
 	cout << endl;
-*/	return 0;
+    */
+    string directorio = "Imagenes_para_probar";
+    vector<string> archivos;
+    listarDirectorio(directorio, archivos);
+    uint tamanio_imagenes = 512;
+    vector<unsigned short int> discretizaciones = {32, 64};
+    vector<unsigned short int> cantidades_de_fuentes = {4, 8, 16, 32, 64};
+    vector<unsigned short int> separaciones = {1, 2, 4, 6, 8, 12, 16};
+    vector<pair<float,float> > ruidos = {make_pair(0.01, 0.04), make_pair(0.05, 0.09)};
+    experimentacion('h', archivos, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
+    experimentacion('v', archivos, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
+    experimentacion('r', archivos, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
+    
+    return 0;
 }
 
 
