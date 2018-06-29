@@ -275,7 +275,8 @@ void barrerLaseres_H_sin_salto(const vector<pair<uint,uint> >& Laseres, vector<p
  * iniciando con rayos horizontales, si vale 1, serán unos rayos fijos, que son colocados en los lados horizontales de
  * la imagen y rotaran, si vale 2, estos rayos son colocados en el tope y fondo verticales de la imagen, y tambien rotan,
  * si vale 3 entonces se usa el metodo de horizontales agregando rayos que vengan del tope, si vale 4 usa un metodo en
- * el que evita repetir rayos.
+ * el que evita repetir rayos, con rayos en la izquierda, derecha y arriba (aunque arriba hay algunos repetidos, 5 hace
+ * sin repetidos solo horizontales (derecha e izquierda) y 6 hace sin repetidos verticales(rayos arriba y abajo).
  * @param cantLaseres es la cantidad de laseres que se desean, DEBE SER DIVISOR DE tamMatriz o la función puede tener
  * resultados indeseables, (como minimo puede pasar que no se obtenga la cantidad deseada de laseres, o cosas peores).
  * @param saltear_hasta_n es la cantidad de pixeles rotados que saltearemos despues de cada rayo disparado, el minimo
@@ -426,7 +427,7 @@ VectorMapMatrix  generarRayos(size_t tamMatriz, int metodo_usado, int cantLasere
         }
 
         return D_ks;
-    } else {
+    } else if(metodo_usado == 4) {
         vector<pair<uint,uint> > laseres = crearLaseres(tamMatriz, tamMatriz/cantLaseres, tamMatriz/(cantLaseres*2), 0); //tamano, despues cada_cuanta_dist, offset, max_cant de rayos.
         vector<pair<uint,uint> > sensores = crearPuntosDeFin(laseres, tamMatriz);
 
@@ -495,6 +496,156 @@ VectorMapMatrix  generarRayos(size_t tamMatriz, int metodo_usado, int cantLasere
 
                         map<uint, double> D_k_map_trans = pasarAMap(D_k_transp);
                         D_ks.agregarFila(D_k_map);
+                        D_ks.agregarFila(D_k_map_trans);
+                    }
+                }
+            }
+            barrerLaseres_H_sin_salto(laseres0,sensores0,tamMatriz);
+            rotaciones++;
+        }
+
+        return D_ks;
+    } else if (metodo_usado == 5){
+        vector<pair<uint,uint> > laseres = crearLaseres(tamMatriz, tamMatriz/cantLaseres, tamMatriz/(cantLaseres*2), 0); //tamano, despues cada_cuanta_dist, offset, max_cant de rayos.
+        vector<pair<uint,uint> > sensores = crearPuntosDeFin(laseres, tamMatriz);
+
+        vector<pair<uint,uint> >::iterator it_ini_laseres = laseres.begin();
+        vector<pair<uint,uint> >::iterator it_med_laseres = laseres.begin() + laseres.size()/2;
+        vector<pair<uint,uint> >::iterator it_fin_laseres = laseres.end();
+
+        vector<pair<uint,uint> >::iterator it_ini_sensores = sensores.begin();
+        vector<pair<uint,uint> >::iterator it_med_sensores = sensores.begin() + sensores.size()/2;
+        vector<pair<uint,uint> >::iterator it_fin_sensores = sensores.end();
+
+        vector<pair<uint,uint> > laseres0(it_ini_laseres, it_med_laseres); //laseres izq
+        vector<pair<uint,uint> > laseres1(it_med_laseres, it_fin_laseres); //laseres der
+        vector<pair<uint,uint> > sensores0(it_ini_sensores, it_med_sensores); //sensores izq
+        vector<pair<uint,uint> > sensores1(it_med_sensores, it_fin_sensores); //sensores der
+
+        VectorMapMatrix D_ks(0, tamMatriz*tamMatriz);
+
+        D_ks.reservar(tamMatriz*tamMatriz, 6 * tamMatriz*cantLaseres); //ancho, alto
+        /* Este es el vector con las matrices D, para cada uno de los K rayos (hay que convertirlas en vectores).
+        Tenemos 2*cantLaseres rayos que rotaremos aproximadamente 3tamMatriz veces. */
+
+        vector<vector<double> > D_k; //matriz auxiliar del D_k del laser a calcular.
+        int rotaciones = 0; //Cantidad de rotaciones ejecutadas, solo calcularemos cuando rotaciones%saltear_hasta_n == 0
+
+
+        while(sensores1[0].first != tamMatriz - 1 or sensores1[0].second != tamMatriz - 1) { //Esto quiza es dificil de ver, pero para los laseres derechos
+            // esta es la ultima posicion interesante a la que apuntan. NOTA IMPORTANTE,
+            // SI SE HACEN MAS DE UN SALTO PUEDE QUE ESTO NO TERMINE. ASIQUE CUIDADO CON PONER MAS DE UN rotarLaseres.
+            if (rotaciones % saltear_hasta_n == saltear_hasta_n /2) { //si rotamos la cantidad correcta entonces calculamos.
+                for(uint i = 0; i < laseres1.size(); i++) {
+                    D_k = trazar_recta_en_matriz_D(laseres1[i], sensores1[i], tamMatriz);
+                    map<uint, double> D_k_map = pasarAMap(D_k);
+                    D_ks.agregarFila(D_k_map);
+                }
+            }
+            barrerLaseres_H_sin_salto(laseres1,sensores1,tamMatriz);
+            rotaciones++;
+        }
+
+        rotaciones = 0;
+
+        while(sensores0[0].first != tamMatriz - 1 or sensores0[0].second != 0) { //Esto quiza es dificil de ver, pero para los laseres izquierdos
+            // este es la ultima posicion interesante a la que apuntan. NOTA IMPORTANTE,
+            // SI SE HACEN MAS DE UN SALTO PUEDE QUE ESTO NO TERMINE. ASIQUE CUIDADO CON PONER MAS DE UN rotarLaseres.
+            if (rotaciones % saltear_hasta_n == saltear_hasta_n /2) { //si rotamos la cantidad correcta entonces calculamos.
+                bool chequearSensores = true; /*Quiero chequear si hay un laser en laseres1 repetido con el sensor actual
+ * para evitar repetidos */
+                for (int i = 0; i < laseres1.size(); i++) {
+                    if(laseres1[i] == sensores0[0]) { //todos los sensores apuntan al mismo lugar, por lo que elegimos el primero
+                        chequearSensores = false; // Encontramos coincidencia, entonces no calculamos D_k.
+                    }
+                }
+                if (chequearSensores) { //Si chequeamos que no habia laser en la posicion, calculamos las D_k.
+                    for(uint i = 0; i < laseres0.size(); i++) {
+                        D_k = trazar_recta_en_matriz_D(laseres0[i], sensores0[i], tamMatriz);
+                        map<uint, double> D_k_map = pasarAMap(D_k);
+                        D_ks.agregarFila(D_k_map);
+                    }
+                }
+            }
+            barrerLaseres_H_sin_salto(laseres0,sensores0,tamMatriz);
+            rotaciones++;
+        }
+
+        return D_ks;
+    } else {
+        vector<pair<uint,uint> > laseres = crearLaseres(tamMatriz, tamMatriz/cantLaseres, tamMatriz/(cantLaseres*2), 0); //tamano, despues cada_cuanta_dist, offset, max_cant de rayos.
+        vector<pair<uint,uint> > sensores = crearPuntosDeFin(laseres, tamMatriz);
+
+        vector<pair<uint,uint> >::iterator it_ini_laseres = laseres.begin();
+        vector<pair<uint,uint> >::iterator it_med_laseres = laseres.begin() + laseres.size()/2;
+        vector<pair<uint,uint> >::iterator it_fin_laseres = laseres.end();
+
+        vector<pair<uint,uint> >::iterator it_ini_sensores = sensores.begin();
+        vector<pair<uint,uint> >::iterator it_med_sensores = sensores.begin() + sensores.size()/2;
+        vector<pair<uint,uint> >::iterator it_fin_sensores = sensores.end();
+
+        vector<pair<uint,uint> > laseres0(it_ini_laseres, it_med_laseres); //laseres izq
+        vector<pair<uint,uint> > laseres1(it_med_laseres, it_fin_laseres); //laseres der
+        vector<pair<uint,uint> > sensores0(it_ini_sensores, it_med_sensores); //sensores izq
+        vector<pair<uint,uint> > sensores1(it_med_sensores, it_fin_sensores); //sensores der
+
+        VectorMapMatrix D_ks(0, tamMatriz*tamMatriz);
+
+        D_ks.reservar(tamMatriz*tamMatriz, 6 * tamMatriz*cantLaseres); //ancho, alto
+        /* Este es el vector con las matrices D, para cada uno de los K rayos (hay que convertirlas en vectores).
+        Tenemos 2*cantLaseres rayos que rotaremos aproximadamente 3tamMatriz veces. */
+
+        vector<vector<double> > D_k; //matriz auxiliar del D_k del laser a calcular.
+        int rotaciones = 0; //Cantidad de rotaciones ejecutadas, solo calcularemos cuando rotaciones%saltear_hasta_n == 0
+
+
+        while(sensores1[0].first != tamMatriz - 1 or sensores1[0].second != tamMatriz - 1) { //Esto quiza es dificil de ver, pero para los laseres derechos
+            // esta es la ultima posicion interesante a la que apuntan. NOTA IMPORTANTE,
+            // SI SE HACEN MAS DE UN SALTO PUEDE QUE ESTO NO TERMINE. ASIQUE CUIDADO CON PONER MAS DE UN rotarLaseres.
+            if (rotaciones % saltear_hasta_n == saltear_hasta_n /2) { //si rotamos la cantidad correcta entonces calculamos.
+                for(uint i = 0; i < laseres1.size(); i++) {
+                    D_k = trazar_recta_en_matriz_D(laseres1[i], sensores1[i], tamMatriz);
+                    //Traspongo para conseguir la recta si el rayo fuese vertical.
+                    vector<vector<double> > D_k_transp(D_k.size(), vector<double>(D_k[0].size()) );
+
+                    for(uint i = 0; i < D_k.size(); ++i)
+                        for (unsigned int j=0; j < D_k[0].size(); ++j)
+                            D_k_transp[j][i] = D_k[i][j];
+
+
+                    map<uint, double> D_k_map_trans = pasarAMap(D_k_transp);
+                    D_ks.agregarFila(D_k_map_trans);
+                }
+            }
+            barrerLaseres_H_sin_salto(laseres1,sensores1,tamMatriz);
+            rotaciones++;
+        }
+
+        rotaciones = 0;
+
+        while(sensores0[0].first != tamMatriz - 1 or sensores0[0].second != 0) { //Esto quiza es dificil de ver, pero para los laseres izquierdos
+            // este es la ultima posicion interesante a la que apuntan. NOTA IMPORTANTE,
+            // SI SE HACEN MAS DE UN SALTO PUEDE QUE ESTO NO TERMINE. ASIQUE CUIDADO CON PONER MAS DE UN rotarLaseres.
+            if (rotaciones % saltear_hasta_n == saltear_hasta_n /2) { //si rotamos la cantidad correcta entonces calculamos.
+                bool chequearSensores = true; /*Quiero chequear si hay un laser en laseres1 repetido con el sensor actual
+ * para evitar repetidos */
+                for (int i = 0; i < laseres1.size(); i++) {
+                    if(laseres1[i] == sensores0[0]) { //todos los sensores apuntan al mismo lugar, por lo que elegimos el primero
+                        chequearSensores = false; // Encontramos coincidencia, entonces no calculamos D_k.
+                    }
+                }
+                if (chequearSensores) { //Si chequeamos que no habia laser en la posicion, calculamos las D_k.
+                    for(uint i = 0; i < laseres0.size(); i++) {
+                        D_k = trazar_recta_en_matriz_D(laseres0[i], sensores0[i], tamMatriz);
+                        //Traspongo para conseguir la recta si el rayo fuese vertical.
+                        vector<vector<double> > D_k_transp(D_k.size(), vector<double>(D_k[0].size()) );
+
+                        for(uint i = 0; i < D_k.size(); ++i)
+                            for (unsigned int j=0; j < D_k[0].size(); ++j)
+                                D_k_transp[j][i] = D_k[i][j];
+
+
+                        map<uint, double> D_k_map_trans = pasarAMap(D_k_transp);
                         D_ks.agregarFila(D_k_map_trans);
                     }
                 }
