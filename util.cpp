@@ -289,7 +289,13 @@ void experimentacion_barrido_H(const string& directorio, uint taman_imags, const
 #define repeticiones 20
 
 /**
- * @param tipo: Si es 'h' se hace un barrido horizontal; si es 'v' se hace un barrido vertical; y si es 'r' se usan rotaciones.
+ * @param tipo: Si es 'h' se hace un barrido horizontal.
+ *              Si es 'v' se hace un barrido vertical.
+ *              Si es 'o' (promedio entre 'h' y 'v') se hace un barrido horizontal y vertical.
+ *              Si es 'i' (latra siguiente a 'h') se hace un barrido horizontal sin repeticiones.
+ *              Si es 'w' (latra siguiente a 'v') se hace un barrido vertical sin repeticiones.
+ *              Si es 'p' (latra siguiente a 'o') se hace un barrido horizontal y vertical con menos repeticiones.
+ *              Si es 'r' se usan rotaciones.
  * @param archivos: vector con los distintos nombres de las imágenes que se usaran.
  * @param taman_imags: cantidad de pixeles de las imagenes.
  * @param discretizacion: vector con las distintas cantidades de pixeles de lado y alto por casillero.
@@ -323,6 +329,26 @@ void experimentacion(char tipo, const vector<string>& archivos, uint taman_imags
                             D = generarRayos(cant_casilleros, 2, cantidades_de_fuentes[ind_fuent], separaciones[ind_separ]);
                             RDTSC_STOP(final);
                             nombre_arch_salida = "resultados de prueba/Tipo:V";
+                        }else if(tipo == 'o') {  //Barrido vertical y horizontal
+                            RDTSC_START(comienzo);
+                            D = generarRayos(cant_casilleros, 3, cantidades_de_fuentes[ind_fuent], separaciones[ind_separ]);
+                            RDTSC_STOP(final);
+                            nombre_arch_salida = "resultados de prueba/Tipo:HyV";
+                        }else if(tipo == 'p') {  //Barrido vertical y horizontal con menos repeticiones.
+                            RDTSC_START(comienzo);
+                            D = generarRayos(cant_casilleros, 4, cantidades_de_fuentes[ind_fuent], separaciones[ind_separ]);
+                            RDTSC_STOP(final);
+                            nombre_arch_salida = "resultados de prueba/Tipo:HyV_SR";
+                        }else if(tipo == 'i') {  //Barrido horizontal sin repeticiones.
+                            RDTSC_START(comienzo);
+                            D = generarRayos(cant_casilleros, 5, cantidades_de_fuentes[ind_fuent], separaciones[ind_separ]);
+                            RDTSC_STOP(final);
+                            nombre_arch_salida = "resultados de prueba/Tipo:H_SR";
+                        }else if(tipo == 'w') {  //Barrido vertical sin repeticiones.
+                            RDTSC_START(comienzo);
+                            D = generarRayos(cant_casilleros, 5, cantidades_de_fuentes[ind_fuent], separaciones[ind_separ]);
+                            RDTSC_STOP(final);
+                            nombre_arch_salida = "resultados de prueba/Tipo:V_SR";
                         }
                         ciclos_clock[i] = final - comienzo;
                     }
