@@ -95,7 +95,7 @@ vector<vector<double> > trazar_recta_en_matriz_D(pair<uint,uint> p1, pair<uint,u
     double a = (double(p2.first) - double(p1.first)) / (double(p2.second) - double(p1.second)); // No importa el orden
     // de p1 y p2, calcula la pendiente, fila 2 menos fila 1 sobre columna 2 menos columna 1.
     double b = double(p1.first) - a * double(p1.second) + 0.5; // calcula b = y - ax, con el punto p1.
-    for(int i = inicio; i<fin ; i++) { //voy de la columna inicio a la fin, pintando los pixeles por los que pase.
+    for(uint i = inicio; i<fin ; i++) { //voy de la columna inicio a la fin, pintando los pixeles por los que pase.
         int pintar_desde = floor(a*i + b);
         int pintar_hasta = floor(a*(i+1) +b);
         if (pintar_hasta < pintar_desde) {
@@ -103,7 +103,7 @@ vector<vector<double> > trazar_recta_en_matriz_D(pair<uint,uint> p1, pair<uint,u
             pintar_desde = pintar_hasta;
             pintar_hasta = aux;
         }
-        for(int j = pintar_desde; j <= pintar_hasta ; j++) {
+        for(uint j = pintar_desde; j <= pintar_hasta ; j++) {
             result[j][i] = 1;
         }
     }
@@ -120,7 +120,7 @@ vector<vector<double> > trazar_recta_en_matriz_D(pair<uint,uint> p1, pair<uint,u
         pintar_hasta = aux;
     }
 
-    for(int j = pintar_desde; j <= pintar_hasta ; j++) {
+    for(uint j = pintar_desde; j <= pintar_hasta ; j++) {
         result[j][fin] = 1;
     }
     return result;
@@ -301,7 +301,7 @@ VectorMapMatrix  generarRayos(size_t tamMatriz, int metodo_usado, int cantLasere
 
         vector<vector<double> > D_k; //matriz auxiliar del D_k del laser a calcular.
         int rotaciones = 0; //Cantidad de rotaciones ejecutadas, solo calcularemos cuando rotaciones%saltear_hasta_n == 0
-        for(int i = 0; i < 2 * tamMatriz; i++) {
+        for(uint i = 0; i < 2 * tamMatriz; i++) {
             if (rotaciones % saltear_hasta_n == saltear_hasta_n/2){ //si rotamos la cantidad correcta entonces calculamos.
                 for(uint j = 0; j < laseres.size(); j++) {
                     D_k = trazar_recta_en_matriz_D(laseres[j], sensores[j], tamMatriz);
@@ -477,7 +477,7 @@ VectorMapMatrix  generarRayos(size_t tamMatriz, int metodo_usado, int cantLasere
             if (rotaciones % saltear_hasta_n == saltear_hasta_n /2) { //si rotamos la cantidad correcta entonces calculamos.
                 bool chequearSensores = true; /*Quiero chequear si hay un laser en laseres1 repetido con el sensor actual
  * para evitar repetidos */
-                for (int i = 0; i < laseres1.size(); i++) {
+                for (uint i = 0; i < laseres1.size(); i++) {
                     if(laseres1[i] == sensores0[0]) { //todos los sensores apuntan al mismo lugar, por lo que elegimos el primero
                         chequearSensores = false; // Encontramos coincidencia, entonces no calculamos D_k.
                     }
@@ -555,7 +555,7 @@ VectorMapMatrix  generarRayos(size_t tamMatriz, int metodo_usado, int cantLasere
             if (rotaciones % saltear_hasta_n == saltear_hasta_n /2) { //si rotamos la cantidad correcta entonces calculamos.
                 bool chequearSensores = true; /*Quiero chequear si hay un laser en laseres1 repetido con el sensor actual
  * para evitar repetidos */
-                for (int i = 0; i < laseres1.size(); i++) {
+                for (uint i = 0; i < laseres1.size(); i++) {
                     if(laseres1[i] == sensores0[0]) { //todos los sensores apuntan al mismo lugar, por lo que elegimos el primero
                         chequearSensores = false; // Encontramos coincidencia, entonces no calculamos D_k.
                     }
@@ -630,7 +630,7 @@ VectorMapMatrix  generarRayos(size_t tamMatriz, int metodo_usado, int cantLasere
             if (rotaciones % saltear_hasta_n == saltear_hasta_n /2) { //si rotamos la cantidad correcta entonces calculamos.
                 bool chequearSensores = true; /*Quiero chequear si hay un laser en laseres1 repetido con el sensor actual
  * para evitar repetidos */
-                for (int i = 0; i < laseres1.size(); i++) {
+                for (uint i = 0; i < laseres1.size(); i++) {
                     if(laseres1[i] == sensores0[0]) { //todos los sensores apuntan al mismo lugar, por lo que elegimos el primero
                         chequearSensores = false; // Encontramos coincidencia, entonces no calculamos D_k.
                     }
@@ -695,7 +695,7 @@ pair<vector<pair<uint,uint> >, vector<pair<uint,uint> > >  generarRayosDeControl
 
         vector<vector<double> > D_k; //matriz auxiliar del D_k del laser a calcular.
         int rotaciones = 0; //Cantidad de rotaciones ejecutadas, solo calcularemos cuando rotaciones%saltear_hasta_n == 0
-        for(int i = 0; i < 2 * tamMatriz; i++) {
+        for(uint i = 0; i < 2 * tamMatriz; i++) {
             if (rotaciones % saltear_hasta_n == saltear_hasta_n/2){ //si rotamos la cantidad correcta entonces calculamos.
                 for(uint j = 0; j < laseres.size(); j++) {
                     D_k = trazar_recta_en_matriz_D(laseres[j], sensores[j], tamMatriz);
@@ -871,7 +871,7 @@ pair<vector<pair<uint,uint> >, vector<pair<uint,uint> > >  generarRayosDeControl
             if (rotaciones % saltear_hasta_n == saltear_hasta_n /2) { //si rotamos la cantidad correcta entonces calculamos.
                 bool chequearSensores = true; /*Quiero chequear si hay un laser en laseres1 repetido con el sensor actual
  * para evitar repetidos */
-                for (int i = 0; i < laseres1.size(); i++) {
+                for (uint i = 0; i < laseres1.size(); i++) {
                     if(laseres1[i] == sensores0[0]) { //todos los sensores apuntan al mismo lugar, por lo que elegimos el primero
                         chequearSensores = false; // Encontramos coincidencia, entonces no calculamos D_k.
                     }
@@ -949,7 +949,7 @@ pair<vector<pair<uint,uint> >, vector<pair<uint,uint> > >  generarRayosDeControl
             if (rotaciones % saltear_hasta_n == saltear_hasta_n /2) { //si rotamos la cantidad correcta entonces calculamos.
                 bool chequearSensores = true; /*Quiero chequear si hay un laser en laseres1 repetido con el sensor actual
  * para evitar repetidos */
-                for (int i = 0; i < laseres1.size(); i++) {
+                for (uint i = 0; i < laseres1.size(); i++) {
                     if(laseres1[i] == sensores0[0]) { //todos los sensores apuntan al mismo lugar, por lo que elegimos el primero
                         chequearSensores = false; // Encontramos coincidencia, entonces no calculamos D_k.
                     }
@@ -1024,7 +1024,7 @@ pair<vector<pair<uint,uint> >, vector<pair<uint,uint> > >  generarRayosDeControl
             if (rotaciones % saltear_hasta_n == saltear_hasta_n /2) { //si rotamos la cantidad correcta entonces calculamos.
                 bool chequearSensores = true; /*Quiero chequear si hay un laser en laseres1 repetido con el sensor actual
  * para evitar repetidos */
-                for (int i = 0; i < laseres1.size(); i++) {
+                for (uint i = 0; i < laseres1.size(); i++) {
                     if(laseres1[i] == sensores0[0]) { //todos los sensores apuntan al mismo lugar, por lo que elegimos el primero
                         chequearSensores = false; // Encontramos coincidencia, entonces no calculamos D_k.
                     }
