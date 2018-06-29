@@ -300,9 +300,9 @@ int main(int argc, char * argv[]) {
     vector<string> archivos;
     listarDirectorio(directorio, archivos);
     uint tamanio_imagenes = 512;
-    vector<unsigned short int> discretizaciones = {32, 64};
-    vector<unsigned short int> cantidades_de_fuentes = {4, 8, 16, 32, 64};
-    vector<unsigned short int> separaciones = {1, 2, 4, 6, 8, 12, 16};
+    vector<unsigned short int> discretizaciones = {64};
+    vector<unsigned short int> cantidades_de_fuentes = {8, 16, 32, 64};
+    vector<unsigned short int> separaciones = {2, 4, 6, 8, 12, 16};
     vector<pair<float,float> > ruidos = {make_pair(0.01, 0.04), make_pair(0.05, 0.09)};
     experimentacion('h', archivos, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
     experimentacion('v', archivos, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
