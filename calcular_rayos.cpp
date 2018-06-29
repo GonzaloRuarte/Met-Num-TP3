@@ -95,7 +95,7 @@ vector<vector<double> > trazar_recta_en_matriz_D(pair<uint,uint> p1, pair<uint,u
     double a = (double(p2.first) - double(p1.first)) / (double(p2.second) - double(p1.second)); // No importa el orden
     // de p1 y p2, calcula la pendiente, fila 2 menos fila 1 sobre columna 2 menos columna 1.
     double b = double(p1.first) - a * double(p1.second) + 0.5; // calcula b = y - ax, con el punto p1.
-    for(uint i = inicio; i<fin ; i++) { //voy de la columna inicio a la fin, pintando los pixeles por los que pase.
+    for(int i = inicio; i<fin ; i++) { //voy de la columna inicio a la fin, pintando los pixeles por los que pase.
         int pintar_desde = floor(a*i + b);
         int pintar_hasta = floor(a*(i+1) +b);
         if (pintar_hasta < pintar_desde) {
@@ -103,7 +103,7 @@ vector<vector<double> > trazar_recta_en_matriz_D(pair<uint,uint> p1, pair<uint,u
             pintar_desde = pintar_hasta;
             pintar_hasta = aux;
         }
-        for(uint j = pintar_desde; j <= pintar_hasta ; j++) {
+        for(int j = pintar_desde; j <= pintar_hasta ; j++) {
             result[j][i] = 1;
         }
     }
@@ -120,7 +120,7 @@ vector<vector<double> > trazar_recta_en_matriz_D(pair<uint,uint> p1, pair<uint,u
         pintar_hasta = aux;
     }
 
-    for(uint j = pintar_desde; j <= pintar_hasta ; j++) {
+    for(int j = pintar_desde; j <= pintar_hasta ; j++) {
         result[j][fin] = 1;
     }
     return result;
