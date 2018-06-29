@@ -304,13 +304,13 @@ int main(int argc, char * argv[]) {
     vector<unsigned short int> cantidades_de_fuentes = {8, 16, 32, 64};
     vector<unsigned short int> separaciones = {2, 4, 6, 8, 12, 16};
     vector<pair<float,float> > ruidos = {make_pair(0.01, 0.04), make_pair(0.05, 0.09)};
+    experimentacion('H', archivos, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
+    experimentacion('V', archivos, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
+    experimentacion('O', archivos, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
+    experimentacion('r', archivos, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
     experimentacion('h', archivos, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
     experimentacion('v', archivos, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
     experimentacion('o', archivos, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
-    experimentacion('r', archivos, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
-    experimentacion('i', archivos, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
-    experimentacion('w', archivos, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
-    experimentacion('p', archivos, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
 
     return 0;
 }
