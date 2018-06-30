@@ -271,13 +271,16 @@ void barrerLaseres_H_sin_salto(const vector<pair<uint,uint> >& Laseres, vector<p
 /**
  * Genera Matriz con todos los D_kij (cada fila es una de las matrices D_k).
  * @param tamMatriz tamaño de la imagen discretizada.
- * @param metodo_usado es un numero entero, y que indica, si es 0, que se usara el metodo de rotaciones
- * iniciando con rayos horizontales, si vale 1, serán unos rayos fijos, que son colocados en los lados horizontales de
- * la imagen y rotaran, si vale 2, estos rayos son colocados en el tope y fondo verticales de la imagen, y tambien rotan,
- * si vale 3 entonces se usa el metodo de horizontales agregando rayos que vengan del tope, si vale 4 usa un metodo en
- * el que evita repetir rayos, con rayos en la izquierda, derecha y arriba (aunque arriba hay algunos repetidos, 5 hace
- * sin repetidos solo horizontales (derecha e izquierda) y 6 hace sin repetidos verticales(rayos arriba y abajo) (para
- * cualquier valor distinto de los anteriores siempre vale el ultimo, aunque seria comportamiento no deseado).
+ * @param metodo_usado es un numero entero que indica:
+ *      Si vale 0, que se usara el metodo de rotaciones iniciando con rayos horizontales.
+ *      Si vale 1, serán unos rayos fijos, que son colocados en los lados horizontales de la imagen y rotaran.
+ *      Si vale 2, estos rayos son colocados en el tope y fondo verticales de la imagen, y tambien rotan.
+ *      Si vale 3, entonces se usa el metodo de horizontales agregando rayos que vengan del tope.
+ *      Si vale 4, usa un metodo en el que evita repetir rayos, con rayos en la izquierda, derecha y arriba
+ *                 (aunque arriba hay algunos repetidos).
+ *      Si vale 5, hace sin repetidos solo horizontales (derecha e izquierda)
+ *      Si vale 6, hace sin repetidos verticales (rayos arriba y abajo)
+ * (para cualquier valor distinto de los anteriores siempre vale el ultimo, aunque seria comportamiento no deseado).
  * @param cantLaseres es la cantidad de laseres que se desean, DEBE SER DIVISOR DE tamMatriz o la función puede tener
  * resultados indeseables, (como minimo puede pasar que no se obtenga la cantidad deseada de laseres, o cosas peores).
  * @param saltear_hasta_n es la cantidad de pixeles rotados que saltearemos despues de cada rayo disparado, el minimo
