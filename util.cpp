@@ -258,25 +258,25 @@ void experimentacion_barrido_H(const string& directorio, uint taman_imags, const
                 VectorMapMatrix D = generarRayos_barrido_H(taman_imags/discretizaciones[ind_disc], espacios_entre_censores[ind_espac]);
                 VectorMapMatrix Dt = getTraspuesta(D);
                 vector<vector<double> > Dt_D = Dt * D;
-                salida.open("resultados de prueba/Discretización:"+to_string(discretizaciones[ind_disc])+" espaciado:"+to_string(espacios_entre_censores[ind_espac])+" .txt");
+                salida.open("resultados de prueba/Discretizacion:"+to_string(discretizaciones[ind_disc])+" espaciado:"+to_string(espacios_entre_censores[ind_espac])+" .txt");
                 salida.close(); //La intención de estas 2 lineas es poner en blanco el archivo si ya existe.
                 for(size_t ind_arch = 0; ind_arch < archivos.size(); ++ind_arch){
                     vector<vector<double> > *imagen_entera = leerCSV(archivos[ind_arch]);
                     vector<vector<double> > imagen_discreta = discretizar(*imagen_entera, discretizaciones[ind_disc]);
                     vector<double> vec_imagen_discreta = pasarAVector(imagen_discreta);
                     vector<double> t_sin_ruido = D * vec_imagen_discreta;
-                    salida.open("resultados de prueba/Discretización:"+to_string(discretizaciones[ind_disc])+" espaciado:"+to_string(espacios_entre_censores[ind_espac])+" .txt", ios::app);
+                    salida.open("resultados de prueba/Discretizacion:"+to_string(discretizaciones[ind_disc])+" espaciado:"+to_string(espacios_entre_censores[ind_espac])+" .txt", ios::app);
                     salida << "Imagen "+archivos[ind_arch]+":\t";
                     salida.close();
                     for(size_t ind_ruido = 0; ind_ruido < ruidos.size(); ++ind_ruido){
                         vector<double> t_con_ruido = uniformNoise(t_sin_ruido, ruidos[ind_ruido].first, ruidos[ind_ruido].second, 0);
                         pair<vector<double>, short> v = EG2(Dt_D, Dt * t_con_ruido);
                         double error = ECM(vec_imagen_discreta, v.first);
-                        salida.open("resultados de prueba/Discretización:"+to_string(discretizaciones[ind_disc])+" espaciado:"+to_string(espacios_entre_censores[ind_espac])+" .txt", ios::app);
+                        salida.open("resultados de prueba/Discretizacion:"+to_string(discretizaciones[ind_disc])+" espaciado:"+to_string(espacios_entre_censores[ind_espac])+" .txt", ios::app);
                         salida << error << ",\t";
                         salida.close();
                     }
-                    salida.open("resultados de prueba/Discretización:"+to_string(discretizaciones[ind_disc])+" espaciado:"+to_string(espacios_entre_censores[ind_espac])+" .txt", ios::app);
+                    salida.open("resultados de prueba/Discretizacion:"+to_string(discretizaciones[ind_disc])+" espaciado:"+to_string(espacios_entre_censores[ind_espac])+" .txt", ios::app);
                     salida << endl;
                     salida << endl; //Lo hago 2 veces para mejor visibilidad.
                     salida.close();
@@ -352,7 +352,7 @@ void experimentacion(char tipo, const vector<string>& archivos, uint taman_imags
                         }
                         ciclos_clock[i] = final - comienzo;
                     }
-                    nombre_arch_salida += " Discretización:"+to_string(discretizaciones[ind_disc])+" cantidad_fuentes:"+to_string(cantidades_de_fuentes[ind_fuent])+" separacion:"+to_string(separaciones[ind_separ])+" .txt";
+                    nombre_arch_salida += " Discretizacion:"+to_string(discretizaciones[ind_disc])+" cantidad_fuentes:"+to_string(cantidades_de_fuentes[ind_fuent])+" separacion:"+to_string(separaciones[ind_separ])+" .txt";
                     salida.open(nombre_arch_salida);
                     salida << "Cantidad rayos: " << D.cantFilas() << endl;
                     salida << "Cantidad ciclos del calculo de los mismos: ";
@@ -438,7 +438,7 @@ void listarDirectorio(const string& directorio,  vector<string>& v)
 
 void escribirVector(string nombreArchivo, vector<double>& vector) {
     ofstream salida(nombreArchivo, ios_base::out);
-    for (int i=0; i < vector.size(); i++) {
+    for (uint i=0; i < vector.size(); i++) {
         salida << vector[i] << endl;
     }
     salida.close();
@@ -448,8 +448,8 @@ void escribirVector(string nombreArchivo, vector<double>& vector) {
 void escribirVectorDeVectores(string nombreArchivo, vector<vector<double>>& vector) {
     ofstream salida(nombreArchivo, ios_base::out);
     string linea = "";
-    for (int i=0; i < vector.size(); i++) {
-        for (int j=0; j <vector[i].size(); j++) {
+    for (uint i=0; i < vector.size(); i++) {
+        for (uint j=0; j <vector[i].size(); j++) {
             linea += to_string(vector[i][j]) + " ";
 
         }

@@ -26,6 +26,6 @@ function graf_de_segm_rot(n)
     hold on;
     %plot([x1s; x2s], [y1s; y2s], int2str(i));
     plot([x1s; x2s], [y1s; y2s], 'b');
-  endfor
+  end
   
 end
