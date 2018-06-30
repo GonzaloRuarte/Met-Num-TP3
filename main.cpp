@@ -258,6 +258,7 @@ void experimentacionVariandoElRuido() {
     string directorio = "imagenes_para_probar";
     vector<string> archivos;
     listarDirectorio(directorio, archivos);
+    string carpeta_salida = "resultados de prueba";
     uint tamanio_imagenes = 512;
     vector<unsigned short int> discretizaciones = {16, 32};
     vector<unsigned short int> cantidades_de_fuentes = {4, 16};
@@ -268,15 +269,16 @@ void experimentacionVariandoElRuido() {
         ruidos.push_back(make_pair(i, i));
     }
 
-    experimentacion('H', archivos, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
-    experimentacion('V', archivos, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
-    experimentacion('r', archivos, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
+    experimentacion('H', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
+    experimentacion('V', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
+    experimentacion('r', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
 }
 
 void experimentacionVariandoDiscretizacion() {
     string directorio = "imagenes_para_probar";
     vector<string> archivos;
     listarDirectorio(directorio, archivos);
+    string carpeta_salida = "resultados de prueba";
     uint tamanio_imagenes = 512;
     vector<unsigned short int> discretizaciones = {16, 32, 64};
     vector<unsigned short int> cantidades_de_fuentes = {2, 8}; //en este caso pongo 2 y 8 fuentes poruqe con idscretizacion 64 no puede haber mas fuentes
@@ -287,15 +289,16 @@ void experimentacionVariandoDiscretizacion() {
     ruidos.push_back(make_pair(0.005, 0.005));
         ruidos.push_back(make_pair(0.1, 0.1));
 
-    experimentacion('H', archivos, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
-    experimentacion('V', archivos, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
-    experimentacion('r', archivos, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
+    experimentacion('H', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
+    experimentacion('V', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
+    experimentacion('r', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
 }
 
 void experimentacionVariandoFuentes() {
     string directorio = "imagenes_para_probar";
     vector<string> archivos;
     listarDirectorio(directorio, archivos);
+    string carpeta_salida = "resultados de prueba";
     uint tamanio_imagenes = 512;
     vector<unsigned short int> discretizaciones = {16, 32};
     vector<unsigned short int> cantidades_de_fuentes;
@@ -309,15 +312,16 @@ void experimentacionVariandoFuentes() {
     ruidos.push_back(make_pair(0.005, 0.005));
         ruidos.push_back(make_pair(0.1, 0.1));
 
-    experimentacion('H', archivos, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
-    experimentacion('V', archivos, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
-    experimentacion('r', archivos, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
+    experimentacion('H', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
+    experimentacion('V', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
+    experimentacion('r', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
 }
 
 void experimentacionVariandoSeparaciones() {
     string directorio = "imagenes_para_probar";
     vector<string> archivos;
     listarDirectorio(directorio, archivos);
+    string carpeta_salida = "resultados de prueba";
     uint tamanio_imagenes = 512;
     vector<unsigned short int> discretizaciones = {16, 32};
     vector<unsigned short int> cantidades_de_fuentes = {4, 16};
@@ -330,9 +334,9 @@ void experimentacionVariandoSeparaciones() {
     ruidos.push_back(make_pair(0.005, 0.005));
         ruidos.push_back(make_pair(0.1, 0.1));
 
-    experimentacion('H', archivos, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
-    experimentacion('V', archivos, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
-    experimentacion('r', archivos, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
+    experimentacion('H', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
+    experimentacion('V', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
+    experimentacion('r', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
 }
 
 int main(int argc, char * argv[]) {
@@ -380,8 +384,7 @@ int main(int argc, char * argv[]) {
     */
 
 
+
+
     return 0;
 }
-
-
-

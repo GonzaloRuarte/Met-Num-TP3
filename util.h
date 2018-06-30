@@ -29,7 +29,7 @@ pair<vector<double>,short> EG2(vector<vector<double>> &mat, vector<double> bb);
 double operator*(const vector<double>& u, const vector<double>& v);
 vector<double> operator*(const vector<vector<double> >& M, const vector<double>& v);
 void experimentacion_barrido_H(const string& directorio, uint taman_imags, const vector<unsigned short int>& discretizaciones, const vector<pair<float,float> >& ruidos, const vector<unsigned short int>& espacios_entre_censores);
-void experimentacion(char tipo, const vector<string>& archivos, uint taman_imags, const vector<unsigned short int>& discretizaciones, const vector<unsigned short int>& cantidades_de_fuentes, const vector<unsigned short int>& separaciones, const vector<pair<float,float> >& ruidos);
+void experimentacion(char tipo, const vector<string>& archivos, string carpeta_salida, uint taman_imags, const vector<unsigned short int>& discretizaciones, const vector<unsigned short int>& cantidades_de_fuentes, const vector<unsigned short int>& separaciones, const vector<pair<float,float> >& ruidos);
 void listarDirectorio(const string& directorio,  vector<string>& v);
 void escribirVector(string nombreArchivo, vector<double>& vector);
 void escribirVectorDeVectores(string nombreArchivo, vector<vector<double>>& vector);
