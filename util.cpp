@@ -280,13 +280,14 @@ void experimentacion_barrido_H(const string& directorio, uint taman_imags, const
                     salida << endl;
                     salida << endl; //Lo hago 2 veces para mejor visibilidad.
                     salida.close();
+                    delete imagen_entera;
                 }
             }
         }
     }
 }
 
-#define repeticiones 20
+//#define repeticiones 20
 
 /**
  * @param tipo: Si es 'H' se hace un barrido horizontal.
@@ -303,8 +304,9 @@ void experimentacion_barrido_H(const string& directorio, uint taman_imags, const
  * @param cantidades_de_fuentes: vector con las distintas cantidades de fuentes de rayos.
  * @param separaciones: vector con las distintas separaciones entre rayos.
  * @param ruido: vector con los distintos intervalos del porcentaje de ruido (expresado como valor entre 0 y 1)
+ * @param repeticiones: cantidad de veces que se repite cada parte del proceso cuyo tiempo queremos medir.
  */
-void experimentacion(char tipo, const vector<string>& archivos, string carpeta_salida, uint taman_imags, const vector<unsigned short int>& discretizaciones, const vector<unsigned short int>& cantidades_de_fuentes, const vector<unsigned short int>& separaciones, const vector<pair<float,float> >& ruidos) {   //Necesito saber el tamaño de las imagenes de antemano.
+void experimentacion(char tipo, const vector<string>& archivos, string carpeta_salida, uint taman_imags, const vector<unsigned short int>& discretizaciones, const vector<unsigned short int>& cantidades_de_fuentes, const vector<unsigned short int>& separaciones, const vector<pair<float,float> >& ruidos, uint16_t repeticiones) {   //Necesito saber el tamaño de las imagenes de antemano.
     ofstream salida;
     for(size_t ind_disc = 0; ind_disc < discretizaciones.size(); ++ind_disc){
         for(size_t ind_fuent = 0; ind_fuent < cantidades_de_fuentes.size(); ++ind_fuent){

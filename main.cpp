@@ -268,10 +268,11 @@ void experimentacionVariandoElRuido() {
     for (float i=0.0; i<=   0.2; i=i+0.01) {
         ruidos.push_back(make_pair(i, i));
     }
+    uint16_t repeticiones = 20;
 
-    experimentacion('H', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
-    experimentacion('V', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
-    experimentacion('r', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
+    experimentacion('H', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
+    experimentacion('V', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
+    experimentacion('r', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
 }
 
 void experimentacionVariandoDiscretizacion() {
@@ -288,10 +289,11 @@ void experimentacionVariandoDiscretizacion() {
 
     ruidos.push_back(make_pair(0.005, 0.005));
         ruidos.push_back(make_pair(0.1, 0.1));
+    uint16_t repeticiones = 20;
 
-    experimentacion('H', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
-    experimentacion('V', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
-    experimentacion('r', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
+    experimentacion('H', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
+    experimentacion('V', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
+    experimentacion('r', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
 }
 
 void experimentacionVariandoFuentes() {
@@ -311,10 +313,11 @@ void experimentacionVariandoFuentes() {
 
     ruidos.push_back(make_pair(0.005, 0.005));
         ruidos.push_back(make_pair(0.1, 0.1));
+    uint16_t repeticiones = 20;
 
-    experimentacion('H', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
-    experimentacion('V', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
-    experimentacion('r', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
+    experimentacion('H', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
+    experimentacion('V', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
+    experimentacion('r', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
 }
 
 void experimentacionVariandoSeparaciones() {
@@ -333,10 +336,11 @@ void experimentacionVariandoSeparaciones() {
 
     ruidos.push_back(make_pair(0.005, 0.005));
         ruidos.push_back(make_pair(0.1, 0.1));
+    uint16_t repeticiones = 20;
 
-    experimentacion('H', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
-    experimentacion('V', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
-    experimentacion('r', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos);
+    experimentacion('H', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
+    experimentacion('V', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
+    experimentacion('r', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
 }
 
 int main(int argc, char * argv[]) {
@@ -382,8 +386,102 @@ int main(int argc, char * argv[]) {
 	}
 	cout << endl;
     */
+    //Imagen de la cátedra:
+    vector<string> archivos;
+    listarDirectorio("Imagenes con padding/128", archivos);
+    string var_dis128 = "128Variando discretizacion";
+    string var_fuen128 = "128Variando cant. de fuentes";
+    string var_sep128 = "128Variando separacion";
+    string var_rui128 = "128Variando ruido";
+    uint tam_imag = 128;
+    vector<unsigned short int> discretizacion32 = {tam_imag/32}; //4
+    vector<unsigned short int> discretizacion16 = {tam_imag/16}; //8
+    vector<unsigned short int> discretizacion8 = {tam_imag/8};   //16. Cuando varío discretización
+    vector<unsigned short int> cantidades_de_fuentes32 = {32/4, 32}; //
+    vector<unsigned short int> cantidades_de_fuentes16 = {16/4, 16};
+    vector<unsigned short int> cantidades_de_fuentes8  = { 8/4,  8};
+    vector<unsigned short int> separaciones = {1, 4};
+    vector<pair<float,float> > ruidos = {make_pair(0.005, 0.005), make_pair(0.1, 0.1)};
+    uint16_t repeticiones = 20;
 
+    vector<unsigned short int> cantidades_de_fuentes32V = {32/8, 32/2};
+    vector<unsigned short int> cantidades_de_fuentes16V = {16/8, 16/2};
+    vector<unsigned short int> separacionesV = {2, 8};
+    vector<pair<float,float> > ruidosV;
+    for(float i = 0.0; i < 0.1; i += 0.02)
+        ruidosV.push_back(make_pair(i,i));
+/*
+    experimentacion('H', archivos, var_dis128, tam_imag, discretizacion32, cantidades_de_fuentes32, separaciones, ruidos, repeticiones);
+    experimentacion('V', archivos, var_dis128, tam_imag, discretizacion32, cantidades_de_fuentes32, separaciones, ruidos, repeticiones);
+    experimentacion('r', archivos, var_dis128, tam_imag, discretizacion32, cantidades_de_fuentes32, separaciones, ruidos, repeticiones);
+    experimentacion('H', archivos, var_dis128, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidos, repeticiones);
+    experimentacion('V', archivos, var_dis128, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidos, repeticiones);
+    experimentacion('r', archivos, var_dis128, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidos, repeticiones);
+    experimentacion('H', archivos, var_dis128, tam_imag, discretizacion8, cantidades_de_fuentes8, separaciones, ruidos, repeticiones);
+    experimentacion('V', archivos, var_dis128, tam_imag, discretizacion8, cantidades_de_fuentes8, separaciones, ruidos, repeticiones);
+    experimentacion('r', archivos, var_dis128, tam_imag, discretizacion8, cantidades_de_fuentes8, separaciones, ruidos, repeticiones);
 
+    experimentacion('H', archivos, var_fuen128, tam_imag, discretizacion32, cantidades_de_fuentes32V, separaciones, ruidos, repeticiones);
+    experimentacion('V', archivos, var_fuen128, tam_imag, discretizacion32, cantidades_de_fuentes32V, separaciones, ruidos, repeticiones);
+    experimentacion('r', archivos, var_fuen128, tam_imag, discretizacion32, cantidades_de_fuentes32V, separaciones, ruidos, repeticiones);
+    experimentacion('H', archivos, var_fuen128, tam_imag, discretizacion16, cantidades_de_fuentes16V, separaciones, ruidos, repeticiones);
+    experimentacion('V', archivos, var_fuen128, tam_imag, discretizacion16, cantidades_de_fuentes16V, separaciones, ruidos, repeticiones);
+    experimentacion('r', archivos, var_fuen128, tam_imag, discretizacion16, cantidades_de_fuentes16V, separaciones, ruidos, repeticiones);
+
+    experimentacion('H', archivos, var_sep128, tam_imag, discretizacion32, cantidades_de_fuentes32, separacionesV, ruidos, repeticiones);
+    experimentacion('V', archivos, var_sep128, tam_imag, discretizacion32, cantidades_de_fuentes32, separacionesV, ruidos, repeticiones);
+    experimentacion('r', archivos, var_sep128, tam_imag, discretizacion32, cantidades_de_fuentes32, separacionesV, ruidos, repeticiones);
+    experimentacion('H', archivos, var_sep128, tam_imag, discretizacion16, cantidades_de_fuentes16, separacionesV, ruidos, repeticiones);
+    experimentacion('V', archivos, var_sep128, tam_imag, discretizacion16, cantidades_de_fuentes16, separacionesV, ruidos, repeticiones);
+    experimentacion('r', archivos, var_sep128, tam_imag, discretizacion16, cantidades_de_fuentes16, separacionesV, ruidos, repeticiones);
+
+    experimentacion('H', archivos, var_rui128, tam_imag, discretizacion32, cantidades_de_fuentes32, separaciones, ruidosV, repeticiones);
+    experimentacion('V', archivos, var_rui128, tam_imag, discretizacion32, cantidades_de_fuentes32, separaciones, ruidosV, repeticiones);
+    experimentacion('r', archivos, var_rui128, tam_imag, discretizacion32, cantidades_de_fuentes32, separaciones, ruidosV, repeticiones);
+    experimentacion('H', archivos, var_rui128, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidosV, repeticiones);
+    experimentacion('V', archivos, var_rui128, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidosV, repeticiones);
+    experimentacion('r', archivos, var_rui128, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidosV, repeticiones);
+    */
+
+    tam_imag = 1024;
+    discretizacion32 = {tam_imag/32}; //32
+    discretizacion16 = {tam_imag/16}; //64
+    discretizacion8 = {tam_imag/8};   //128. Cuando varío discretización
+    string var_dis1024 = "1024Variando discretizacion";
+    string var_fuen1024 = "1024Variando cant. de fuentes";
+    string var_sep1024 = "1024Variando separacion";
+    string var_rui1024 = "1024Variando ruido";
+
+    experimentacion('H', archivos, var_dis1024, tam_imag, discretizacion32, cantidades_de_fuentes32, separaciones, ruidos, repeticiones);
+    experimentacion('V', archivos, var_dis1024, tam_imag, discretizacion32, cantidades_de_fuentes32, separaciones, ruidos, repeticiones);
+    experimentacion('r', archivos, var_dis1024, tam_imag, discretizacion32, cantidades_de_fuentes32, separaciones, ruidos, repeticiones);
+    experimentacion('H', archivos, var_dis1024, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidos, repeticiones);
+    experimentacion('V', archivos, var_dis1024, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidos, repeticiones);
+    experimentacion('r', archivos, var_dis1024, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidos, repeticiones);
+    experimentacion('H', archivos, var_dis1024, tam_imag, discretizacion8, cantidades_de_fuentes8, separaciones, ruidos, repeticiones);
+    experimentacion('V', archivos, var_dis1024, tam_imag, discretizacion8, cantidades_de_fuentes8, separaciones, ruidos, repeticiones);
+    experimentacion('r', archivos, var_dis1024, tam_imag, discretizacion8, cantidades_de_fuentes8, separaciones, ruidos, repeticiones);
+
+    experimentacion('H', archivos, var_fuen1024, tam_imag, discretizacion32, cantidades_de_fuentes32V, separaciones, ruidos, repeticiones);
+    experimentacion('V', archivos, var_fuen1024, tam_imag, discretizacion32, cantidades_de_fuentes32V, separaciones, ruidos, repeticiones);
+    experimentacion('r', archivos, var_fuen1024, tam_imag, discretizacion32, cantidades_de_fuentes32V, separaciones, ruidos, repeticiones);
+    experimentacion('H', archivos, var_fuen1024, tam_imag, discretizacion16, cantidades_de_fuentes16V, separaciones, ruidos, repeticiones);
+    experimentacion('V', archivos, var_fuen1024, tam_imag, discretizacion16, cantidades_de_fuentes16V, separaciones, ruidos, repeticiones);
+    experimentacion('r', archivos, var_fuen1024, tam_imag, discretizacion16, cantidades_de_fuentes16V, separaciones, ruidos, repeticiones);
+
+    experimentacion('H', archivos, var_sep1024, tam_imag, discretizacion32, cantidades_de_fuentes32, separacionesV, ruidos, repeticiones);
+    experimentacion('V', archivos, var_sep1024, tam_imag, discretizacion32, cantidades_de_fuentes32, separacionesV, ruidos, repeticiones);
+    experimentacion('r', archivos, var_sep1024, tam_imag, discretizacion32, cantidades_de_fuentes32, separacionesV, ruidos, repeticiones);
+    experimentacion('H', archivos, var_sep1024, tam_imag, discretizacion16, cantidades_de_fuentes16, separacionesV, ruidos, repeticiones);
+    experimentacion('V', archivos, var_sep1024, tam_imag, discretizacion16, cantidades_de_fuentes16, separacionesV, ruidos, repeticiones);
+    experimentacion('r', archivos, var_sep1024, tam_imag, discretizacion16, cantidades_de_fuentes16, separacionesV, ruidos, repeticiones);
+
+    experimentacion('H', archivos, var_rui1024, tam_imag, discretizacion32, cantidades_de_fuentes32, separaciones, ruidosV, repeticiones);
+    experimentacion('V', archivos, var_rui1024, tam_imag, discretizacion32, cantidades_de_fuentes32, separaciones, ruidosV, repeticiones);
+    experimentacion('r', archivos, var_rui1024, tam_imag, discretizacion32, cantidades_de_fuentes32, separaciones, ruidosV, repeticiones);
+    experimentacion('H', archivos, var_rui1024, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidosV, repeticiones);
+    experimentacion('V', archivos, var_rui1024, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidosV, repeticiones);
+    experimentacion('r', archivos, var_rui1024, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidosV, repeticiones);
 
 
     return 0;
