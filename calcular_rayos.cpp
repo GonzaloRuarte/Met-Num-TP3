@@ -415,14 +415,13 @@ VectorMapMatrix  generarRayos(size_t tamMatriz, int metodo_usado, int cantLasere
                     map<uint, double> D_k_map = pasarAMap(D_k);
                     D_ks.agregarFila(D_k_map);
 
-                    if (i<laseres.size()/2) {
-                        for(uint i = 0; i < D_k.size(); ++i)
-                            for (unsigned int j=0; j < D_k[0].size(); ++j)
-                                D_k_transp[j][i] = D_k[i][j];
-
-
-                        map<uint, double> D_k_map2 = pasarAMap(D_k_transp);
-                        D_ks.agregarFila(D_k_map2);
+                    if (i>=laseres.size()/2) {
+                        if(sensores[i].second == 0) { //calculo el transpuesto que es cambiar fila y columna para los verticales.
+                            D_k = trazar_recta_en_matriz_D(make_pair(laseres[i].second,laseres[i].first),
+                                                           make_pair(sensores[i].second,sensores[i].first), tamMatriz);
+                            map<uint, double> D_k_map = pasarAMap(D_k);
+                            D_ks.agregarFila(D_k_map);
+                        }
                     }
                 }
             }
@@ -466,6 +465,12 @@ VectorMapMatrix  generarRayos(size_t tamMatriz, int metodo_usado, int cantLasere
                     D_k = trazar_recta_en_matriz_D(laseres1[i], sensores1[i], tamMatriz);
                     map<uint, double> D_k_map = pasarAMap(D_k);
                     D_ks.agregarFila(D_k_map);
+                    if(sensores1[i].second == 0) { //calculo el transpuesto que es cambiar fila y columna para los verticales.
+                        D_k = trazar_recta_en_matriz_D(make_pair(laseres1[i].second,laseres1[i].first),
+                                make_pair(sensores1[i].second,sensores1[i].first), tamMatriz);
+                        map<uint, double> D_k_map = pasarAMap(D_k);
+                        D_ks.agregarFila(D_k_map);
+                    }
                 }
             }
             barrerLaseres_H_sin_salto(laseres1,sensores1,tamMatriz);
@@ -488,19 +493,8 @@ VectorMapMatrix  generarRayos(size_t tamMatriz, int metodo_usado, int cantLasere
                 if (chequearSensores) { //Si chequeamos que no habia laser en la posicion, calculamos las D_k.
                     for(uint i = 0; i < laseres0.size(); i++) {
                         D_k = trazar_recta_en_matriz_D(laseres0[i], sensores0[i], tamMatriz);
-                        //Traspongo para conseguir la recta si el rayo fuese vertical.
-                        vector<vector<double> > D_k_transp(D_k.size(), vector<double>(D_k[0].size()) );
-
-                        for(uint i = 0; i < D_k.size(); ++i)
-                            for (unsigned int j=0; j < D_k[0].size(); ++j)
-                                D_k_transp[j][i] = D_k[i][j];
-
                         map<uint, double> D_k_map = pasarAMap(D_k);
-
-
-                        map<uint, double> D_k_map_trans = pasarAMap(D_k_transp);
                         D_ks.agregarFila(D_k_map);
-                        D_ks.agregarFila(D_k_map_trans);
                     }
                 }
             }
@@ -775,9 +769,11 @@ pair<vector<pair<uint,uint> >, vector<pair<uint,uint> > >  generarRayosDeControl
                     result.first.emplace_back(laseres[i]);
                     result.second.emplace_back(sensores[i]);
 
-                    if (i<laseres.size()/2) {
-                        result.first.emplace_back(make_pair(laseres[i].second, laseres[i].first));
-                        result.second.emplace_back(make_pair(sensores[i].second,sensores[i].first));
+                    if (i>=laseres.size()/2) {
+                        if(sensores[i].second == 0) { //si son rayos horizontales de derecha los copio verticales.
+                            result.first.emplace_back(make_pair(laseres[i].second, laseres[i].first));
+                            result.second.emplace_back(make_pair(sensores[i].second,sensores[i].first));
+                        }
                     }
                 }
             }
@@ -815,6 +811,11 @@ pair<vector<pair<uint,uint> >, vector<pair<uint,uint> > >  generarRayosDeControl
                 for(uint i = 0; i < laseres1.size(); i++) {
                     result.first.emplace_back(laseres1[i]);
                     result.second.emplace_back(sensores1[i]);
+
+                    if(sensores1[i].second == 0) { //si estan dando al lado opuesto, tambien coloco los transpuestos.
+                        result.first.emplace_back(make_pair(laseres1[i].second, laseres1[i].first));
+                        result.second.emplace_back(make_pair(sensores1[i].second,sensores1[i].first));
+                    }
                 }
             }
             barrerLaseres_H_sin_salto(laseres1,sensores1,tamMatriz);
@@ -838,9 +839,6 @@ pair<vector<pair<uint,uint> >, vector<pair<uint,uint> > >  generarRayosDeControl
                     for(uint i = 0; i < laseres0.size(); i++) {
                         result.first.emplace_back(laseres0[i]);
                         result.second.emplace_back(sensores0[i]);
-
-                        result.first.emplace_back(make_pair(laseres0[i].second, laseres0[i].first));
-                        result.second.emplace_back(make_pair(sensores0[i].second,sensores0[i].first));
                     }
                 }
             }

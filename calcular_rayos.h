@@ -119,4 +119,27 @@ void barrerLaseres_H_sin_salto(const vector<pair<uint,uint> >& Laseres, vector<p
  */
 VectorMapMatrix  generarRayos(size_t tamMatriz, int metodo_usado, int cantLaseres, int saltear_hasta_n);
 
+
+/**
+ * Esta funcion auxiliar sirve para chequear los rayos y puntos generados y poder graficar en matlab las rectas
+ * correspondientes a los rayos generados por cada metodo, devuelve un par de 2 vectores, donde el primer vector guarda
+ * los pares de enteros sin signo que representan los puntos de inicio de los rayos y el otro vector tendra los puntos
+ * de finalizacion de dichos rayos para poder graficar en matlab.
+ * @param tamMatriz tamaño de la imagen discretizada.
+ * @param metodo_usado es un numero entero, y que indica, si es 0, que se usara el metodo de rotaciones
+ * iniciando con rayos horizontales, si vale 1, serán unos rayos fijos, que son colocados en los lados horizontales de
+ * la imagen y rotaran, si vale 2, estos rayos son colocados en el tope y fondo verticales de la imagen, y tambien rotan,
+ * si vale 3 entonces se usa el metodo de horizontales agregando rayos que vengan del tope, si vale 4 usa un metodo en
+ * el que evita repetir rayos, con rayos en la izquierda, derecha y arriba (aunque arriba hay algunos repetidos, 5 hace
+ * sin repetidos solo horizontales (derecha e izquierda) y 6 hace sin repetidos verticales(rayos arriba y abajo) (para
+ * cualquier valor distinto de los anteriores siempre vale el ultimo, aunque seria comportamiento no deseado).
+ * @param cantLaseres es la cantidad de laseres que se desean, DEBE SER DIVISOR DE tamMatriz o la función puede tener
+ * resultados indeseables, (como minimo puede pasar que no se obtenga la cantidad deseada de laseres, o cosas peores).
+ * @param saltear_hasta_n es la cantidad de pixeles rotados que saltearemos despues de cada rayo disparado, el minimo
+ * valor permitido es 1 (CON 0 SE ROMPE) y aumentar el valor reduce el tiempo de computo, pero tambien reduce la
+ * precision.
+ * @return La matriz D con todos los D_k.
+ */
+pair<vector<pair<uint,uint> >, vector<pair<uint,uint> > >  generarRayosDeControl(size_t tamMatriz, int metodo_usado, int cantLaseres, int saltear_hasta_n);
+
 #endif //CALCULAR_RAYOS_H
