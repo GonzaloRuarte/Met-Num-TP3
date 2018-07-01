@@ -260,9 +260,9 @@ void experimentacionVariandoElRuido() {
     listarDirectorio(directorio, archivos);
     string carpeta_salida = "resultados de prueba";
     uint tamanio_imagenes = 512;
-    vector<unsigned short int> discretizaciones = {16, 32};
-    vector<unsigned short int> cantidades_de_fuentes = {4, 16};
-    vector<unsigned short int> separaciones = {1, 8};
+    vector<unsigned short int> discretizaciones = {16, 32, 64};
+    vector<unsigned short int> cantidades_de_fuentes = {1, 2, 4, 8};
+    vector<unsigned short int> separaciones = {1, 2, 4, 8};
 
     vector<pair<float,float> > ruidos;
     for (float i=0.0; i<=   0.2; i=i+0.01) {

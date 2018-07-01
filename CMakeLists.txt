@@ -28,3 +28,11 @@ add_executable(TP3
         util.h
         VectorMapMatrix.cpp
         VectorMapMatrix.h)
+
+add_executable(matlab
+        main_dibujar_rectas_matlab.cpp
+        calcular_rayos.cpp
+        ppmloader.cpp
+        rdtsc.h
+        util.cpp
+        VectorMapMatrix.cpp)
