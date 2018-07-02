@@ -17,9 +17,6 @@
 using namespace std;
 
 
-
-//VectorMapMatrix getTraspuesta(VectorMapMatrix &W)
-
 /**
  * esta funcion toma como parametros las matrices D y V
  * @return el tiempo que tarda la senial en atravesar el cuerpo
@@ -45,9 +42,6 @@ vector<vector<double> > trasponer(const vector<vector<double> >& mat){
     return res;
 
 }
-
-//pair<vector<double>,short> EG2(vector<vector<double>> &mat, vector<double> bb)
-
 
 vector<vector<double> > multMatPorMat(const vector<vector<double> >& mat1, const vector<vector<double> >& mat2) {
     const unsigned long& n = mat1.size();
@@ -80,7 +74,6 @@ VectorMapMatrix multMatPorMat(VectorMapMatrix &mat1, VectorMapMatrix &mat2) {
     	return res;
 }
 
-//vector<double> uniformNoise(vector<double> t, double init, double end, double sign)
 
 vector<vector<uint16_t>> datosAMatriz(uchar &datos, uint ancho, uint alto) {
 	vector<vector<uint16_t>> ret (0);
@@ -95,52 +88,6 @@ vector<vector<uint16_t>> datosAMatriz(uchar &datos, uint ancho, uint alto) {
 	}
 	return ret;
 }
-
-	unsigned char* readPPM(const char* fileName, char* pSix, int* width, int* height) {
-
-		// open the file to read just the header reading
-		FILE* fr = fopen(fileName, "r");
-
-		// formatted read of header
-		fscanf(fr, "%s", pSix);
-
-		// check to see if it's a PPM image file
-/*		if (strncmp(pSix, "P6" , 10) != 0) {
-			printf("They are not the same\n");
-		} else {
-			printf("They are the same\n");
-		}*/
-
-		// read the rest of header
-		fscanf(fr, "%d\n %d\n", width, height);
-
-		//fscanf(fr, "%d\n", maximum);
-
-		// check to see if they were stored properly
-		printf("PSix: %s\n", pSix);
-		printf("Width: %d\n", *width);
-		printf("Height: %d\n", *height);
-//		printf("maximum: %d\n", *maximum);
-
-		int size = (*width) * (*height);
-		//int size = 423800;
-
-		// allocate array for pixels
-		unsigned char* pixels = new unsigned char[size];
-
-		// unformatted read of binary pixel data
-		while (fread(pixels, sizeof(int), 128, fr)) {
-			printf("%s", pixels);
-		} // end of for loop
-
-		// close file
-		fclose(fr);
-
-		// return the array
-		return pixels;
-
-	} // end of readPPM
-
 
 /**
  * Genera Matriz con todos los D_kij (cada fila es una de las matrices D_k).
@@ -176,8 +123,7 @@ bool esTraspuesta(VectorMapMatrix &D, VectorMapMatrix &Dt) {
 	return ret;
 }
 
-
-vector<double> reconstruirCuerpo(string nombreAchivoEntrada, vector<double>* V, uint tamanoDiscretizacion, double inicioRuido, double finRuido, double signoRuido) {
+vector<double> reconstruirCuerpo(string nombreAchivoEntrada, vector<double>* V, uint tamanoDiscretizacion, double inicioRuido, double finRuido, double signoRuido, int* ancho) {
 	vector<vector<double> >* cuerpo;
 	// 1) tomamos la imagen
 	cuerpo = leerCSV(nombreAchivoEntrada);
@@ -216,273 +162,63 @@ vector<double> reconstruirCuerpo(string nombreAchivoEntrada, vector<double>* V, 
 		}
 	} No hay que invertir.*/
 
-	cout << ECM(*V,solucion.first) << endl;
+	//cout << ECM(*V,solucion.first) << endl;
 	// invertir los valores de la solucion y volverlo a pasar a matriz para luego convertirlo en una imagen que podamos ver
 	return solucion.first;
 }
 
 
+//------------------------ Parseo de la entrada -------------------------------//
 
-//double ECM(vector<double> original, vector<double> reconstruido)
+bool contiene(char *argv[], const string *cadena) {
+    string param1 = argv[1], param2 = argv[3], param3 = argv[5];//, param4 = argv[5];
+    return param1.compare(*cadena) || param2.compare(*cadena) || param3.compare(*cadena); //|| param4.compare(*cadena);
+}
 
-vector<double> medirErrorDeReconstruccion(string nombreDirectorioEntrada, uint tamanoDiscretizacion, double inicioRuido, double finRuido, double signoRuido) {
-	vector<string> listadoDirectorio;
-    listarDirectorio(nombreDirectorioEntrada, listadoDirectorio);
-	vector<double>* cuerpoDiscretizado;
-	vector<double> cuerpoDiscretizaqdoReconstruido;
-    vector<double> ECMs (0);
-	for (uint i=0; i < listadoDirectorio.size(); i++) {
-		cuerpoDiscretizaqdoReconstruido = reconstruirCuerpo(listadoDirectorio[i], cuerpoDiscretizado, tamanoDiscretizacion, inicioRuido, finRuido, signoRuido);
-    	//cout << listadoDirectorio[i] << endl;
-    	ECMs.push_back(ECM(*cuerpoDiscretizado, cuerpoDiscretizaqdoReconstruido));
+string obtener(char *argv[], const string *cadena) {
+    string ret;
+    string param1 = argv[1], param2 = argv[3], param3 = argv[5];//, param4 = argv[7];
+
+    if (param1.compare(*cadena) == 0) ret = argv[2];
+    if (param2.compare(*cadena) == 0) ret = argv[4];
+    if (param3.compare(*cadena) == 0) ret = argv[6];
+//    if (param4.compare(*cadena) == 0) ret = argv[8];
+    return ret;
+}
+
+bool obtenerParametros(int argc, char * argv[], string *ruido, string *nombreArchivoEntrada, string *nombreArchivoSalida) {
+    bool ret = false;
+    const string param1 = "-r", param2 = "-i", param3 = "-o";
+
+    if (argc == 7 && contiene(argv, &param1) && contiene(argv, &param2) && contiene(argv, &param3)) {
+        *ruido = obtener(argv, &param1);
+        *nombreArchivoEntrada = obtener(argv, &param2);
+        *nombreArchivoSalida = obtener(argv, &param3);
+        ret = (ruido != NULL && nombreArchivoEntrada != NULL && nombreArchivoSalida != NULL);
     }
-    return ECMs;
-}
-/*
-void experimentacion_barrido_H(unsigned char discretizacion, pair<float,float> ruido, unsigned short int espacio_entre_censores){
-   vector<vector<double> > *imagen_entera = leerCSV(archivo_imagen);
-    vector<vector<double> > imagen_discreta = discretizar(*imagen_entera, discretizacion);
-    vector<double> vec_imagen_discreta = pasarAVector(imagen_discreta);
-    VectorMapMatrix D = generarRayos_barrido_H(imagen_discreta.size(), espacio_entre_censores);
-    vector<double> t_sin_ruido = D*vec_imagen_discreta;
-    vector<double> t_con_ruido = uniformNoise(t_sin_ruido, ruido.first, ruido.second, 0);
-    VectorMapMatrix Dt_D = getTraspuesta(D)*D;
-    pair<vector<double>, short> v = Dt_D.EG(Dt_D, t_con_ruido);
-    double error = ECM(vec_imagen_discreta, v.first);
-    ofstream salida(archivo_salida);
-    salida << error;
-    salida.close();
-    return;
-}*/
-void experimentacionVariandoElRuido() {
-    string directorio = "imagenes_para_probar";
-    vector<string> archivos;
-    listarDirectorio(directorio, archivos);
-    string carpeta_salida = "resultados de prueba";
-    uint tamanio_imagenes = 512;
-    vector<unsigned short int> discretizaciones = {16, 32, 64};
-    vector<unsigned short int> cantidades_de_fuentes = {1, 2, 4, 8};
-    vector<unsigned short int> separaciones = {1, 2, 4, 8};
-
-    vector<pair<float,float> > ruidos;
-    for (float i=0.0; i<=   0.2; i=i+0.01) {
-        ruidos.push_back(make_pair(i, i));
-    }
-    uint16_t repeticiones = 20;
-
-    experimentacion('H', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
-    experimentacion('V', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
-    experimentacion('r', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
+    return ret;
 }
 
-void experimentacionVariandoDiscretizacion() {
-    string directorio = "imagenes_para_probar";
-    vector<string> archivos;
-    listarDirectorio(directorio, archivos);
-    string carpeta_salida = "resultados de prueba";
-    uint tamanio_imagenes = 512;
-    vector<unsigned short int> discretizaciones = {16, 32, 64};
-    vector<unsigned short int> cantidades_de_fuentes = {2, 8}; //en este caso pongo 2 y 8 fuentes poruqe con idscretizacion 64 no puede haber mas fuentes
-    vector<unsigned short int> separaciones = {1, 8};
-
-    vector<pair<float,float> > ruidos;
-
-    ruidos.push_back(make_pair(0.005, 0.005));
-        ruidos.push_back(make_pair(0.1, 0.1));
-    uint16_t repeticiones = 20;
-
-    experimentacion('H', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
-    experimentacion('V', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
-    experimentacion('r', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
-}
-
-void experimentacionVariandoFuentes() {
-    string directorio = "imagenes_para_probar";
-    vector<string> archivos;
-    listarDirectorio(directorio, archivos);
-    string carpeta_salida = "resultados de prueba";
-    uint tamanio_imagenes = 512;
-    vector<unsigned short int> discretizaciones = {16, 32};
-    vector<unsigned short int> cantidades_de_fuentes;
-	for(uint i = 1; i<=16; i*=2){
-		cantidades_de_fuentes.push_back(i);
-	}
-    vector<unsigned short int> separaciones = {1, 8};
-
-    vector<pair<float,float> > ruidos;
-
-    ruidos.push_back(make_pair(0.005, 0.005));
-        ruidos.push_back(make_pair(0.1, 0.1));
-    uint16_t repeticiones = 20;
-
-    experimentacion('H', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
-    experimentacion('V', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
-    experimentacion('r', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
-}
-
-void experimentacionVariandoSeparaciones() {
-    string directorio = "imagenes_para_probar";
-    vector<string> archivos;
-    listarDirectorio(directorio, archivos);
-    string carpeta_salida = "resultados de prueba";
-    uint tamanio_imagenes = 512;
-    vector<unsigned short int> discretizaciones = {16, 32};
-    vector<unsigned short int> cantidades_de_fuentes = {4, 16};
-    vector<unsigned short int> separaciones = {1, 8};
-	for(uint i = 1; i<=16; i+=2){
-		separaciones.push_back(i);
-	}
-    vector<pair<float,float> > ruidos;
-
-    ruidos.push_back(make_pair(0.005, 0.005));
-        ruidos.push_back(make_pair(0.1, 0.1));
-    uint16_t repeticiones = 20;
-
-    experimentacion('H', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
-    experimentacion('V', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
-    experimentacion('r', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
-}
+//------------------------ Parseo de la entrada -------------------------------//
 
 int main(int argc, char * argv[]) {
 
 
+    string nombreAchivoEntrada;
+    string nombreAchivoSalida;
+    vector<double>* V;
+    uint discretizacion;
+    string ruido;
+    int ancho;
 
-	//reconstruirCuerpos("dicom_csv2", 4, 3, 2, 1);
-	
-	//VectorMapMatrix  D = generarRayos(500,true);
-    //vector<double>* cuerpo;
-    //cuerpo = leerCSV("dicom_csv2/1.2.826.0.1.3680043.2.656.1.138.1.csv");
+    if (!obtenerParametros(argc, argv, &ruido, &nombreAchivoEntrada, &nombreAchivoSalida)) {
+        cout << "Modo de uso: tp3 -r <nivel_ruido> -i <nombre_archivo_entrada> -o <nombre_archivo_salida>\n";
+    } else {
+        double nivelRuido = atof(ruido.c_str());
+        vector<double> reconstruccion = reconstruirCuerpo(nombreAchivoEntrada, V, 32, nivelRuido, nivelRuido, 0, &ancho);
 
-	//cout << (*matriz)[0].size() << endl;
-
-	//vector<double> asd = reconstruirCuerpo("dicom_csv2/1.2.826.0.1.3680043.2.656.1.138.1.csv", cuerpo, 16, 0.4, 0.5, 0);
-	//vector<double> asd = reconstruirCuerpo("dicom_csv2/1.2.826.0.1.3680043.2.656.1.138.1.csv", cuerpo, 16, 0, 0, 0);
-
-/*	vector<vector<double>> mat(20,vector<double> (20,0));
-
-	for(uint i = 0; i< mat.size(); i++){
-		for(uint j = 0; j < mat[0].size(); j++){
-			mat[i][j]=i*2+j*2;
-			cout << mat[i][j] << " ";
-			
-		}
-		cout << endl;
-		
-		
-	}
-	vector<vector<double>> disc = discretizar(mat,5);
-	for(uint i = 0; i< disc.size(); i++){
-		for(uint j = 0; j < disc[0].size(); j++){
-			cout << disc[i][j] << " ";
-			
-		}
-		cout << endl;
-		
-		
-	}
-	vector<double> vec = pasarAVector(disc);
-	for(uint i = 0; i< vec.size(); i++){
-		cout << vec[i]<< " ";
-	}
-	cout << endl;
-    */
-    //Imagen de la cátedra:
-    vector<string> archivos;
-    listarDirectorio("Imagenes con padding/128", archivos);
-    string var_dis128 = "128Variando discretizacion";
-    string var_fuen128 = "128Variando cant. de fuentes";
-    string var_sep128 = "128Variando separacion";
-    string var_rui128 = "128Variando ruido";
-    uint tam_imag = 128;
-    vector<unsigned short int> discretizacion32 = {tam_imag/32}; //4
-    vector<unsigned short int> discretizacion16 = {tam_imag/16}; //8
-    vector<unsigned short int> discretizacion8 = {tam_imag/8};   //16. Cuando varío discretización
-    vector<unsigned short int> cantidades_de_fuentes32 = {32/4, 32}; //
-    vector<unsigned short int> cantidades_de_fuentes16 = {16/4, 16};
-    vector<unsigned short int> cantidades_de_fuentes8  = { 8/4,  8};
-    vector<unsigned short int> separaciones = {1, 4};
-    vector<pair<float,float> > ruidos = {make_pair(0.005, 0.005), make_pair(0.1, 0.1)};
-    uint16_t repeticiones = 20;
-
-    vector<unsigned short int> cantidades_de_fuentes32V = {32/8, 32/2};
-    vector<unsigned short int> cantidades_de_fuentes16V = {16/8, 16/2};
-    vector<unsigned short int> separacionesV = {2, 8};
-    vector<pair<float,float> > ruidosV;
-    for(float i = 0.0; i < 0.1; i += 0.02)
-        ruidosV.push_back(make_pair(i,i));
-/*
-    experimentacion('H', archivos, var_dis128, tam_imag, discretizacion32, cantidades_de_fuentes32, separaciones, ruidos, repeticiones);
-    experimentacion('V', archivos, var_dis128, tam_imag, discretizacion32, cantidades_de_fuentes32, separaciones, ruidos, repeticiones);
-    experimentacion('r', archivos, var_dis128, tam_imag, discretizacion32, cantidades_de_fuentes32, separaciones, ruidos, repeticiones);
-    experimentacion('H', archivos, var_dis128, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidos, repeticiones);
-    experimentacion('V', archivos, var_dis128, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidos, repeticiones);
-    experimentacion('r', archivos, var_dis128, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidos, repeticiones);
-    experimentacion('H', archivos, var_dis128, tam_imag, discretizacion8, cantidades_de_fuentes8, separaciones, ruidos, repeticiones);
-    experimentacion('V', archivos, var_dis128, tam_imag, discretizacion8, cantidades_de_fuentes8, separaciones, ruidos, repeticiones);
-    experimentacion('r', archivos, var_dis128, tam_imag, discretizacion8, cantidades_de_fuentes8, separaciones, ruidos, repeticiones);
-
-    experimentacion('H', archivos, var_fuen128, tam_imag, discretizacion32, cantidades_de_fuentes32V, separaciones, ruidos, repeticiones);
-    experimentacion('V', archivos, var_fuen128, tam_imag, discretizacion32, cantidades_de_fuentes32V, separaciones, ruidos, repeticiones);
-    experimentacion('r', archivos, var_fuen128, tam_imag, discretizacion32, cantidades_de_fuentes32V, separaciones, ruidos, repeticiones);
-    experimentacion('H', archivos, var_fuen128, tam_imag, discretizacion16, cantidades_de_fuentes16V, separaciones, ruidos, repeticiones);
-    experimentacion('V', archivos, var_fuen128, tam_imag, discretizacion16, cantidades_de_fuentes16V, separaciones, ruidos, repeticiones);
-    experimentacion('r', archivos, var_fuen128, tam_imag, discretizacion16, cantidades_de_fuentes16V, separaciones, ruidos, repeticiones);
-
-    experimentacion('H', archivos, var_sep128, tam_imag, discretizacion32, cantidades_de_fuentes32, separacionesV, ruidos, repeticiones);
-    experimentacion('V', archivos, var_sep128, tam_imag, discretizacion32, cantidades_de_fuentes32, separacionesV, ruidos, repeticiones);
-    experimentacion('r', archivos, var_sep128, tam_imag, discretizacion32, cantidades_de_fuentes32, separacionesV, ruidos, repeticiones);
-    experimentacion('H', archivos, var_sep128, tam_imag, discretizacion16, cantidades_de_fuentes16, separacionesV, ruidos, repeticiones);
-    experimentacion('V', archivos, var_sep128, tam_imag, discretizacion16, cantidades_de_fuentes16, separacionesV, ruidos, repeticiones);
-    experimentacion('r', archivos, var_sep128, tam_imag, discretizacion16, cantidades_de_fuentes16, separacionesV, ruidos, repeticiones);
-
-    experimentacion('H', archivos, var_rui128, tam_imag, discretizacion32, cantidades_de_fuentes32, separaciones, ruidosV, repeticiones);
-    experimentacion('V', archivos, var_rui128, tam_imag, discretizacion32, cantidades_de_fuentes32, separaciones, ruidosV, repeticiones);
-    experimentacion('r', archivos, var_rui128, tam_imag, discretizacion32, cantidades_de_fuentes32, separaciones, ruidosV, repeticiones);
-    experimentacion('H', archivos, var_rui128, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidosV, repeticiones);
-    experimentacion('V', archivos, var_rui128, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidosV, repeticiones);
-    experimentacion('r', archivos, var_rui128, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidosV, repeticiones);
-    */
-
-    tam_imag = 1024;
-    discretizacion32 = {tam_imag/32}; //32
-    discretizacion16 = {tam_imag/16}; //64
-    discretizacion8 = {tam_imag/8};   //128. Cuando varío discretización
-    string var_dis1024 = "1024Variando discretizacion";
-    string var_fuen1024 = "1024Variando cant. de fuentes";
-    string var_sep1024 = "1024Variando separacion";
-    string var_rui1024 = "1024Variando ruido";
-
-    experimentacion('H', archivos, var_dis1024, tam_imag, discretizacion32, cantidades_de_fuentes32, separaciones, ruidos, repeticiones);
-    experimentacion('V', archivos, var_dis1024, tam_imag, discretizacion32, cantidades_de_fuentes32, separaciones, ruidos, repeticiones);
-    experimentacion('r', archivos, var_dis1024, tam_imag, discretizacion32, cantidades_de_fuentes32, separaciones, ruidos, repeticiones);
-    experimentacion('H', archivos, var_dis1024, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidos, repeticiones);
-    experimentacion('V', archivos, var_dis1024, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidos, repeticiones);
-    experimentacion('r', archivos, var_dis1024, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidos, repeticiones);
-    experimentacion('H', archivos, var_dis1024, tam_imag, discretizacion8, cantidades_de_fuentes8, separaciones, ruidos, repeticiones);
-    experimentacion('V', archivos, var_dis1024, tam_imag, discretizacion8, cantidades_de_fuentes8, separaciones, ruidos, repeticiones);
-    experimentacion('r', archivos, var_dis1024, tam_imag, discretizacion8, cantidades_de_fuentes8, separaciones, ruidos, repeticiones);
-
-    experimentacion('H', archivos, var_fuen1024, tam_imag, discretizacion32, cantidades_de_fuentes32V, separaciones, ruidos, repeticiones);
-    experimentacion('V', archivos, var_fuen1024, tam_imag, discretizacion32, cantidades_de_fuentes32V, separaciones, ruidos, repeticiones);
-    experimentacion('r', archivos, var_fuen1024, tam_imag, discretizacion32, cantidades_de_fuentes32V, separaciones, ruidos, repeticiones);
-    experimentacion('H', archivos, var_fuen1024, tam_imag, discretizacion16, cantidades_de_fuentes16V, separaciones, ruidos, repeticiones);
-    experimentacion('V', archivos, var_fuen1024, tam_imag, discretizacion16, cantidades_de_fuentes16V, separaciones, ruidos, repeticiones);
-    experimentacion('r', archivos, var_fuen1024, tam_imag, discretizacion16, cantidades_de_fuentes16V, separaciones, ruidos, repeticiones);
-
-    experimentacion('H', archivos, var_sep1024, tam_imag, discretizacion32, cantidades_de_fuentes32, separacionesV, ruidos, repeticiones);
-    experimentacion('V', archivos, var_sep1024, tam_imag, discretizacion32, cantidades_de_fuentes32, separacionesV, ruidos, repeticiones);
-    experimentacion('r', archivos, var_sep1024, tam_imag, discretizacion32, cantidades_de_fuentes32, separacionesV, ruidos, repeticiones);
-    experimentacion('H', archivos, var_sep1024, tam_imag, discretizacion16, cantidades_de_fuentes16, separacionesV, ruidos, repeticiones);
-    experimentacion('V', archivos, var_sep1024, tam_imag, discretizacion16, cantidades_de_fuentes16, separacionesV, ruidos, repeticiones);
-    experimentacion('r', archivos, var_sep1024, tam_imag, discretizacion16, cantidades_de_fuentes16, separacionesV, ruidos, repeticiones);
-
-    experimentacion('H', archivos, var_rui1024, tam_imag, discretizacion32, cantidades_de_fuentes32, separaciones, ruidosV, repeticiones);
-    experimentacion('V', archivos, var_rui1024, tam_imag, discretizacion32, cantidades_de_fuentes32, separaciones, ruidosV, repeticiones);
-    experimentacion('r', archivos, var_rui1024, tam_imag, discretizacion32, cantidades_de_fuentes32, separaciones, ruidosV, repeticiones);
-    experimentacion('H', archivos, var_rui1024, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidosV, repeticiones);
-    experimentacion('V', archivos, var_rui1024, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidosV, repeticiones);
-    experimentacion('r', archivos, var_rui1024, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidosV, repeticiones);
-
+        escribirCSV(nombreAchivoSalida, reconstruccion, ancho);
+    }
 
     return 0;
 }
