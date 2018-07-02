@@ -33,6 +33,6 @@ void experimentacion(char tipo, const vector<string>& archivos, string carpeta_s
 void listarDirectorio(const string& directorio,  vector<string>& v);
 void escribirVector(string nombreArchivo, vector<double>& vector);
 void escribirVectorDeVectores(string nombreArchivo, vector<vector<double>>& vector);
-void escribirCSV(string nombreArchivo, vector<double>& vector, int ancho);
+void escribirCSV(string nombreArchivo, vector<double>& vector, size_t ancho);
 
 #endif //TC_UTIL_H

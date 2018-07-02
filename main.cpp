@@ -123,7 +123,7 @@ bool esTraspuesta(VectorMapMatrix &D, VectorMapMatrix &Dt) {
 	return ret;
 }
 
-vector<double> reconstruirCuerpo(string nombreAchivoEntrada, vector<double>* V, uint tamanoDiscretizacion, double inicioRuido, double finRuido, double signoRuido, int* ancho) {
+vector<double> reconstruirCuerpo(string nombreAchivoEntrada, vector<double>* V, uint tamanoDiscretizacion, double inicioRuido, double finRuido, double signoRuido, size_t* ancho) {
 	vector<vector<double> >* cuerpo;
 	// 1) tomamos la imagen
 	cuerpo = leerCSV(nombreAchivoEntrada);
@@ -131,8 +131,9 @@ vector<double> reconstruirCuerpo(string nombreAchivoEntrada, vector<double>* V, 
 	// 2) la discretizamos
 	vector<vector<double> > cuerpoDiscretizado = discretizar(*cuerpo, tamanoDiscretizacion);
 	size_t tamMatriz = cuerpoDiscretizado.size();
+    *ancho = cuerpoDiscretizado.size();
 	// 3) obtenemos D (la matriz con las trayectorias de los rayos
-	VectorMapMatrix  D = generarRayos(tamMatriz, 4, 32, 1); //tamaño discretizado, metodo a utilizar, cantidad de rayos, pixeles salteados-1.
+	VectorMapMatrix  D = generarRayos(tamMatriz, 2, tamMatriz, 1); //tamaño discretizado, metodo a utilizar, cantidad de rayos, pixeles salteados-1.
 	// 4) pasamos la imagen discretizada a vector
 	vector<double> Vtemp = pasarAVector(cuerpoDiscretizado);
 	V = &Vtemp;
@@ -209,7 +210,7 @@ int main(int argc, char * argv[]) {
     vector<double>* V;
     uint discretizacion;
     string ruido;
-    int ancho;
+    size_t ancho;
 
     if (!obtenerParametros(argc, argv, &ruido, &nombreAchivoEntrada, &nombreAchivoSalida)) {
         cout << "Modo de uso: tp3 -r <nivel_ruido> -i <nombre_archivo_entrada> -o <nombre_archivo_salida>\n";
