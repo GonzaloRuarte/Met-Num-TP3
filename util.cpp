@@ -465,9 +465,11 @@ void escribirVectorDeVectores(string nombreArchivo, vector<vector<double>>& vect
 void escribirCSV(string nombreArchivo, vector<double>& vector, size_t ancho) {
     ofstream salida(nombreArchivo, ios_base::out);
     string linea = "";
+    double valor;
     for (int j=0; j<ancho; j++) {
         for (int i = 0; i < ancho; i++) {
-            linea += to_string(vector[i + j]) + " ";
+            valor = floor(vector[i + j]);
+            linea += to_string((signed short) valor) + " ";
         }
         salida << linea << endl;
         linea = "";
