@@ -96,75 +96,50 @@ vector<vector<uint16_t>> datosAMatriz(uchar &datos, uint ancho, uint alto) {
 	return ret;
 }
 
-	unsigned char* readPPM(const char* fileName, char* pSix, int* width, int* height) {
+unsigned char* readPPM(const char* fileName, char* pSix, int* width, int* height) {
 
-		// open the file to read just the header reading
-		FILE* fr = fopen(fileName, "r");
+    // open the file to read just the header reading
+    FILE* fr = fopen(fileName, "r");
 
-		// formatted read of header
-		fscanf(fr, "%s", pSix);
+    // formatted read of header
+    fscanf(fr, "%s", pSix);
 
-		// check to see if it's a PPM image file
+    // check to see if it's a PPM image file
 /*		if (strncmp(pSix, "P6" , 10) != 0) {
-			printf("They are not the same\n");
-		} else {
-			printf("They are the same\n");
-		}*/
+        printf("They are not the same\n");
+    } else {
+        printf("They are the same\n");
+    }*/
 
-		// read the rest of header
-		fscanf(fr, "%d\n %d\n", width, height);
+    // read the rest of header
+    fscanf(fr, "%d\n %d\n", width, height);
 
-		//fscanf(fr, "%d\n", maximum);
+    //fscanf(fr, "%d\n", maximum);
 
-		// check to see if they were stored properly
-		printf("PSix: %s\n", pSix);
-		printf("Width: %d\n", *width);
-		printf("Height: %d\n", *height);
+    // check to see if they were stored properly
+    printf("PSix: %s\n", pSix);
+    printf("Width: %d\n", *width);
+    printf("Height: %d\n", *height);
 //		printf("maximum: %d\n", *maximum);
 
-		int size = (*width) * (*height);
-		//int size = 423800;
+    int size = (*width) * (*height);
+    //int size = 423800;
 
-		// allocate array for pixels
-		unsigned char* pixels = new unsigned char[size];
+    // allocate array for pixels
+    unsigned char* pixels = new unsigned char[size];
 
-		// unformatted read of binary pixel data
-		while (fread(pixels, sizeof(int), 128, fr)) {
-			printf("%s", pixels);
-		} // end of for loop
+    // unformatted read of binary pixel data
+    while (fread(pixels, sizeof(int), 128, fr)) {
+        printf("%s", pixels);
+    } // end of for loop
 
-		// close file
-		fclose(fr);
+    // close file
+    fclose(fr);
 
-		// return the array
-		return pixels;
+    // return the array
+    return pixels;
 
-	} // end of readPPM
-
-
-/**
- * Genera Matriz con todos los D_kij (cada fila es una de las matrices D_k).
- * @param tamMatriz tamaño de la imagen discretizada.
- * @param metodo_usado es un numero QUE DEBE VALER 0,1 o 2, y que indica, si es 0, que se usara el metodo de rotaciones
- * iniciando con rayos horizontales, si vale 1, serán unos rayos fijos, que son colocados en los lados horizontales de
- * la imagen y rotaran, si vale 2, estos rayos son colocados en el tope y fondo verticales de la imagen, y tambien rotan,
- * si vale 3 entonces se usa el metodo de horizontales agregando rayos que vengan del tope, si vale 4 usa un metodo en
- * el que evita repetir rayos.
- * @param cantLaseres es la cantidad de laseres que se desean, DEBE SER DIVISOR DE tamMatriz o la función puede tener
- * resultados indeseables, (como minimo puede pasar que no se obtenga la cantidad deseada de laseres, o cosas peores).
- * @param saltear_hasta_n es la cantidad de pixeles rotados que saltearemos despues de cada rayo disparado, el minimo
- * valor permitido es 1 (CON 0 SE ROMPE) y aumentar el valor reduce el tiempo de computo, pero tambien reduce la
- * precision.
- * @return La matriz D con todos los D_k.
- */
-/*VectorMapMatrix  generarRayos(size_t tamMatriz, int metodo_usado, int cantLaseres, int saltear_hasta_n);*/
-/*
-vector<vector<double>> obtenerTrayectorias() {
-
-	for (vector<string>::iterator it = lecturas.begin(); it != lecturas.end(); ++it) {
-
-	}
-}*/
+} // end of readPPM
 
 bool esTraspuesta(VectorMapMatrix &D, VectorMapMatrix &Dt) {
 	bool ret = true;
@@ -177,7 +152,7 @@ bool esTraspuesta(VectorMapMatrix &D, VectorMapMatrix &Dt) {
 }
 
 
-vector<double> reconstruirCuerpo(string nombreAchivoEntrada, vector<double>* V, uint tamanoDiscretizacion, double inicioRuido, double finRuido, double signoRuido) {
+vector<double> reconstruirCuerpo(string nombreAchivoEntrada, vector<double>*& V, uint tamanoDiscretizacion, double inicioRuido, double finRuido, double signoRuido) {
 	vector<vector<double> >* cuerpo;
 	// 1) tomamos la imagen
 	cuerpo = leerCSV(nombreAchivoEntrada);
@@ -216,7 +191,7 @@ vector<double> reconstruirCuerpo(string nombreAchivoEntrada, vector<double>* V, 
 		}
 	} No hay que invertir.*/
 
-	cout << ECM(*V,solucion.first) << endl;
+	cout << solucion.second << endl;
 	// invertir los valores de la solucion y volverlo a pasar a matriz para luego convertirlo en una imagen que podamos ver
 	return solucion.first;
 }
@@ -254,7 +229,7 @@ void experimentacion_barrido_H(unsigned char discretizacion, pair<float,float> r
     salida.close();
     return;
 }*/
-void experimentacionVariandoElRuido() {
+/*void experimentacionVariandoElRuido() {
     string directorio = "imagenes_para_probar";
     vector<string> archivos;
     listarDirectorio(directorio, archivos);
@@ -341,7 +316,7 @@ void experimentacionVariandoSeparaciones() {
     experimentacion('H', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
     experimentacion('V', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
     experimentacion('r', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
-}
+}*/
 
 int main(int argc, char * argv[]) {
 
@@ -387,7 +362,7 @@ int main(int argc, char * argv[]) {
 	cout << endl;
     */
     //Imagen de la cátedra:
-    vector<string> archivos;
+/*    vector<string> archivos;
     listarDirectorio("Imagenes con padding/128", archivos);
     string var_dis128 = "128Variando discretizacion";
     string var_fuen128 = "128Variando cant. de fuentes";
@@ -410,7 +385,7 @@ int main(int argc, char * argv[]) {
     vector<pair<float,float> > ruidosV;
     for(float i = 0.0; i < 0.1; i += 0.02)
         ruidosV.push_back(make_pair(i,i));
-/*
+
     experimentacion('H', archivos, var_dis128, tam_imag, discretizacion32, cantidades_de_fuentes32, separaciones, ruidos, repeticiones);
     experimentacion('V', archivos, var_dis128, tam_imag, discretizacion32, cantidades_de_fuentes32, separaciones, ruidos, repeticiones);
     experimentacion('r', archivos, var_dis128, tam_imag, discretizacion32, cantidades_de_fuentes32, separaciones, ruidos, repeticiones);
@@ -441,7 +416,7 @@ int main(int argc, char * argv[]) {
     experimentacion('H', archivos, var_rui128, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidosV, repeticiones);
     experimentacion('V', archivos, var_rui128, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidosV, repeticiones);
     experimentacion('r', archivos, var_rui128, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidosV, repeticiones);
-    */
+
 
     tam_imag = 1024;
     discretizacion32 = {tam_imag/32}; //32
@@ -482,7 +457,7 @@ int main(int argc, char * argv[]) {
     experimentacion('H', archivos, var_rui1024, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidosV, repeticiones);
     experimentacion('V', archivos, var_rui1024, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidosV, repeticiones);
     experimentacion('r', archivos, var_rui1024, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidosV, repeticiones);
-
+    */
 
     return 0;
 }
