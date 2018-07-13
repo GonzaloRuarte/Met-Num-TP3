@@ -17,9 +17,6 @@
 using namespace std;
 
 
-
-//VectorMapMatrix getTraspuesta(VectorMapMatrix &W)
-
 /**
  * esta funcion toma como parametros las matrices D y V
  * @return el tiempo que tarda la senial en atravesar el cuerpo
@@ -45,9 +42,6 @@ vector<vector<double> > trasponer(const vector<vector<double> >& mat){
     return res;
 
 }
-
-//pair<vector<double>,short> EG2(vector<vector<double>> &mat, vector<double> bb)
-
 
 vector<vector<double> > multMatPorMat(const vector<vector<double> >& mat1, const vector<vector<double> >& mat2) {
     const unsigned long& n = mat1.size();
@@ -80,7 +74,6 @@ VectorMapMatrix multMatPorMat(VectorMapMatrix &mat1, VectorMapMatrix &mat2) {
     	return res;
 }
 
-//vector<double> uniformNoise(vector<double> t, double init, double end, double sign)
 
 vector<vector<uint16_t>> datosAMatriz(uchar &datos, uint ancho, uint alto) {
 	vector<vector<uint16_t>> ret (0);
@@ -151,29 +144,28 @@ bool esTraspuesta(VectorMapMatrix &D, VectorMapMatrix &Dt) {
 	return ret;
 }
 
-
-vector<double> reconstruirCuerpo(string nombreAchivoEntrada, vector<double>*& V, uint tamanoDiscretizacion, double inicioRuido, double finRuido, double signoRuido) {
-	vector<vector<double> >* cuerpo;
+vector<double> reconstruirCuerpo(string nombreAchivoEntrada, vector<double>& vecCuerpoDiscretizado, uint tamanoDiscretizacion, int metodo, double inicioRuido, double finRuido, double signoRuido, size_t& ancho) {
+	vector<vector<double> > cuerpo;
 	// 1) tomamos la imagen
-	cuerpo = leerCSV(nombreAchivoEntrada);
+	cuerpo = *leerCSV(nombreAchivoEntrada);
 
 	// 2) la discretizamos
-	vector<vector<double> > cuerpoDiscretizado = discretizar(*cuerpo, tamanoDiscretizacion);
+	vector<vector<double> > cuerpoDiscretizado = discretizar(cuerpo, tamanoDiscretizacion);
 	size_t tamMatriz = cuerpoDiscretizado.size();
+    ancho = cuerpoDiscretizado.size();
 	// 3) obtenemos D (la matriz con las trayectorias de los rayos
-	VectorMapMatrix  D = generarRayos(tamMatriz, 4, 32, 1); //tamaño discretizado, metodo a utilizar, cantidad de rayos, pixeles salteados-1.
+	VectorMapMatrix  D = generarRayos(tamMatriz, metodo, tamMatriz, 1); //tamaño discretizado, metodo a utilizar, cantidad de rayos, pixeles salteados-1.
 	// 4) pasamos la imagen discretizada a vector
-	vector<double> Vtemp = pasarAVector(cuerpoDiscretizado);
-	V = &Vtemp;
-	// 5) invertimos el vector V
-	/*vector<double> Vinv (V->size(), 0);
-	for (uint i = 0; i< V->size(); i++){
-		if ((*V)[i] != 0){
-			Vinv[i] = 1/(*V)[i];
+    vecCuerpoDiscretizado = pasarAVector(cuerpoDiscretizado);
+	// 5) invertimos el vector vecCuerpoDiscretizado
+	/*vector<double> Vinv (vecCuerpoDiscretizado->size(), 0);
+	for (uint i = 0; i< vecCuerpoDiscretizado->size(); i++){
+		if ((*vecCuerpoDiscretizado)[i] != 0){
+			Vinv[i] = 1/(*vecCuerpoDiscretizado)[i];
 		}
 	} No hay que invertir.*/
-	// 6) multiplicamos la matriz D por el vector V
-	vector<double> T = D*Vtemp;
+	// 6) multiplicamos la matriz D por el vector vecCuerpoDiscretizado
+	vector<double> T = D*vecCuerpoDiscretizado;
 	// 7) le aplicamos ruido al vector T
 	vector<double> Tr = uniformNoise(T, inicioRuido, finRuido, signoRuido);
 	// 8) generamos DtD
@@ -184,51 +176,34 @@ vector<double> reconstruirCuerpo(string nombreAchivoEntrada, vector<double>*& V,
 	vector<double> DtT = Dt*Tr;
 	// 10) resolvemos el sistema DtDx = DtT con EG
 	pair<vector<double>,short> solucion = EG2(DtD, DtT);
-	/*vector<double> Check (V->size(), 0);
-	for (uint i = 0; i< V->size(); i++){
+	/*vector<double> Check (vecCuerpoDiscretizado->size(), 0);
+	for (uint i = 0; i< vecCuerpoDiscretizado->size(); i++){
 		if (abs(solucion.first[i]) > 0.00001){
 			Check[i] = 1/solucion.first[i];
 		}
 	} No hay que invertir.*/
 
-	cout << solucion.second << endl;
-	// invertir los valores de la solucion y volverlo a pasar a matriz para luego convertirlo en una imagen que podamos ver
+	cout << "Cantidad del metodo" << metodo << ": " << D.cantFilas() << "; status del sistema: " << solucion.second << "; ECM: " << ECM(solucion.first, vecCuerpoDiscretizado) << endl;
 	return solucion.first;
 }
 
-
-
 //double ECM(vector<double> original, vector<double> reconstruido)
 
-vector<double> medirErrorDeReconstruccion(string nombreDirectorioEntrada, uint tamanoDiscretizacion, double inicioRuido, double finRuido, double signoRuido) {
-	vector<string> listadoDirectorio;
+vector<double> medirErrorDeReconstruccion(string nombreDirectorioEntrada, uint tamanoDiscretizacion, int metodo, double inicioRuido, double finRuido, double signoRuido) {
+    vector<string> listadoDirectorio;
     listarDirectorio(nombreDirectorioEntrada, listadoDirectorio);
-	vector<double>* cuerpoDiscretizado;
-	vector<double> cuerpoDiscretizaqdoReconstruido;
+    vector<double> cuerpoDiscretizado;
+    vector<double> cuerpoDiscretizaqdoReconstruido;
     vector<double> ECMs (0);
-	for (uint i=0; i < listadoDirectorio.size(); i++) {
-		cuerpoDiscretizaqdoReconstruido = reconstruirCuerpo(listadoDirectorio[i], cuerpoDiscretizado, tamanoDiscretizacion, inicioRuido, finRuido, signoRuido);
-    	//cout << listadoDirectorio[i] << endl;
-    	ECMs.push_back(ECM(*cuerpoDiscretizado, cuerpoDiscretizaqdoReconstruido));
+    size_t ancho;
+    for (uint i=0; i < listadoDirectorio.size(); i++) {
+        cuerpoDiscretizaqdoReconstruido = reconstruirCuerpo(listadoDirectorio[i], cuerpoDiscretizado, metodo, tamanoDiscretizacion, inicioRuido, finRuido, signoRuido, ancho);
+        //cout << listadoDirectorio[i] << endl;
+        ECMs.push_back(ECM(cuerpoDiscretizado, cuerpoDiscretizaqdoReconstruido));
     }
     return ECMs;
 }
-/*
-void experimentacion_barrido_H(unsigned char discretizacion, pair<float,float> ruido, unsigned short int espacio_entre_censores){
-   vector<vector<double> > *imagen_entera = leerCSV(archivo_imagen);
-    vector<vector<double> > imagen_discreta = discretizar(*imagen_entera, discretizacion);
-    vector<double> vec_imagen_discreta = pasarAVector(imagen_discreta);
-    VectorMapMatrix D = generarRayos_barrido_H(imagen_discreta.size(), espacio_entre_censores);
-    vector<double> t_sin_ruido = D*vec_imagen_discreta;
-    vector<double> t_con_ruido = uniformNoise(t_sin_ruido, ruido.first, ruido.second, 0);
-    VectorMapMatrix Dt_D = getTraspuesta(D)*D;
-    pair<vector<double>, short> v = Dt_D.EG(Dt_D, t_con_ruido);
-    double error = ECM(vec_imagen_discreta, v.first);
-    ofstream salida(archivo_salida);
-    salida << error;
-    salida.close();
-    return;
-}*/
+
 /*void experimentacionVariandoElRuido() {
     string directorio = "imagenes_para_probar";
     vector<string> archivos;
@@ -248,52 +223,6 @@ void experimentacion_barrido_H(unsigned char discretizacion, pair<float,float> r
     experimentacion('H', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
     experimentacion('V', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
     experimentacion('r', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
-}
-
-void experimentacionVariandoDiscretizacion() {
-    string directorio = "imagenes_para_probar";
-    vector<string> archivos;
-    listarDirectorio(directorio, archivos);
-    string carpeta_salida = "resultados de prueba";
-    uint tamanio_imagenes = 512;
-    vector<unsigned short int> discretizaciones = {16, 32, 64};
-    vector<unsigned short int> cantidades_de_fuentes = {2, 8}; //en este caso pongo 2 y 8 fuentes poruqe con idscretizacion 64 no puede haber mas fuentes
-    vector<unsigned short int> separaciones = {1, 8};
-
-    vector<pair<float,float> > ruidos;
-
-    ruidos.push_back(make_pair(0.005, 0.005));
-        ruidos.push_back(make_pair(0.1, 0.1));
-    uint16_t repeticiones = 20;
-
-    experimentacion('H', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
-    experimentacion('V', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
-    experimentacion('r', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
-}
-
-void experimentacionVariandoFuentes() {
-    string directorio = "imagenes_para_probar";
-    vector<string> archivos;
-    listarDirectorio(directorio, archivos);
-    string carpeta_salida = "resultados de prueba";
-    uint tamanio_imagenes = 512;
-    vector<unsigned short int> discretizaciones = {16, 32};
-    vector<unsigned short int> cantidades_de_fuentes;
-	for(uint i = 1; i<=16; i*=2){
-		cantidades_de_fuentes.push_back(i);
-	}
-    vector<unsigned short int> separaciones = {1, 8};
-
-    vector<pair<float,float> > ruidos;
-
-    ruidos.push_back(make_pair(0.005, 0.005));
-        ruidos.push_back(make_pair(0.1, 0.1));
-    uint16_t repeticiones = 20;
-
-    experimentacion('H', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
-    experimentacion('V', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
-    experimentacion('r', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
-}
 
 void experimentacionVariandoSeparaciones() {
     string directorio = "imagenes_para_probar";
@@ -318,10 +247,43 @@ void experimentacionVariandoSeparaciones() {
     experimentacion('r', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
 }*/
 
+//------------------------ Parseo de la entrada -------------------------------//
+
+bool contiene(char *argv[], const string *cadena) {
+    string param1 = argv[1], param2 = argv[3], param3 = argv[5];//, param4 = argv[5];
+    return param1.compare(*cadena) || param2.compare(*cadena) || param3.compare(*cadena); //|| param4.compare(*cadena);
+}
+
+string obtener(char *argv[], const string *cadena) {
+    string ret;
+    string param1 = argv[1], param2 = argv[3], param3 = argv[5];//, param4 = argv[7];
+
+    if (param1.compare(*cadena) == 0) ret = argv[2];
+    if (param2.compare(*cadena) == 0) ret = argv[4];
+    if (param3.compare(*cadena) == 0) ret = argv[6];
+//    if (param4.compare(*cadena) == 0) ret = argv[8];
+    return ret;
+}
+
+bool obtenerParametros(int argc, char * argv[], string *ruido, string *nombreArchivoEntrada, string *nombreArchivoSalida) {
+    bool ret = false;
+    const string param1 = "-r", param2 = "-i", param3 = "-o";
+    bool estan_todos = argc==7;
+    estan_todos = estan_todos && contiene(argv, &param1);
+    estan_todos = estan_todos && contiene(argv, &param2);
+    estan_todos = estan_todos && contiene(argv, &param3);
+    //if (argc == 7 && contiene(argv, &param1) && contiene(argv, &param2) && contiene(argv, &param3)) {
+    if (estan_todos) {
+        *ruido = obtener(argv, &param1);
+        *nombreArchivoEntrada = obtener(argv, &param2);
+        *nombreArchivoSalida = obtener(argv, &param3);
+        ret = (ruido != NULL && nombreArchivoEntrada != NULL && nombreArchivoSalida != NULL);
+    }
+    return ret;
+}
+//------------------------ Parseo de la entrada -------------------------------//
+
 int main(int argc, char * argv[]) {
-
-
-
 	//reconstruirCuerpos("dicom_csv2", 4, 3, 2, 1);
 	
 	//VectorMapMatrix  D = generarRayos(500,true);
@@ -458,6 +420,29 @@ int main(int argc, char * argv[]) {
     experimentacion('V', archivos, var_rui1024, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidosV, repeticiones);
     experimentacion('r', archivos, var_rui1024, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidosV, repeticiones);
     */
+
+    string nombreAchivoEntrada;
+    string nombreAchivoSalida;
+    vector<double> vecCuerpoDiscretizado;
+    uint discretizacion;
+    string ruido;
+    size_t ancho;
+    if (!obtenerParametros(argc, argv, &ruido, &nombreAchivoEntrada, &nombreAchivoSalida)) {
+        cout << "Modo de uso: tp3 -r <nivel_ruido> -i <nombre_archivo_entrada> -o <nombre_archivo_salida>\n";
+    } else {
+        double nivelRuido = atof(ruido.c_str());
+        //Comparación de las reconstrucciones de las distintas estratégias.
+        vector<double> reconstruccionR = reconstruirCuerpo(nombreAchivoEntrada, vecCuerpoDiscretizado, 16, 0, 0, nivelRuido, 0, ancho);
+        escribirCSV("Resultados_de_reconstrucción/reconstruccionR.csv", reconstruccionR, ancho);
+        vector<double> reconstruccionH = reconstruirCuerpo(nombreAchivoEntrada, vecCuerpoDiscretizado, 16, 5, 0, nivelRuido, 0, ancho);
+        escribirCSV("Resultados_de_reconstrucción/reconstruccionH.csv", reconstruccionH, ancho);
+        vector<double> reconstruccionV = reconstruirCuerpo(nombreAchivoEntrada, vecCuerpoDiscretizado, 16, 6, 0, nivelRuido, 0, ancho);
+        escribirCSV("Resultados_de_reconstrucción/reconstruccionV.csv", reconstruccionV, ancho);
+        escribirCSV("Resultados_de_reconstrucción/original discretizado.csv", vecCuerpoDiscretizado, ancho);
+        //Lo que debe quedar en la entrega:
+        /*vector<double> reconstruccion = reconstruirCuerpo(nombreAchivoEntrada, vecCuerpoDiscretizado, 16, 0, 0, nivelRuido, 0, ancho);
+        escribirCSV(nombreAchivoSalida, reconstruccion, ancho);*/
+    }
 
     return 0;
 }

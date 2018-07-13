@@ -451,10 +451,25 @@ void escribirVector(string nombreArchivo, vector<double>& vector) {
 void escribirVectorDeVectores(string nombreArchivo, vector<vector<double>>& vector) {
     ofstream salida(nombreArchivo, ios_base::out);
     string linea = "";
-    for (uint i=0; i < vector.size(); i++) {
-        for (uint j=0; j <vector[i].size(); j++) {
+    for (uint i = 0; i < vector.size(); i++) {
+        for (uint j = 0; j < vector[i].size(); j++) {
             linea += to_string(vector[i][j]) + " ";
 
+        }
+        salida << linea << endl;
+        linea = "";
+    }
+    salida.close();
+}
+
+void escribirCSV(string nombreArchivo, vector<double>& vector, size_t ancho) {
+    ofstream salida(nombreArchivo, ios_base::out);
+    string linea = "";
+    double valor;
+    for (int i=0; i<ancho; i++) {
+        for (int j = 0; j < ancho; j++) {
+            valor = floor(vector[i*ancho + j]);
+            linea += to_string((signed short) valor) + ",";
         }
         salida << linea << endl;
         linea = "";
