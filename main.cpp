@@ -345,9 +345,10 @@ void variacion_de_parametros_con_imagenes_de_la_catedra(){
     experimentacion('r', archivos, var_rui1024, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidosV, repeticiones);
 }
 
-void reconstruccion_especifica(uint16_t cantidad_celdas, uint16_t metodo, uint16_t cant_rayos_inic, uint16_t separacion, string nom_arch_datos, string carpeta_archivos_salida, const vector<double>& vecCuerpoDiscretizado){
+void reconstruccion_especifica(uint16_t cantidad_celdas, uint16_t metodo, uint16_t cant_rayos_inic, uint16_t separacion, pair<double,double> ruido, string nom_arch_datos, string carpeta_archivos_salida, const vector<double>& vecCuerpoDiscretizado){
     VectorMapMatrix D = generarRayos(cantidad_celdas, metodo, cant_rayos_inic, separacion);
     vector<double> T = D*vecCuerpoDiscretizado;
+    T = uniformNoise(T, ruido.first, ruido.second, 0);
     VectorMapMatrix Dt = getTraspuesta(D);
     vector<vector<double>> DtD = Dt*D;
     vector<double> DtT = Dt*T;
@@ -362,10 +363,14 @@ void reconstruccion_especifica(uint16_t cantidad_celdas, uint16_t metodo, uint16
         case 5: char_metodo = 'h'; break;
         case 6: char_metodo = 'v'; break;
     }
+    char str_ruido1[4];
+    sprintf(str_ruido1, "%g", ruido.first);
+    char str_ruido2[4];
+    sprintf(str_ruido2, "%g", ruido.first);
     ofstream arch_datos(nom_arch_datos, ios::app);
-    arch_datos << "Estrategia = " << char_metodo << ", cantidad rayos iniciales =" << cant_rayos_inic << ", separación =" << separacion << ":" << endl;
+    arch_datos << "Estrategia = " << char_metodo << ", cantidad rayos iniciales =" << cant_rayos_inic << ", separación =" << separacion << ", ruido = (" << str_ruido1 << "," << str_ruido2 << "):" << endl;
     arch_datos << "Cantidad de rayos: " << D.cantFilas() << ";\tstatus de la EG: " << solucion.second << ";\tECM: " << ECM(solucion.first, vecCuerpoDiscretizado) << endl << endl;
-    string nombre_arch_reconst = carpeta_archivos_salida+"/Reconstr. "+char_metodo+","+to_string(cant_rayos_inic)+","+to_string(separacion)+".csv";
+    string nombre_arch_reconst = carpeta_archivos_salida+"/Reconstr. "+char_metodo+","+to_string(cant_rayos_inic)+","+to_string(separacion)+","+to_string(ruido.first)+"_"+to_string(ruido.second)+".csv";
     escribirCSV(nombre_arch_reconst, solucion.first, cantidad_celdas);
 }
 
@@ -378,40 +383,103 @@ void reconstrucciones_especificas(const string& archivo_imagen_entrada, string c
     uint discretizacion_para_cantidad_celdas = cuerpo.size()/cantidad_celdas;     //Discretización necesaria para tener una grilla de "cantidad_celdas"x"cantidad_celdas".
     vector<vector<double> > cuerpoDiscretizado = discretizar(cuerpo, discretizacion_para_cantidad_celdas);
     vector<double> vecCuerpoDiscretizado = pasarAVector(cuerpoDiscretizado);
+    pair<double,double> ruido = {0,0};
     string nombre_arch_reconst = carpeta_archivos_salida+"/Reconstr. del original.csv";
     escribirCSV(nombre_arch_reconst, vecCuerpoDiscretizado, cantidad_celdas);
     //R con máxima cant. de rayos iniciales y separación 1.
-    reconstruccion_especifica(cantidad_celdas, 0, cantidad_celdas, 1, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+    reconstruccion_especifica(cantidad_celdas, 0, cantidad_celdas, 1, ruido, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
     //R con 1/2 de la máxima cant. de rayos iniciales y separación 1.
-    reconstruccion_especifica(cantidad_celdas, 0, cantidad_celdas/2, 1, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+    reconstruccion_especifica(cantidad_celdas, 0, cantidad_celdas/2, 1, ruido, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
     //R con la máxima cant. de rayos iniciales y separación 2.
-    reconstruccion_especifica(cantidad_celdas, 0, cantidad_celdas, 2, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+    reconstruccion_especifica(cantidad_celdas, 0, cantidad_celdas, 2, ruido, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
 
     //H con la máxima cant. de rayos iniciales y separación 1.
-    reconstruccion_especifica(cantidad_celdas, 1, cantidad_celdas, 1, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+    reconstruccion_especifica(cantidad_celdas, 1, cantidad_celdas, 1, ruido, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
     //H con la máxima cant. de rayos iniciales y separación 2.
-    reconstruccion_especifica(cantidad_celdas, 1, cantidad_celdas, 2, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+    reconstruccion_especifica(cantidad_celdas, 1, cantidad_celdas, 2, ruido, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
     //H con la máxima cant. de rayos iniciales y separación 4.
-    reconstruccion_especifica(cantidad_celdas, 1, cantidad_celdas, 4, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+    reconstruccion_especifica(cantidad_celdas, 1, cantidad_celdas, 4, ruido, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
     //H con 1/2 de la máxima cant. de rayos iniciales y separación 1.
-    reconstruccion_especifica(cantidad_celdas, 1, cantidad_celdas/2, 1, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+    reconstruccion_especifica(cantidad_celdas, 1, cantidad_celdas/2, 1, ruido, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
     //H con 1/2 de la máxima cant. de rayos iniciales y separación 2.
-    reconstruccion_especifica(cantidad_celdas, 1, cantidad_celdas/2, 2, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+    reconstruccion_especifica(cantidad_celdas, 1, cantidad_celdas/2, 2, ruido, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
     //H con 1/4 de la máxima cant. de rayos iniciales y separación 1.
-    reconstruccion_especifica(cantidad_celdas, 1, cantidad_celdas/4, 1, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+    reconstruccion_especifica(cantidad_celdas, 1, cantidad_celdas/4, 1, ruido, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
 
     //V con la máxima cant. de rayos iniciales y separación 1.
-    reconstruccion_especifica(cantidad_celdas, 2, cantidad_celdas, 1, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+    reconstruccion_especifica(cantidad_celdas, 2, cantidad_celdas, 1, ruido, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
     //V con la máxima cant. de rayos iniciales y separación 2.
-    reconstruccion_especifica(cantidad_celdas, 2, cantidad_celdas, 2, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+    reconstruccion_especifica(cantidad_celdas, 2, cantidad_celdas, 2, ruido, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
     //V con la máxima cant. de rayos iniciales y separación 4.
-    reconstruccion_especifica(cantidad_celdas, 2, cantidad_celdas, 4, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+    reconstruccion_especifica(cantidad_celdas, 2, cantidad_celdas, 4, ruido, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
     //V con 1/2 de la máxima cant. de rayos iniciales y separación 1.
-    reconstruccion_especifica(cantidad_celdas, 2, cantidad_celdas/2, 1, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+    reconstruccion_especifica(cantidad_celdas, 2, cantidad_celdas/2, 1, ruido, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
     //V con 1/2 de la máxima cant. de rayos iniciales y separación 2.
-    reconstruccion_especifica(cantidad_celdas, 2, cantidad_celdas/2, 2, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+    reconstruccion_especifica(cantidad_celdas, 2, cantidad_celdas/2, 2, ruido, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
     //V con 1/4 de la máxima cant. de rayos iniciales y separación 1.
-    reconstruccion_especifica(cantidad_celdas, 2, cantidad_celdas/4, 1, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+    reconstruccion_especifica(cantidad_celdas, 2, cantidad_celdas/4, 1, ruido, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+}
+
+/**
+ * @param ruido: Debe tener 11 elementos
+ */
+void reconstruccion_variando_ruido(uint16_t cantidad_celdas, uint16_t metodo, uint16_t cant_rayos_inic, uint16_t separacion, pair<double,double>* ruido, string nom_arch_datos, string carpeta_archivos_salida, const vector<double>& vecCuerpoDiscretizado){
+    VectorMapMatrix D = generarRayos(cantidad_celdas, metodo, cant_rayos_inic, separacion);
+    vector<double> T = D*vecCuerpoDiscretizado;
+    VectorMapMatrix Dt = getTraspuesta(D);
+    vector<vector<double>> DtD = Dt*D;
+    char char_metodo;
+    switch(metodo){
+        case 0: char_metodo = 'R'; break;
+        case 1: char_metodo = 'H'; break;
+        case 2: char_metodo = 'V'; break;
+        case 3: char_metodo = 'O'; break;
+        case 4: char_metodo = 'o'; break;
+        case 5: char_metodo = 'h'; break;
+        case 6: char_metodo = 'v'; break;
+    }
+    for(uint8_t i = 0; i < 11; ++i){
+        vector<double> Tr = uniformNoise(T, ruido[i].first, ruido[i].second, 0);
+        vector<double> DtT = Dt*Tr;
+        pair<vector<double>,short> solucion = EG2(DtD, DtT);
+        char str_ruido1[4];
+        sprintf(str_ruido1, "%g", ruido[i].first);
+        char str_ruido2[4];
+        sprintf(str_ruido2, "%g", ruido[i].first);
+        ofstream arch_datos(nom_arch_datos, ios::app);
+        arch_datos << "Estrategia = " << char_metodo << ", cantidad rayos iniciales = " << cant_rayos_inic << ", separación = " << separacion << ", ruido = (" << str_ruido1 << "," << str_ruido2 << "):" << endl;
+        arch_datos << "Cantidad de rayos: " << D.cantFilas() << ";\tstatus de la EG: " << solucion.second << ";\tECM: " << ECM(solucion.first, vecCuerpoDiscretizado) << endl << endl;
+        string nombre_arch_reconst = carpeta_archivos_salida+"/Reconstr. "+char_metodo+","+to_string(cant_rayos_inic)+","+to_string(separacion)+","+str_ruido1+"_"+str_ruido2+".csv";
+        escribirCSV(nombre_arch_reconst, solucion.first, cantidad_celdas);
+    }
+}
+
+void variando_ruido_con_parametros_preestablecidos(const string& archivo_imagen_entrada, string carpeta_archivos_salida, uint16_t cantidad_celdas){
+    string nom_arch_datos = carpeta_archivos_salida+"/datos de las reconstrucciones.txt";
+    ofstream arch_datos(nom_arch_datos);
+    arch_datos << "En todos los casos el tamaño de las reconstrucciones es de " << cantidad_celdas << endl << endl;
+    arch_datos.close();
+    vector<vector<double> > cuerpo = *leerCSV(archivo_imagen_entrada);
+    uint discretizacion_para_cantidad_celdas = cuerpo.size()/cantidad_celdas;     //Discretización necesaria para tener una grilla de "cantidad_celdas"x"cantidad_celdas".
+    vector<vector<double> > cuerpoDiscretizado = discretizar(cuerpo, discretizacion_para_cantidad_celdas);
+    vector<double> vecCuerpoDiscretizado = pasarAVector(cuerpoDiscretizado);
+    string nombre_arch_reconst = carpeta_archivos_salida+"/Reconstr. del original.csv";
+    escribirCSV(nombre_arch_reconst, vecCuerpoDiscretizado, cantidad_celdas);
+    pair<double,double> ruido[11] = {{0.0,0.0}, {0.01,0.01}, {0.02,0.02}, {0.03,0.03}, {0.04,0.04}, {0.05,0.05}, {0.06,0.06}, {0.07,0.07}, {0.08,0.08}, {0.09,0.09}, {1.0,1.0}};
+    //R con máxima cant. de rayos iniciales y separación 1.
+    reconstruccion_variando_ruido(cantidad_celdas, 0, cantidad_celdas, 1, ruido, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+    //H con máxima cant. de rayos iniciales y separación 1.
+    reconstruccion_variando_ruido(cantidad_celdas, 1, cantidad_celdas, 1, ruido, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+    //V con máxima cant. de rayos iniciales y separación 1.
+    reconstruccion_variando_ruido(cantidad_celdas, 2, cantidad_celdas, 1, ruido, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+    //H con 1/2 de la máxima cant. de rayos iniciales y separación 1.
+    reconstruccion_variando_ruido(cantidad_celdas, 1, cantidad_celdas/2, 1, ruido, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+    //V con 1/2 de la máxima cant. de rayos iniciales y separación 1.
+    reconstruccion_variando_ruido(cantidad_celdas, 2, cantidad_celdas/2, 1, ruido, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+    //H con 1/4 de la máxima cant. de rayos iniciales y separación 1.
+    reconstruccion_variando_ruido(cantidad_celdas, 1, cantidad_celdas/4, 1, ruido, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+    //V con 1/4 de la máxima cant. de rayos iniciales y separación 1.
+    reconstruccion_variando_ruido(cantidad_celdas, 2, cantidad_celdas/4, 1, ruido, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
 }
 
 //------------------------ Parseo de la entrada -------------------------------//
@@ -477,7 +545,9 @@ int main(int argc, char * argv[]) {
         escribirCSV("Resultados_de_reconstrucción/reconstruccionV.csv", reconstruccionV, ancho);
         escribirCSV("Resultados_de_reconstrucción/original discretizado.csv", vecCuerpoDiscretizado, ancho);*/
         //Otra comparación de las reconstrucciones de las distintas estratégias.
-        reconstrucciones_especificas(nombreAchivoEntrada, "Resultados_de_reconstrucción", 32);
+        //reconstrucciones_especificas(nombreAchivoEntrada, "Resultados_de_reconstrucción", 32);
+        //Variando ruido para una combinación específica de parámetros para cada estrategia.
+        variando_ruido_con_parametros_preestablecidos(nombreAchivoEntrada, "Resultados_de_variación_ruido", 32);
         //Lo que debe quedar en la entrega:
         /*vector<double> reconstruccion = reconstruirCuerpo(nombreAchivoEntrada, vecCuerpoDiscretizado, 16, 0, 0, nivelRuido, 0, ancho);
         escribirCSV(nombreAchivoSalida, reconstruccion, ancho);*/
