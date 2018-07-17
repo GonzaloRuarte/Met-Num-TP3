@@ -154,7 +154,7 @@ vector<double> reconstruirCuerpo(string nombreAchivoEntrada, vector<double>& vec
 	size_t tamMatriz = cuerpoDiscretizado.size();
     ancho = cuerpoDiscretizado.size();
 	// 3) obtenemos D (la matriz con las trayectorias de los rayos
-	VectorMapMatrix  D = generarRayos(tamMatriz, metodo, tamMatriz, 1); //tamaño discretizado, metodo a utilizar, cantidad de rayos, pixeles salteados-1.
+	VectorMapMatrix  D = generarRayos(tamMatriz, metodo, tamMatriz/2, 1); //tamaño discretizado, metodo a utilizar, cantidad de rayos, pixeles salteados-1.
 	// 4) pasamos la imagen discretizada a vector
     vecCuerpoDiscretizado = pasarAVector(cuerpoDiscretizado);
 	// 5) invertimos el vector vecCuerpoDiscretizado
@@ -247,84 +247,8 @@ void experimentacionVariandoSeparaciones() {
     experimentacion('r', archivos, carpeta_salida, tamanio_imagenes, discretizaciones, cantidades_de_fuentes, separaciones, ruidos, repeticiones);
 }*/
 
-//------------------------ Parseo de la entrada -------------------------------//
-
-bool contiene(char *argv[], const string *cadena) {
-    string param1 = argv[1], param2 = argv[3], param3 = argv[5];//, param4 = argv[5];
-    return param1.compare(*cadena) || param2.compare(*cadena) || param3.compare(*cadena); //|| param4.compare(*cadena);
-}
-
-string obtener(char *argv[], const string *cadena) {
-    string ret;
-    string param1 = argv[1], param2 = argv[3], param3 = argv[5];//, param4 = argv[7];
-
-    if (param1.compare(*cadena) == 0) ret = argv[2];
-    if (param2.compare(*cadena) == 0) ret = argv[4];
-    if (param3.compare(*cadena) == 0) ret = argv[6];
-//    if (param4.compare(*cadena) == 0) ret = argv[8];
-    return ret;
-}
-
-bool obtenerParametros(int argc, char * argv[], string *ruido, string *nombreArchivoEntrada, string *nombreArchivoSalida) {
-    bool ret = false;
-    const string param1 = "-r", param2 = "-i", param3 = "-o";
-    bool estan_todos = argc==7;
-    estan_todos = estan_todos && contiene(argv, &param1);
-    estan_todos = estan_todos && contiene(argv, &param2);
-    estan_todos = estan_todos && contiene(argv, &param3);
-    //if (argc == 7 && contiene(argv, &param1) && contiene(argv, &param2) && contiene(argv, &param3)) {
-    if (estan_todos) {
-        *ruido = obtener(argv, &param1);
-        *nombreArchivoEntrada = obtener(argv, &param2);
-        *nombreArchivoSalida = obtener(argv, &param3);
-        ret = (ruido != NULL && nombreArchivoEntrada != NULL && nombreArchivoSalida != NULL);
-    }
-    return ret;
-}
-//------------------------ Parseo de la entrada -------------------------------//
-
-int main(int argc, char * argv[]) {
-	//reconstruirCuerpos("dicom_csv2", 4, 3, 2, 1);
-	
-	//VectorMapMatrix  D = generarRayos(500,true);
-    //vector<double>* cuerpo;
-    //cuerpo = leerCSV("dicom_csv2/1.2.826.0.1.3680043.2.656.1.138.1.csv");
-
-	//cout << (*matriz)[0].size() << endl;
-
-	//vector<double> asd = reconstruirCuerpo("dicom_csv2/1.2.826.0.1.3680043.2.656.1.138.1.csv", cuerpo, 16, 0.4, 0.5, 0);
-	//vector<double> asd = reconstruirCuerpo("dicom_csv2/1.2.826.0.1.3680043.2.656.1.138.1.csv", cuerpo, 16, 0, 0, 0);
-
-/*	vector<vector<double>> mat(20,vector<double> (20,0));
-
-	for(uint i = 0; i< mat.size(); i++){
-		for(uint j = 0; j < mat[0].size(); j++){
-			mat[i][j]=i*2+j*2;
-			cout << mat[i][j] << " ";
-			
-		}
-		cout << endl;
-		
-		
-	}
-	vector<vector<double>> disc = discretizar(mat,5);
-	for(uint i = 0; i< disc.size(); i++){
-		for(uint j = 0; j < disc[0].size(); j++){
-			cout << disc[i][j] << " ";
-			
-		}
-		cout << endl;
-		
-		
-	}
-	vector<double> vec = pasarAVector(disc);
-	for(uint i = 0; i< vec.size(); i++){
-		cout << vec[i]<< " ";
-	}
-	cout << endl;
-    */
-    //Imagen de la cátedra:
-/*    vector<string> archivos;
+void variacion_de_parametros_con_imagenes_de_la_catedra(){
+    vector<string> archivos;
     listarDirectorio("Imagenes con padding/128", archivos);
     string var_dis128 = "128Variando discretizacion";
     string var_fuen128 = "128Variando cant. de fuentes";
@@ -419,7 +343,120 @@ int main(int argc, char * argv[]) {
     experimentacion('H', archivos, var_rui1024, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidosV, repeticiones);
     experimentacion('V', archivos, var_rui1024, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidosV, repeticiones);
     experimentacion('r', archivos, var_rui1024, tam_imag, discretizacion16, cantidades_de_fuentes16, separaciones, ruidosV, repeticiones);
-    */
+}
+
+void reconstruccion_especifica(uint16_t cantidad_celdas, uint16_t metodo, uint16_t cant_rayos_inic, uint16_t separacion, string nom_arch_datos, string carpeta_archivos_salida, const vector<double>& vecCuerpoDiscretizado){
+    VectorMapMatrix D = generarRayos(cantidad_celdas, metodo, cant_rayos_inic, separacion);
+    vector<double> T = D*vecCuerpoDiscretizado;
+    VectorMapMatrix Dt = getTraspuesta(D);
+    vector<vector<double>> DtD = Dt*D;
+    vector<double> DtT = Dt*T;
+    pair<vector<double>,short> solucion = EG2(DtD, DtT);
+    char char_metodo;
+    switch(metodo){
+        case 0: char_metodo = 'R'; break;
+        case 1: char_metodo = 'H'; break;
+        case 2: char_metodo = 'V'; break;
+        case 3: char_metodo = 'O'; break;
+        case 4: char_metodo = 'o'; break;
+        case 5: char_metodo = 'h'; break;
+        case 6: char_metodo = 'v'; break;
+    }
+    ofstream arch_datos(nom_arch_datos, ios::app);
+    arch_datos << "Estrategia = " << char_metodo << ", cantidad rayos iniciales =" << cant_rayos_inic << ", separación =" << separacion << ":" << endl;
+    arch_datos << "Cantidad de rayos: " << D.cantFilas() << ";\tstatus de la EG: " << solucion.second << ";\tECM: " << ECM(solucion.first, vecCuerpoDiscretizado) << endl << endl;
+    string nombre_arch_reconst = carpeta_archivos_salida+"/Reconstr. "+char_metodo+","+to_string(cant_rayos_inic)+","+to_string(separacion)+".csv";
+    escribirCSV(nombre_arch_reconst, solucion.first, cantidad_celdas);
+}
+
+void reconstrucciones_especificas(const string& archivo_imagen_entrada, string carpeta_archivos_salida, uint16_t cantidad_celdas){
+    string nom_arch_datos = carpeta_archivos_salida+"/datos de las reconstrucciones.txt";
+    ofstream arch_datos(nom_arch_datos);
+    arch_datos << "En todos los casos el tamaño de las reconstrucciones es de " << cantidad_celdas << endl << endl;
+    arch_datos.close();
+    vector<vector<double> > cuerpo = *leerCSV(archivo_imagen_entrada);
+    uint discretizacion_para_cantidad_celdas = cuerpo.size()/cantidad_celdas;     //Discretización necesaria para tener una grilla de "cantidad_celdas"x"cantidad_celdas".
+    vector<vector<double> > cuerpoDiscretizado = discretizar(cuerpo, discretizacion_para_cantidad_celdas);
+    vector<double> vecCuerpoDiscretizado = pasarAVector(cuerpoDiscretizado);
+    string nombre_arch_reconst = carpeta_archivos_salida+"/Reconstr. del original.csv";
+    escribirCSV(nombre_arch_reconst, vecCuerpoDiscretizado, cantidad_celdas);
+    //R con máxima cant. de rayos iniciales y separación 1.
+    reconstruccion_especifica(cantidad_celdas, 0, cantidad_celdas, 1, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+    //R con 1/2 de la máxima cant. de rayos iniciales y separación 1.
+    reconstruccion_especifica(cantidad_celdas, 0, cantidad_celdas/2, 1, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+    //R con la máxima cant. de rayos iniciales y separación 2.
+    reconstruccion_especifica(cantidad_celdas, 0, cantidad_celdas, 2, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+
+    //H con la máxima cant. de rayos iniciales y separación 1.
+    reconstruccion_especifica(cantidad_celdas, 1, cantidad_celdas, 1, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+    //H con la máxima cant. de rayos iniciales y separación 2.
+    reconstruccion_especifica(cantidad_celdas, 1, cantidad_celdas, 2, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+    //H con la máxima cant. de rayos iniciales y separación 4.
+    reconstruccion_especifica(cantidad_celdas, 1, cantidad_celdas, 4, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+    //H con 1/2 de la máxima cant. de rayos iniciales y separación 1.
+    reconstruccion_especifica(cantidad_celdas, 1, cantidad_celdas/2, 1, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+    //H con 1/2 de la máxima cant. de rayos iniciales y separación 2.
+    reconstruccion_especifica(cantidad_celdas, 1, cantidad_celdas/2, 2, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+    //H con 1/4 de la máxima cant. de rayos iniciales y separación 1.
+    reconstruccion_especifica(cantidad_celdas, 1, cantidad_celdas/4, 1, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+
+    //V con la máxima cant. de rayos iniciales y separación 1.
+    reconstruccion_especifica(cantidad_celdas, 2, cantidad_celdas, 1, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+    //V con la máxima cant. de rayos iniciales y separación 2.
+    reconstruccion_especifica(cantidad_celdas, 2, cantidad_celdas, 2, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+    //V con la máxima cant. de rayos iniciales y separación 4.
+    reconstruccion_especifica(cantidad_celdas, 2, cantidad_celdas, 4, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+    //V con 1/2 de la máxima cant. de rayos iniciales y separación 1.
+    reconstruccion_especifica(cantidad_celdas, 2, cantidad_celdas/2, 1, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+    //V con 1/2 de la máxima cant. de rayos iniciales y separación 2.
+    reconstruccion_especifica(cantidad_celdas, 2, cantidad_celdas/2, 2, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+    //V con 1/4 de la máxima cant. de rayos iniciales y separación 1.
+    reconstruccion_especifica(cantidad_celdas, 2, cantidad_celdas/4, 1, nom_arch_datos, carpeta_archivos_salida, vecCuerpoDiscretizado);
+}
+
+//------------------------ Parseo de la entrada -------------------------------//
+
+bool contiene(char *argv[], const string *cadena) {
+    string param1 = argv[1], param2 = argv[3], param3 = argv[5];//, param4 = argv[5];
+    return param1.compare(*cadena) || param2.compare(*cadena) || param3.compare(*cadena); //|| param4.compare(*cadena);
+}
+
+string obtener(char *argv[], const string *cadena) {
+    string ret;
+    string param1 = argv[1], param2 = argv[3], param3 = argv[5];//, param4 = argv[7];
+
+    if (param1.compare(*cadena) == 0) ret = argv[2];
+    if (param2.compare(*cadena) == 0) ret = argv[4];
+    if (param3.compare(*cadena) == 0) ret = argv[6];
+//    if (param4.compare(*cadena) == 0) ret = argv[8];
+    return ret;
+}
+
+bool obtenerParametros(int argc, char * argv[], string *ruido, string *nombreArchivoEntrada, string *nombreArchivoSalida) {
+    bool ret = false;
+    const string param1 = "-r", param2 = "-i", param3 = "-o";
+    bool estan_todos = argc==7;
+    estan_todos = estan_todos && contiene(argv, &param1);
+    estan_todos = estan_todos && contiene(argv, &param2);
+    estan_todos = estan_todos && contiene(argv, &param3);
+    //if (argc == 7 && contiene(argv, &param1) && contiene(argv, &param2) && contiene(argv, &param3)) {
+    if (estan_todos) {
+        *ruido = obtener(argv, &param1);
+        *nombreArchivoEntrada = obtener(argv, &param2);
+        *nombreArchivoSalida = obtener(argv, &param3);
+        ret = (ruido != NULL && nombreArchivoEntrada != NULL && nombreArchivoSalida != NULL);
+    }
+    return ret;
+}
+//------------------------ Parseo de la entrada -------------------------------//
+
+int main(int argc, char * argv[]) {
+
+    //Viendo centidad de rayos:
+    /*VectorMapMatrix R = generarRayos(32, 0, 32, 1);
+    VectorMapMatrix H = generarRayos(32, 1, 32/2, 1);
+    cout << "cant. rayos de R: " << R.cantFilas() << endl;
+    cout << "cant. rayos de H: " << H.cantFilas() << endl;*/
 
     string nombreAchivoEntrada;
     string nombreAchivoSalida;
@@ -432,13 +469,15 @@ int main(int argc, char * argv[]) {
     } else {
         double nivelRuido = atof(ruido.c_str());
         //Comparación de las reconstrucciones de las distintas estratégias.
-        vector<double> reconstruccionR = reconstruirCuerpo(nombreAchivoEntrada, vecCuerpoDiscretizado, 16, 0, 0, nivelRuido, 0, ancho);
+        /*vector<double> reconstruccionR = reconstruirCuerpo(nombreAchivoEntrada, vecCuerpoDiscretizado, 16, 0, 0, nivelRuido, 0, ancho);
         escribirCSV("Resultados_de_reconstrucción/reconstruccionR.csv", reconstruccionR, ancho);
-        vector<double> reconstruccionH = reconstruirCuerpo(nombreAchivoEntrada, vecCuerpoDiscretizado, 16, 5, 0, nivelRuido, 0, ancho);
+        vector<double> reconstruccionH = reconstruirCuerpo(nombreAchivoEntrada, vecCuerpoDiscretizado, 16, 1, 0, nivelRuido, 0, ancho);
         escribirCSV("Resultados_de_reconstrucción/reconstruccionH.csv", reconstruccionH, ancho);
-        vector<double> reconstruccionV = reconstruirCuerpo(nombreAchivoEntrada, vecCuerpoDiscretizado, 16, 6, 0, nivelRuido, 0, ancho);
+        vector<double> reconstruccionV = reconstruirCuerpo(nombreAchivoEntrada, vecCuerpoDiscretizado, 16, 2, 0, nivelRuido, 0, ancho);
         escribirCSV("Resultados_de_reconstrucción/reconstruccionV.csv", reconstruccionV, ancho);
-        escribirCSV("Resultados_de_reconstrucción/original discretizado.csv", vecCuerpoDiscretizado, ancho);
+        escribirCSV("Resultados_de_reconstrucción/original discretizado.csv", vecCuerpoDiscretizado, ancho);*/
+        //Otra comparación de las reconstrucciones de las distintas estratégias.
+        reconstrucciones_especificas(nombreAchivoEntrada, "Resultados_de_reconstrucción", 32);
         //Lo que debe quedar en la entrega:
         /*vector<double> reconstruccion = reconstruirCuerpo(nombreAchivoEntrada, vecCuerpoDiscretizado, 16, 0, 0, nivelRuido, 0, ancho);
         escribirCSV(nombreAchivoSalida, reconstruccion, ancho);*/
