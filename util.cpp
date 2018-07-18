@@ -469,8 +469,8 @@ void escribirCSV(string nombreArchivo, vector<double>& vector, size_t ancho) {
     for (int i=0; i<ancho; i++) {
         for (int j = 0; j < ancho; j++) {
             valor = floor(vector[i*ancho + j]);
-		if(valor >= 32768){valor = 32768 - 1}
-		if(valor <-32768){valor = -32768}
+		if(valor >= 32768){valor = 32768 - 1;}
+		if(valor <-32768){valor = -32768;}
             linea += to_string((signed short) valor) + ",";
         }
         salida << linea << endl;
